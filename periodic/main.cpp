@@ -29,6 +29,7 @@ typedef enum
     EDT_FB_COLOR,
     EDT_FB_BW,
     EDT_FULL_CLEAR,
+    EDT_CIRCLE,
     EDT_COUNT
 } E_DISPLAY_TESTS;
 
@@ -58,6 +59,7 @@ void main()
     infoVideo.bg0rom.text(vec(1, 1), "FB Mode 32");
     infoVideo.bg0rom.text(vec(1, 2), "FB Mode 64");
     infoVideo.bg0rom.text(vec(1, 3), "Screen flicker");
+    infoVideo.bg0rom.text(vec(1, 4), "Circle");
     DrawCursor();
     InitCurrentTest();
     
@@ -137,6 +139,9 @@ const UInt2 SpriteSizeFB64 = vec(4,4);
 //EDT_FULL_CLEAR
 bool everyOtherFrame;
 
+//EDT_CIRCLE
+int lastRadius;
+
 void InitCurrentTest()
 {
     if (currentTest == EDT_WINDOWED_SPRITES)
@@ -154,7 +159,7 @@ void InitCurrentTest()
         video.colormap.setEGA();
         video.fb32.fill(0);
 
-        return;//Remove me for fun glitches
+        return;
     }
 
     if (currentTest == EDT_FB_BW)
@@ -163,12 +168,21 @@ void InitCurrentTest()
         video.colormap.setMono(0x0, 0xFFFFFFFF);
         video.fb64.fill(0);
 
-        return;//Remove me for fun glitches
+        return;
     }
 
     if (currentTest == EDT_FULL_CLEAR)
     {
         video.initMode(SOLID_MODE);
+        return;
+    }
+
+    if (currentTest == EDT_CIRCLE)
+    {
+        video.initMode(FB64);
+        video.colormap.setMono(0x0, 0xFFFFFFFF);
+        video.fb64.fill(0);
+
         return;
     }
 
@@ -210,6 +224,35 @@ void DrawWindowedSprites(float delta)
 
         System::paint();
         System::finish();//Fixes tearing on sprites
+    }
+}
+
+void DrawCircle(int x0, int y0, int radius, unsigned int color)
+{
+    int x = radius;
+    int y = 0;
+    int radiusError = 1 - x;
+
+    while (x >= y)
+    {
+        video.fb64.fill(vec(x + x0, y + y0), vec(1, 1), color);
+        video.fb64.fill(vec(y + x0, x + y0), vec(1, 1), color);
+        video.fb64.fill(vec(-x + x0, y + y0), vec(1, 1), color);
+        video.fb64.fill(vec(-y + x0, x + y0), vec(1, 1), color);
+        video.fb64.fill(vec(-x + x0, -y + y0), vec(1, 1), color);
+        video.fb64.fill(vec(-y + x0, -x + y0), vec(1, 1), color);
+        video.fb64.fill(vec(x + x0, -y + y0), vec(1, 1), color);
+        video.fb64.fill(vec(y + x0, -x + y0), vec(1, 1), color);
+        y++;
+        if (radiusError < 0)
+        {
+            radiusError += 2 * y + 1;
+        }
+        else
+        {
+            x--;
+            radiusError += 2 * (y - x + 1);
+        }
     }
 }
 
@@ -266,6 +309,22 @@ void DrawCurrentTest(float delta)
         video.colormap[0] = RGB565::fromRGB(everyOtherFrame ? 0xFF0000 : 0x0000FF);
         everyOtherFrame = !everyOtherFrame;
         System::paintUnlimited();
+        return;
+    }
+
+    if (currentTest == EDT_CIRCLE)
+    {
+        //Clear the old circle:
+        DrawCircle(32, 32, lastRadius, 0);
+
+        //Draw the new one:
+        int radius = (int)(sin(time * 3.f) * 16 + 16);
+        DrawCircle(32, 32, radius, 1);
+        lastRadius = radius;
+
+        System::paint();
+        System::finish();
+
         return;
     }
 
