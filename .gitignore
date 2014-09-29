@@ -1,0 +1,14 @@
+# Visual Studio Supporting Files
+*.opensdf
+*.sdf
+*.suo
+
+# Sifteo Generated Files
+assets.gen.*
+assets.html
+
+# Artifacts
+Debug/
+*.o
+*.d
+*.elf
