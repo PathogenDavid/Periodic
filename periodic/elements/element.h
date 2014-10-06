@@ -3,6 +3,30 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+struct Flourine
+{
+
+}
+
+struct Chlorine
+{
+
+}
+
+struct Bromine
+{
+
+}
+
+struct Iodine
+{
+
+}
+
+struct Astatine
+{
+
+}
 
 class Element
 {

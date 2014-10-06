@@ -3,6 +3,36 @@
 #ifndef ALKALI_H
 #define ALKALI_H
 
+struct Lithium
+{
+
+}
+
+struct Sodium
+{
+
+}
+
+struct Potassium
+{
+
+}
+
+struct Rubidium
+{
+
+}
+
+struct Cesium
+{
+
+}
+
+struct Francium
+{
+
+}
+
 class Alkali : public Element
 {
 	public:
