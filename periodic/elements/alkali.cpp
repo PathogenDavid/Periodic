@@ -2,6 +2,8 @@
 
 using namespace std;
 
+
+
 Alkali::Alkali(void)
 {
 	numOuterElectrons = 1;
