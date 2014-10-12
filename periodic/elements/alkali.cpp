@@ -6,13 +6,13 @@ using namespace std;
 
 Alkali::Alkali(void)
 {
-	numOuterElectrons = 1;
+	createAlkali();
 }
 
 
 void Alkali::createAlkali(void)
 {
-	struct Lithium lithium;
+	extern struct Lithium lithium;
 	lithium.elementName = "Lithium";
 	lithium.elementSymbol = "Li";
 	lithium.atomicNumber = 3;
@@ -20,14 +20,14 @@ void Alkali::createAlkali(void)
 	lithium.numOuterElectrons = 1;
 	
 	
-	struct Sodium sodium;
+	extern struct Sodium sodium;
 	sodium.elementName = "Sodium";
 	sodium.elementSymbol = "Na";
 	sodium.atomicNumber = 11;
 	sodium.elementWeight = 22.98976928;
 	sodium.numOuterElectrons = 1;
 	
-	struct Potassium potassium;
+	extern struct Potassium potassium;
 	potassium.elementName = "Potassium";
 	potassium.elementSymbol = "K";
 	potassium.atomicNumber = 19;
@@ -35,24 +35,30 @@ void Alkali::createAlkali(void)
 	potassium.numOuterElectrons = 1;
 	
 	
-	struct Rubidium rubidium;
+	extern struct Rubidium rubidium;
 	rubidium.elementName = "Rubidium";
 	rubidium.elementSymbol = "Rb";
 	rubidium.atomicNumber = 37;
 	rubidium.elementWeight = 85.4678;
 	rubidium.numOuterElectrons = 1;
 	
-	struct Cesium cesium;
+	extern struct Cesium cesium;
 	cesium.elementName = "Cesium";
 	cesium.elementSymbol = "Cs";
 	cesium.atomicNumber = 55;
 	cesium.elementWeight = 132.90545196;
 	cesium.numOuterElectrons = 1;
 	
-	struct Francium francium;
+	extern struct Francium francium;
 	francium.elementName = "Francium";
 	francium.elementSymbol = "Fr";
 	francium.atomicNumber = 87;
 	francium.elementWeight = 223;
 	francium.numOuterElectrons = 1;
+}
+
+void Alkali::checkBond(int outerNum1, int outerNum2)
+{
+	bool bond = (outerNum1 + outerNum2 == 8) ? true : false;
+	return bond;
 }

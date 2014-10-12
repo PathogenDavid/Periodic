@@ -47,7 +47,8 @@ class Halogen : public Element
 {
 	public:
 		Halogen(void);
-		createHalogen(void);
+		void createHalogen(void);
+		bool checkBond(int, int); 
 		virtual void print(void);
 }	
 

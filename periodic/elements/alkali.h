@@ -56,6 +56,7 @@ class Alkali : public Element
 	public:
 		Alkali(void)
 		createAlkali(void);
+		bool checkBond(int, int);
 		virtual void print(void);
 }
 
