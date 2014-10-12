@@ -13,7 +13,7 @@ struct Flourine
 
 struct Chlorine
 {
-	std::string elementName;
+	std::string elementName, elementSymbol;
 	short atomicNumber;
 	double elementWeight;
 	short numOuterElectrons;
@@ -21,7 +21,7 @@ struct Chlorine
 
 struct Bromine
 {
-	std::string elementName;
+	std::string elementName, elementSymbol;
 	short atomicNumber;
 	double elementWeight;
 	short numOuterElectrons;
@@ -29,7 +29,7 @@ struct Bromine
 
 struct Iodine
 {
-	std::string elementName;
+	std::string elementName, elementSymbol;
 	short atomicNumber;
 	double elementWeight;
 	short numOuterElectrons;
@@ -37,7 +37,7 @@ struct Iodine
 
 struct Astatine
 {
-	std::string elementName;
+	std::string elementName, elementSymbol;
 	short atomicNumber;
 	double elementWeight;
 	short numOuterElectrons;
@@ -47,6 +47,7 @@ class Halogen : public Element
 {
 	public:
 		Halogen(void);
+		createHalogen(void);
 		virtual void print(void);
 }	
 
