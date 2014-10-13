@@ -4,80 +4,81 @@
 
 #include <sifteo.h>
 #include "assets.gen.h"
+#include "coders_crux.gen.h"
+
 using namespace Sifteo;
 
 static AssetSlot MainSlot = AssetSlot::allocate()
     .bootstrap(GameAssets);
 
+#define NUM_CUBES 2
+
 static Metadata M = Metadata()
     .title("Periodic Project")
     .package("edu.ksu.periodic", "0.1")
     .icon(Icon)
-    .cubeRange(2)
+    .cubeRange(NUM_CUBES)
 ;
 
-const CubeID displayCube(0);
-static VideoBuffer video;
-const CubeID infoCube(1);
-static VideoBuffer infoVideo;
+const char* elements1[] = { "H", "Li", "Na", "K", "Rb", "Cs", "Fr", NULL };
+const char* elements2[] = { "F", "Cl", "Br", "I", "At", "Uus", NULL };
+
+#define SCREEN_WIDTH 32
+#define SCREEN_HEIGHT 32
+
+static struct
+{
+    const CubeID cube;
+    VideoBuffer video;
+    bool isDirty;
+    int currentElement;
+    const char** elements;
+} cubes[NUM_CUBES] =
+{
+    { CubeID(0), VideoBuffer(), true, 0, NULL },
+    { CubeID(1), VideoBuffer(), true, 0, NULL },
+};
 
 static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
-
-typedef enum
-{
-    EDT_WINDOWED_SPRITES,
-    EDT_FB_COLOR,
-    EDT_FB_BW,
-    EDT_FULL_CLEAR,
-    EDT_CIRCLE,
-    EDT_COUNT
-} E_DISPLAY_TESTS;
-
-int currentTest;
-bool forceSuperClearOnNextLoop;
 
 void OnPress(unsigned cubeId);
 void OnRelease(unsigned cubeId);
 void OnTouch(void* sender, unsigned cubeId);
 
-void InitCurrentTest();
-void DrawCurrentTest(float delta);
+void RenderCube(unsigned cubeId);
 
-void ClearCursor();
-void DrawCursor();
+#define BG_COLOR 7 //White
 
 void main()
 {
-    video.attach(displayCube);
-    infoVideo.attach(infoCube);
+    cubes[0].elements = elements1;
+    cubes[1].elements = elements2;
+
+    // Initialize video buffers:
+    for (unsigned i = 0; i < NUM_CUBES; i++)
+    {
+        cubes[i].video.attach(cubes[i].cube);
+        cubes[i].video.initMode(FB32);
+        cubes[i].video.fb32.fill(BG_COLOR);
+
+        // Load the palette:
+        for (int j = 0, h = 0; j < PALETTE_COUNT; j++, h += 3)
+        {
+            cubes[i].video.colormap[j].set(palette[h], palette[h + 1], palette[h + 2]);
+        }
+    }
 
     Events::cubeTouch.set(OnTouch);
-    
-    //Draw menu on info cube:
-    infoVideo.initMode(BG0_ROM);
-    infoVideo.bg0rom.text(vec(1, 0), "Windowed Sprites");
-    infoVideo.bg0rom.text(vec(1, 1), "FB Mode 32");
-    infoVideo.bg0rom.text(vec(1, 2), "FB Mode 64");
-    infoVideo.bg0rom.text(vec(1, 3), "Screen flicker");
-    infoVideo.bg0rom.text(vec(1, 4), "Circle");
-    DrawCursor();
-    InitCurrentTest();
     
     TimeStep timeStep;
     while (1)
     {
-        if (forceSuperClearOnNextLoop)
+        for (unsigned i = 0; i < NUM_CUBES; i++)
         {
-            System::finish();
-            video.setDefaultWindow();
-            System::paintUnlimited();
-            video.setDefaultWindow();
-            System::finish();
-
-            forceSuperClearOnNextLoop = false;
+            RenderCube(i);
         }
 
-        DrawCurrentTest(timeStep.delta());
+        System::paint();
         timeStep.next();
     }
 }
@@ -88,13 +89,16 @@ void OnPress(unsigned cubeId)
 
 void OnRelease(unsigned cubeId)
 {
-    ClearCursor();
-    currentTest++;
-    if (currentTest >= EDT_COUNT)
-    { currentTest = 0; }
-    DrawCursor();
-    InitCurrentTest();
-    forceSuperClearOnNextLoop = true;
+    LOG("Going to next elemenet on cube %d.\n", cubeId);
+
+    cubes[cubeId].currentElement++;
+
+    if (cubes[cubeId].elements[cubes[cubeId].currentElement] == NULL)
+    {
+        cubes[cubeId].currentElement = 0;
+    }
+
+    cubes[cubeId].isDirty = true;
 }
 
 void OnTouch(void* sender, unsigned cubeId)
@@ -111,222 +115,95 @@ void OnTouch(void* sender, unsigned cubeId)
     isRelease[cubeId] = !isRelease[cubeId];//Next touch event on this cube will be a release event
 }
 
-void ClearCursor()
+int strlen(const char* str);
+
+#define LETTER_SPACING 1
+#define LETTER_DESCENDER_HEIGHT 2
+
+void DrawCharAt(VideoBuffer* v, int x, int y, char c);
+
+void RenderCube(unsigned cubeId)
 {
-    infoVideo.bg0rom.text(vec(0, currentTest), " ");
+    if (!cubes[cubeId].isDirty)
+    { return; }
+
+    LOG("Cube %d is dirty! Redrawing.\n", cubeId);
+    VideoBuffer* v = &cubes[cubeId].video;
+
+    // Clear the screen:
+    v->fb32.fill(BG_COLOR);
+
+    // Draw the element symbol:
+    const char* symbol = cubes[cubeId].elements[cubes[cubeId].currentElement];
+    int chars = strlen(symbol);
+    int stringWidth = chars * CODERS_CRUX_GLYPH_WIDTH + (chars - 1) * LETTER_SPACING;
+    int stringHeight = CODERS_CRUX_GLYPH_HEIGHT - LETTER_DESCENDER_HEIGHT;
+
+    int x = SCREEN_WIDTH / 2 - stringWidth / 2;
+    int y = SCREEN_HEIGHT / 2 - stringHeight / 2;
+
+    // Draw the symbol:
+    for (int i = 0; i < chars; i++)
+    {
+        LOG("Drawing '%c'\n", symbol[i]);
+        DrawCharAt(v, x, y, symbol[i]);
+        x += CODERS_CRUX_GLYPH_WIDTH + LETTER_SPACING;
+    }
+
+    // Draw some dummy electrons:
+    // Right now this is super hacky, need to clean up.
+    const int electronColor = 15;
+
+    x = SCREEN_WIDTH / 2 - stringWidth / 2;
+    y = SCREEN_HEIGHT / 2;
+    int xoff = 2;
+    int yoff = 2;
+    x -= xoff;
+    v->fb32.plot(vec(x, y - yoff), electronColor);
+    v->fb32.plot(vec(x, y + yoff), electronColor);
+    x += stringWidth + xoff;
+    x++;
+    v->fb32.plot(vec(x, y - yoff), electronColor);
+    v->fb32.plot(vec(x, y + yoff), electronColor);
+    x = SCREEN_WIDTH / 2;
+    y -= stringHeight / 2 + xoff;
+    int zoff = 1 * chars;
+    v->fb32.plot(vec(x - zoff, y), electronColor);
+    v->fb32.plot(vec(x + zoff, y), electronColor);
+    y += stringHeight + xoff;
+    y++;
+    v->fb32.plot(vec(x - zoff, y), electronColor);
+    v->fb32.plot(vec(x + zoff, y), electronColor);
+
+    cubes[cubeId].isDirty = false;
 }
 
-void DrawCursor()
+void DrawCharAt(VideoBuffer* v, int x, int y, char c)
 {
-    infoVideo.bg0rom.text(vec(0, currentTest), "*");
-}
+    // Convert char to glyph id:
+    if (c >= 'a' && c <= 'z')
+    { c = c - 'a' + 26; }
+    else if (c >= 'A' && c <= 'Z')
+    { c -= 'A'; }
+    else
+    { c = 0; }//Invalid character
+    
+    //This function seems broken, or I am misunderstanding its purpose.
+    //v->fb32.bitmap(vec(x, y), vec(CODERS_CRUX_GLYPH_WIDTH, CODERS_CRUX_GLYPH_HEIGHT), &coders_crux[c * CODERS_CRUX_GLYPH_SIZE], CODERS_CRUX_GLYPH_WIDTH);
 
-//Common variables/constants:
-float time;
-#define NUM_SPRITES 16
-float SpriteX[NUM_SPRITES];
-
-//EDT_WINDOWED_SPRITES variables/constants:
-#define NUM_ACTUAL_SPRITES 8
-const UInt2 SpriteSize = vec(8, 8);
-
-//EDT_FB_COLOR variables/constants:
-const UInt2 SpriteSizeFB32 = vec(2,2);
-
-//EDT_FB_BW variables/constants:
-const UInt2 SpriteSizeFB64 = vec(4,4);
-
-//EDT_FULL_CLEAR
-bool everyOtherFrame;
-
-//EDT_CIRCLE
-int lastRadius;
-
-void InitCurrentTest()
-{
-    if (currentTest == EDT_WINDOWED_SPRITES)
+    for (int i = 0; i < CODERS_CRUX_GLYPH_HEIGHT; i++)
     {
-        video.initMode(BG0_SPR_BG1);
-        video.bg0.fill(vec(0, 0), vec(16, 16), BlackBg);
-        video.bg1.eraseMask();
-
-        return;
-    }
-
-    if (currentTest == EDT_FB_COLOR)
-    {
-        video.initMode(FB32);
-        video.colormap.setEGA();
-        video.fb32.fill(0);
-
-        return;
-    }
-
-    if (currentTest == EDT_FB_BW)
-    {
-        video.initMode(FB64);
-        video.colormap.setMono(0x0, 0xFFFFFFFF);
-        video.fb64.fill(0);
-
-        return;
-    }
-
-    if (currentTest == EDT_FULL_CLEAR)
-    {
-        video.initMode(SOLID_MODE);
-        return;
-    }
-
-    if (currentTest == EDT_CIRCLE)
-    {
-        video.initMode(FB64);
-        video.colormap.setMono(0x0, 0xFFFFFFFF);
-        video.fb64.fill(0);
-
-        return;
-    }
-
-    video.initMode(BG0_ROM);
-    video.bg0rom.text(vec(0, 0), "//TODO: IMPLEMENT ME");
-    video.setDefaultWindow();
-}
-
-void UpdateSprite(int i)
-{
-    SpriteX[i] = sin((float)i + time * 2.f) * 56.f + 60.f;
-}
-
-void UpdateSprites()
-{
-    //Update the "sprites":
-    for (int i = 0; i < NUM_SPRITES; i++)
-    {
-        UpdateSprite(i);
-    }
-}
-
-void DrawWindowedSprites(float delta)
-{
-    UpdateSprites();
-
-    //Draw the sprites, one bank at a time:
-    for (int j = 0; j < NUM_SPRITES; j += NUM_ACTUAL_SPRITES)
-    {
-        //Set the Window:
-        video.setWindow(j * 8, (j + NUM_ACTUAL_SPRITES) * 8);
-
-        //Set the image and position for the current sprites:
-        for (int i = 0; i < NUM_ACTUAL_SPRITES; i++)
+        for (int j = 0; j < CODERS_CRUX_GLYPH_WIDTH; j++)
         {
-            video.sprites[i].setImage(Rainbow, j + i);
-            video.sprites[i].move(SpriteX[j + i], (j + i) * 8);
-        }
-
-        System::paint();
-        System::finish();//Fixes tearing on sprites
-    }
-}
-
-void DrawCircle(int x0, int y0, int radius, unsigned int color)
-{
-    int x = radius;
-    int y = 0;
-    int radiusError = 1 - x;
-
-    while (x >= y)
-    {
-        video.fb64.fill(vec(x + x0, y + y0), vec(1, 1), color);
-        video.fb64.fill(vec(y + x0, x + y0), vec(1, 1), color);
-        video.fb64.fill(vec(-x + x0, y + y0), vec(1, 1), color);
-        video.fb64.fill(vec(-y + x0, x + y0), vec(1, 1), color);
-        video.fb64.fill(vec(-x + x0, -y + y0), vec(1, 1), color);
-        video.fb64.fill(vec(-y + x0, -x + y0), vec(1, 1), color);
-        video.fb64.fill(vec(x + x0, -y + y0), vec(1, 1), color);
-        video.fb64.fill(vec(y + x0, -x + y0), vec(1, 1), color);
-        y++;
-        if (radiusError < 0)
-        {
-            radiusError += 2 * y + 1;
-        }
-        else
-        {
-            x--;
-            radiusError += 2 * (y - x + 1);
+            v->fb32.plot(vec(x + j, y + i), coders_crux[j + i * CODERS_CRUX_GLYPH_WIDTH + c * CODERS_CRUX_GLYPH_SIZE]);
         }
     }
 }
 
-void DrawCurrentTest(float delta)
+int strlen(const char* str)
 {
-    time += delta;
-
-    if (currentTest == EDT_WINDOWED_SPRITES)
-    {
-        DrawWindowedSprites(delta);
-        return;
-    }
-
-    if (currentTest == EDT_FB_COLOR)
-    {
-        for (int i = 0; i < NUM_SPRITES; i++)
-        {
-            //Clear the old one:
-            UInt2 pos = vec((unsigned)(SpriteX[i] / 4.f), i * SpriteSizeFB32.y);
-            video.fb32.fill(pos, SpriteSizeFB32, 0);
-
-            //Draw the new one:
-            UpdateSprite(i);
-            pos.x = SpriteX[i] / 4.f;
-            video.fb32.fill(pos, SpriteSizeFB32, i % 15 + 1);//Keep color index between 1 - 15 (#0 is the background)
-        }
-
-        System::paint();
-        System::finish();
-        return;
-    }
-
-    if (currentTest == EDT_FB_BW)
-    {
-        for (int i = 0; i < NUM_SPRITES; i++)
-        {
-            //Clear the old one:
-            UInt2 pos = vec((unsigned)(SpriteX[i] / 2.f), i * SpriteSizeFB64.y);
-            video.fb64.fill(pos, SpriteSizeFB64, 0);
-
-            //Draw the new one:
-            UpdateSprite(i);
-            pos.x = SpriteX[i] / 2.f;
-            video.fb64.fill(pos, SpriteSizeFB64, 1);
-        }
-
-        System::paint();
-        System::finish();
-        return;
-    }
-
-    if (currentTest == EDT_FULL_CLEAR)
-    {
-        video.colormap[0] = RGB565::fromRGB(everyOtherFrame ? 0xFF0000 : 0x0000FF);
-        everyOtherFrame = !everyOtherFrame;
-        System::paintUnlimited();
-        return;
-    }
-
-    if (currentTest == EDT_CIRCLE)
-    {
-        //Clear the old circle:
-        DrawCircle(32, 32, lastRadius, 0);
-
-        //Draw the new one:
-        int radius = (int)(sin(time * 3.f) * 16 + 16);
-        DrawCircle(32, 32, radius, 1);
-        lastRadius = radius;
-
-        System::paint();
-        System::finish();
-
-        return;
-    }
-
-    System::paint();
+    int ret = 0;
+    while (str[ret] != '\0')
+    { ret++; }
+    return ret;
 }

@@ -15,10 +15,16 @@
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="assets.gen.cpp" />
+    <ClCompile Include="coders_crux.gen.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="assets.gen.h" />
+    <ClInclude Include="coders_crux.gen.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16888AC4-0062-4D0B-81C9-B35063AFFE40}</ProjectGuid>

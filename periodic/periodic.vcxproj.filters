@@ -6,8 +6,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="assets.gen.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="coders_crux.gen.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="assets.gen.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="coders_crux.gen.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{44ee09c8-e397-40eb-968e-27a0f036ebc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
