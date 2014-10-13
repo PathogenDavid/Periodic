@@ -2,13 +2,19 @@
 *.opensdf
 *.sdf
 *.suo
+*.csproj.user
 
 # Sifteo Generated Files
 assets.gen.*
 assets.html
+
+# Other Generated Files
+coders_crux.gen.*
 
 # Artifacts
 Debug/
 *.o
 *.d
 *.elf
+bin/
+obj/
