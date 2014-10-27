@@ -1,30 +1,26 @@
-//#include<string>
-
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-
 struct Element
 {
-	string elementName;
-	string elementSymbol;
-	short atomicNumber;
-	double elementWeight;
-	short numOuterElectrons;
+    string elementName;
+    string elementSymbol;
+    short atomicNumber;
+    double elementWeight;
+    short numOuterElectrons;
 }
 
 class Element
 {
-	protected:
-		string elementName;
-		string elementSymbol;
-		short atomicNumber;
-		double elementWeight;
-		int numOuterElectrons;
-	public:
-		Element(void);
-		createElements(void);
+    private:
+        const char* elementName;
+        const char* elementSymbol;
+        short atomicNumber;
+        double elementWeight;
+        int numOuterElectrons;
+    public:
+        Element(void);
+        createElements(void);
 }
-
 
 #endif
