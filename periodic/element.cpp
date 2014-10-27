@@ -1,108 +1,102 @@
+#include "periodic.h"
 #include "element.h"
+#include <sifteo.h>
 
-
-
-Element::Element(void)
+Element::Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons)
 {
-    
+    this->baseElement = NULL;
+    this->name = name;
+    this->symbol = symbol;
+    this->atomicNumber = atomicNumber;
+    this->elementWeight = elementWeight;
 }
 
-void Element::createElements(void)
+Element::Element(Element* baseElement)
 {
-    //alkali
-    static struct Element lithium;
-    lithium.elementName = "Lithium";
-    lithium.elementSymbol = "Li";
-    lithium.atomicNumber = 3;
-    lithium.elementWeight = 6.94;
-    lithium.numOuterElectrons = 1;
+    Assert(baseElement != NULL);
+    this->baseElement = baseElement;
+    ResetToBasicState();
+}
+
+void Element::ResetToBasicState()
+{
+    this->name = baseElement->name;
+    this->symbol = baseElement->symbol;
+    this->atomicNumber = baseElement->atomicNumber;
+    this->elementWeight = baseElement->elementWeight;
+}
+
+const char* Element::GetName() { return name; }
+const char* Element::GetSymbol() { return symbol; }
+short Element::GetAtomicNumber() { return atomicNumber; }
+double Element::GetElementWeight() { return elementWeight; }
+int Element::GetNumOuterElectrons() { return numOuterElectrons; }
+
+bool Element::IsRawElement()
+{
+    return baseElement == NULL;
+}
+
+int Element::GetCharge()
+{
+    if (!IsRawElement())
+    { return 0; }
+
+    return baseElement->numOuterElectrons - this->numOuterElectrons;
+}
+
+void Element::ReactWith(Element* other)
+{
+    //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
+
+    //Check for ionic bond:
+    if ((this->numOuterElectrons + other->numOuterElectrons) == 8)
+    {
+        //Check if we should be an electron donor. (This is probably not scientficially accurate.)
+        if (this->numOuterElectrons < other->numOuterElectrons)
+        {
+            int electronsDonated = 8 - other->numOuterElectrons;
+            this->numOuterElectrons -= electronsDonated;
+            other->numOuterElectrons += electronsDonated;
+        }
+        else
+        {
+            int electronsDonated = 8 - this->numOuterElectrons;
+            other->numOuterElectrons -= electronsDonated;
+            this->numOuterElectrons += electronsDonated;
+        }
+    }
+}
+
+static Element rawElements[] =
+{
+    //Alkali Metals
+    Element("Lithium", "Li", 3, 6.94, 1),
+    Element("Sodium", "Na", 11, 22.9898, 1),
+    Element("Potassium", "K", 19, 39.0938, 1),
+    Element("Rubidium", "Rb", 37, 85.4678, 1),
+    Element("Cesium", "Cs", 55, 132.90545196, 1), //don't remember if we need this one or not
     
-    static struct Element sodium;
-    lithium.elementName = "Lithium";
-    lithium.elementSymbol = "Li";
-    lithium.atomicNumber = 3;
-    lithium.elementWeight = 6.94;
-    lithium.numOuterElectrons = 1;
+    //Halogens
+    Element("Flourine", "F", 9, 18.998403163, 7),
+    Element("Chlorine", "Cl", 17, 35.45, 7),
+    Element("Bromine", "Br", 35, 79.094, 7),
+    Element("Iodine", "I", 53, 126.90447, 7),
     
-    static struct Element potassium;
-    potassium.elementName = "Potassium";
-    potassium.elementSymbol = "K";
-    potassium.atomicNumber = 19;
-    potassium.elementWeight = 39.0938;
-    potassium.numOuterElectrons = 1;
-    
-    static struct Element rubidium;
-    rubidium.elementName = "Rubidium";
-    rubidium.elementSymbol = "Rb";
-    rubidium.atomicNumber = 37;
-    rubidium.elementWeight = 85.4678;
-    rubidium.numOuterElectrons = 1;
-    
-    //don't remember if we need this one or not
-    static struct Element cesium;
-    cesium.elementName = "Cesium";
-    cesium.elementSymbol = "Cs";
-    cesium.atomicNumber = 55;
-    cesium.elementWeight = 132.90545196;
-    cesium.numOuterElectrons = 1;
-    
-    
-    
-    //halogen
-    static struct Element flourine;
-    flourine.elementName = "Flourine";
-    flourine.elementSymbol = "F";
-    flourine.atomicNumber = 9;
-    flourine.elementWeight = 18.998403163;
-    flourine.numOuterElectrons = 7;
-    
-    static struct Element chlorine;
-    chroline.elementName = "Chlorine";
-    chroline.elementSymbol = "Cl";
-    chroline.atomicNumber = 17;
-    chroline.elementWeight = 35.45;
-    chroline.numOuterElectrons = 7;
-    
-    static struct Element bormine;
-    bromine.elementName = "Bromine";
-    bromine.elementSymbol = "Br";
-    bromine.atomicNumber = 35;
-    bromine.elementWeight = 79.094;
-    bromine.numOuterElectrons = 7;
-    
-    static struct Element iodine;
-    iodine.elementName = "Iodine";
-    iodine.elementSymbol = "I";
-    iodine.atomicNumber = 53;
-    iodine.elementWeight = 126.90447;
-    iodine.numOuterElectrons = 7;
-    
-    //noble gases
-    static struct Element helium;
-    iodine.elementName = "Helium";
-    iodine.elementSymbol = "He";
-    iodine.atomicNumber = 2;
-    iodine.elementWeight = 4.002602;
-    iodine.numOuterElectrons = 2;
-    
-    static struct Element neon;
-    iodine.elementName = "Neon";
-    iodine.elementSymbol = "Ne";
-    iodine.atomicNumber = 10;
-    iodine.elementWeight = 20.1797;
-    iodine.numOuterElectrons = 8;
-    
-    static struct Element argon;
-    iodine.elementName = "Argon";
-    iodine.elementSymbol = "Ar";
-    iodine.atomicNumber = 18;
-    iodine.elementWeight = 39.948;
-    iodine.numOuterElectrons = 8;
-    
-    static struct Element krypton;
-    iodine.elementName = "Krypton";
-    iodine.elementSymbol = "Kr";
-    iodine.atomicNumber = 36;
-    iodine.elementWeight = 83.798;
-    iodine.numOuterElectrons = 8;
+    //Noble Gases
+    Element("Helium", "He", 2, 4.002602, 2),
+    Element("Neon", "Ne", 10, 20.1797, 8),
+    Element("Argon", "Ar", 18, 39.948, 8),
+    Element("Krypton", "Kr", 36, 83.798, 8),
+};
+
+Element* Element::GetRawElement(int num)
+{
+    Assert(num > 0 && num < GetRawElementCount());
+    return new Element(&rawElements[num]);
+}
+
+int Element::GetRawElementCount()
+{
+    return CountOfArray(rawElements);
 }

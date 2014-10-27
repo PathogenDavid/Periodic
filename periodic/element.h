@@ -1,26 +1,35 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-struct Element
-{
-    string elementName;
-    string elementSymbol;
-    short atomicNumber;
-    double elementWeight;
-    short numOuterElectrons;
-}
-
 class Element
 {
     private:
-        const char* elementName;
-        const char* elementSymbol;
+        Element* baseElement;
+        const char* name;
+        const char* symbol;
         short atomicNumber;
         double elementWeight;
         int numOuterElectrons;
     public:
-        Element(void);
-        createElements(void);
-}
+        Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons);
+        Element(Element* baseElement);
+
+        const char* GetName();
+        const char* GetSymbol();
+        short GetAtomicNumber();
+        double GetElementWeight();
+        int GetNumOuterElectrons();
+
+        bool IsRawElement();
+
+        int GetCharge();
+
+        static Element* GetRawElement(int num);
+        static int GetRawElementCount();
+
+        void ResetToBasicState();
+
+        void ReactWith(Element* other);
+};
 
 #endif

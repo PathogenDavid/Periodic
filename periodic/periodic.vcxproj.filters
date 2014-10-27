@@ -12,6 +12,7 @@
     <ClCompile Include="coders_crux.gen.cpp">
       <Filter>Generated</Filter>
     </ClCompile>
+    <ClCompile Include="element.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -23,6 +24,8 @@
     <ClInclude Include="coders_crux.gen.h">
       <Filter>Generated</Filter>
     </ClInclude>
+    <ClInclude Include="element.h" />
+    <ClInclude Include="periodic.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">
