@@ -11,6 +11,7 @@ class Element
         double elementWeight;
         int numOuterElectrons;
     public:
+        Element();
         Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons);
         Element(Element* baseElement);
 
@@ -24,12 +25,12 @@ class Element
 
         int GetCharge();
 
-        static Element* GetRawElement(int num);
+        static void GetRawElement(int num, Element* elementOut);
         static int GetRawElementCount();
 
         void ResetToBasicState();
 
-        void ReactWith(Element* other);
+        bool ReactWith(Element* other);
 };
 
 #endif

@@ -1,6 +1,11 @@
 #include "periodic.h"
-#include "element.h"
+#include "Element.h"
 #include <sifteo.h>
+
+// Default constructor will not create a valid element, it must be initialized before use using GetRawElement
+Element::Element()
+{
+}
 
 Element::Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons)
 {
@@ -9,6 +14,7 @@ Element::Element(const char* name, const char* symbol, short atomicNumber, doubl
     this->symbol = symbol;
     this->atomicNumber = atomicNumber;
     this->elementWeight = elementWeight;
+    this->numOuterElectrons = numOuterElectrons;
 }
 
 Element::Element(Element* baseElement)
@@ -24,6 +30,7 @@ void Element::ResetToBasicState()
     this->symbol = baseElement->symbol;
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
+    this->numOuterElectrons = baseElement->numOuterElectrons;
 }
 
 const char* Element::GetName() { return name; }
@@ -45,9 +52,10 @@ int Element::GetCharge()
     return baseElement->numOuterElectrons - this->numOuterElectrons;
 }
 
-void Element::ReactWith(Element* other)
+bool Element::ReactWith(Element* other)
 {
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
+    //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
     //Check for ionic bond:
     if ((this->numOuterElectrons + other->numOuterElectrons) == 8)
@@ -65,7 +73,11 @@ void Element::ReactWith(Element* other)
             other->numOuterElectrons -= electronsDonated;
             this->numOuterElectrons += electronsDonated;
         }
+
+        return true;
     }
+
+    return false;
 }
 
 static Element rawElements[] =
@@ -90,10 +102,10 @@ static Element rawElements[] =
     Element("Krypton", "Kr", 36, 83.798, 8),
 };
 
-Element* Element::GetRawElement(int num)
+void Element::GetRawElement(int num, Element* elementOut)
 {
-    Assert(num > 0 && num < GetRawElementCount());
-    return new Element(&rawElements[num]);
+    Assert(num >= 0 && num < GetRawElementCount());
+    *elementOut = Element(&rawElements[num]);
 }
 
 int Element::GetRawElementCount()

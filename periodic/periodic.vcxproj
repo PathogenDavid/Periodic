@@ -17,8 +17,10 @@
   <ItemGroup>
     <ClCompile Include="assets.gen.cpp" />
     <ClCompile Include="coders_crux.gen.cpp" />
-    <ClCompile Include="element.cpp" />
+    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="periodic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -26,7 +28,8 @@
   <ItemGroup>
     <ClInclude Include="assets.gen.h" />
     <ClInclude Include="coders_crux.gen.h" />
-    <ClInclude Include="element.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="ElementCube.h" />
     <ClInclude Include="periodic.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

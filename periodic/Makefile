@@ -2,7 +2,7 @@ APP = periodic
 
 include $(SDK_DIR)/Makefile.defs
 
-OBJS = $(ASSETS).gen.o main.o coders_crux.gen.o element.o
+OBJS = $(ASSETS).gen.o main.o coders_crux.gen.o Element.o ElementCube.o periodic.o
 ASSETDEPS += *.png $(ASSETS).lua
 
 # build assets.html to proof stir-processed assets.
