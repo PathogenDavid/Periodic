@@ -8,6 +8,7 @@ using namespace Sifteo;
 
 #define BG_COLOR 7 //White
 #define CHARGE_COLOR 8 //Red
+#define ELECTRON_COLOR 15 //Pink
 
 class ElementCube
 {
@@ -28,6 +29,7 @@ class ElementCube
     
     private:
         void DrawCharAt(int x, int y, char c);
+        void DrawLewisDots(int stringWidth, int stringHeight);
 };
 
 #endif

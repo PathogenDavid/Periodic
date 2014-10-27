@@ -27,7 +27,7 @@ void ElementCube::GoToNextElement()
 {
     currentElementNum++;
 
-    if (currentElementNum > Element::GetRawElementCount())
+    if (currentElementNum >= Element::GetRawElementCount())
     { currentElementNum = 0; }
 
     Element::GetRawElement(currentElementNum, &currentElement);
@@ -104,30 +104,8 @@ void ElementCube::Render()
         }
     }
 
-    // Draw some dummy electrons:
-    // Right now this is super hacky, need to clean up.
-    const int electronColor = 15;
-
-    x = SCREEN_WIDTH / 2 - stringWidth / 2;
-    y = SCREEN_HEIGHT / 2;
-    int xoff = 2;
-    int yoff = 2;
-    x -= xoff;
-    v.fb32.plot(vec(x, y - yoff), electronColor);
-    v.fb32.plot(vec(x, y + yoff), electronColor);
-    x += stringWidth + xoff;
-    x++;
-    v.fb32.plot(vec(x, y - yoff), electronColor);
-    v.fb32.plot(vec(x, y + yoff), electronColor);
-    x = SCREEN_WIDTH / 2;
-    y -= stringHeight / 2 + xoff;
-    int zoff = 1 * chars;
-    v.fb32.plot(vec(x - zoff, y), electronColor);
-    v.fb32.plot(vec(x + zoff, y), electronColor);
-    y += stringHeight + xoff;
-    y++;
-    v.fb32.plot(vec(x - zoff, y), electronColor);
-    v.fb32.plot(vec(x + zoff, y), electronColor);
+    // Draw electrons:
+    DrawLewisDots(stringWidth, stringHeight);
 
     isDirty = false;
 }
@@ -145,7 +123,7 @@ void ElementCube::DrawCharAt(int x, int y, char c)
     }
     else
     {
-        c = 0;
+        Assert(false);
     }//Invalid character
 
     //This function seems broken, or I am misunderstanding its purpose.
@@ -156,6 +134,87 @@ void ElementCube::DrawCharAt(int x, int y, char c)
         for (int j = 0; j < CODERS_CRUX_GLYPH_WIDTH; j++)
         {
             v.fb32.plot(vec(x + j, y + i), coders_crux[j + i * CODERS_CRUX_GLYPH_WIDTH + c * CODERS_CRUX_GLYPH_SIZE]);
+        }
+    }
+}
+
+/*
+Order of adding electrons according to WolframAlpha:
+1. Right
+2. Left
+3. Top
+4. Bottom
+Repeat pattern as needed.
+*/
+enum LewisSides
+{
+    LRight = 0,
+    LLeft = 1,
+    LTop = 2,
+    LBottom = 3,
+
+    LFirst = LRight,
+    LLast = LBottom
+};
+
+void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
+{
+    for (int s = LFirst; s <= LLast; s++)
+    {
+        // Calculate the number of electrons on this side
+        int e = (currentElement.GetNumOuterElectrons() + 3 - s) / 4;
+
+        int x = SCREEN_WIDTH / 2;
+        int y = SCREEN_HEIGHT / 2;
+
+        // Calulate offset to get on the correct side:
+        switch (s)
+        {
+            case LRight:
+                x += stringWidth / 2 + 2;
+                y += LETTER_DESCENDER_HEIGHT / 2;
+                break;
+            case LLeft:
+                x -= stringWidth / 2 + 2;
+                y += LETTER_DESCENDER_HEIGHT / 2;
+                break;
+            case LTop:
+                y -= stringHeight / 2 + 2;
+                break;
+            case LBottom:
+                y += stringHeight / 2 + 2;
+                break;
+        }
+        
+        // Calculate offset for electron separation:
+        switch (s)
+        {
+            case LRight:
+            case LLeft:
+                y -= (e - 1) * 2;
+                break;
+            case LTop:
+            case LBottom:
+                x -= (e - 1) * 2;
+                break;
+        }
+
+        // Draw the electrons:
+        for ( ; e > 0; e--)
+        {
+            v.fb32.plot(vec(x, y), ELECTRON_COLOR);
+
+            switch (s)
+            {
+            case LRight:
+            case LLeft:
+                y += 2;
+                break;
+            case LTop:
+            case LBottom:
+                x += 2;
+                break;
+            }
         }
     }
 }
