@@ -4,15 +4,26 @@
 #define ELEMENT_H
 
 
+struct Element
+{
+	string elementName;
+	string elementSymbol;
+	short atomicNumber;
+	double elementWeight;
+	short numOuterElectrons;
+}
 
 class Element
 {
+	protected:
+		string elementName;
+		string elementSymbol;
+		short atomicNumber;
+		double elementWeight;
+		int numOuterElectrons;
 	public:
-		virtual string elementName;
-		virtual string elementSymbol;
-		virtual short atomicNumber;
-		virtual double elementWeight;
-		virtual int numOuterElectrons;
+		Element(void);
+		createElements(void);
 }
 
 
