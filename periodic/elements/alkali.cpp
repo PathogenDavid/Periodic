@@ -12,6 +12,7 @@ Alkali::Alkali(void)
 
 void Alkali::createAlkali(void)
 {
+/*
 	extern struct Lithium lithium;
 	lithium.elementName = "Lithium";
 	lithium.elementSymbol = "Li";
@@ -55,6 +56,7 @@ void Alkali::createAlkali(void)
 	francium.atomicNumber = 87;
 	francium.elementWeight = 223;
 	francium.numOuterElectrons = 1;
+	*/
 }
 
 void Alkali::checkBond(int outerNum1, int outerNum2)

@@ -12,6 +12,7 @@ Halogen::Halogen(void)
 
 void Halogen::createHalogen(void);
 {
+/*
 	extern struct Flourine flourine;
 	flourine.elementName = "Flourine";
 	flourine.elementSymbol = "F";
@@ -46,6 +47,7 @@ void Halogen::createHalogen(void);
 	astatine.atomicNumber = 85;
 	astatine.elementWeight = 210;
 	astatine.numOuterElectrons = 7;
+	*/
 }
 
 void Halogen::checkBond(int outerNum1, int outerNum2)
