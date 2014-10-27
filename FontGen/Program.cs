@@ -150,6 +150,9 @@ namespace FontGen
             using (StreamWriter f = new StreamWriter(outputFileHeader))
             {
                 WriteHeader(f, outputFileHeader, inputFile);
+                string headerGuard = outputFileHeader.ToUpperInvariant().Replace('.', '_');
+                f.WriteLine("#ifndef __{0}__", headerGuard);
+                f.WriteLine("#define __{0}__", headerGuard);
                 f.WriteLine();
                 f.WriteLine("#define PALETTE_COUNT {0}", palette.Length);
                 f.WriteLine("#define PALETTE_SIZE (PALETTE_COUNT * 3)");
@@ -160,6 +163,8 @@ namespace FontGen
                 f.WriteLine("#define {0}_GLYPH_HEIGHT {1}", FONTNAME, glyphHeight);
                 f.WriteLine("#define {0}_GLYPH_SIZE ({0}_GLYPH_WIDTH * {0}_GLYPH_HEIGHT)", FONTNAME);
                 f.WriteLine("extern const unsigned char {0}[{1}_SIZE];", fontName, FONTNAME);
+                f.WriteLine();
+                f.WriteLine("#endif");
                 f.WriteLine();
             }
 
