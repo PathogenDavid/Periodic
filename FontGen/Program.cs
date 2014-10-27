@@ -41,6 +41,8 @@ namespace FontGen
 
         static int Main(string[] args)
         {
+            Console.WriteLine("FB32 Font File Generator for Sifteo Cubes");
+
             // Verify / parse arguments
             if (args.Length != 1)
             {
