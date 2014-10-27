@@ -46,7 +46,7 @@ void ElementCube::ReactWith(ElementCube* other)
 
     if (this->currentElement.ReactWith(&other->currentElement))
     {
-        LOG("They react!");
+        LOG("They react!\n");
         this->isDirty = true;
         other->isDirty = true;
     }
@@ -70,6 +70,13 @@ void ElementCube::Render()
     int stringWidth = chars * CODERS_CRUX_GLYPH_WIDTH + (chars - 1) * LETTER_SPACING;
     int stringHeight = CODERS_CRUX_GLYPH_HEIGHT - LETTER_DESCENDER_HEIGHT;
 
+    // Add space for +/- symbol
+    //TODO: Need to handle other charges. (Like 2+) (Needs smaller font for numbers.)
+    if (currentElement.GetCharge() != 0)
+    {
+        stringWidth += 3 + LETTER_SPACING;
+    }
+
     int x = SCREEN_WIDTH / 2 - stringWidth / 2;
     int y = SCREEN_HEIGHT / 2 - stringHeight / 2;
 
@@ -79,6 +86,22 @@ void ElementCube::Render()
         //LOG("Drawing '%c'\n", symbol[i]);
         DrawCharAt(x, y, symbol[i]);
         x += CODERS_CRUX_GLYPH_WIDTH + LETTER_SPACING;
+    }
+
+    // Draw the +/- symbol:
+    if (currentElement.GetCharge() != 0)
+    {
+        // Draw the line for the dash
+        v.fb32.plot(vec(x + 0, y + 1), CHARGE_COLOR);
+        v.fb32.plot(vec(x + 1, y + 1), CHARGE_COLOR);
+        v.fb32.plot(vec(x + 2, y + 1), CHARGE_COLOR);
+
+        // Draw the nubs for the plus for positive charge
+        if (currentElement.GetCharge() > 0)
+        {
+            v.fb32.plot(vec(x + 1, y + 0), CHARGE_COLOR);
+            v.fb32.plot(vec(x + 1, y + 2), CHARGE_COLOR);
+        }
     }
 
     // Draw some dummy electrons:

@@ -46,7 +46,7 @@ bool Element::IsRawElement()
 
 int Element::GetCharge()
 {
-    if (!IsRawElement())
+    if (IsRawElement())
     { return 0; }
 
     return baseElement->numOuterElectrons - this->numOuterElectrons;

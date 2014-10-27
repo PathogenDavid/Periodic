@@ -7,6 +7,7 @@
 using namespace Sifteo;
 
 #define BG_COLOR 7 //White
+#define CHARGE_COLOR 8 //Red
 
 class ElementCube
 {
