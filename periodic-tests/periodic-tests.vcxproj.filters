@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="assets.gen.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStep_ElementBasic.cpp" />
+    <ClCompile Include="TestStep_Strcmp.cpp" />
+    <ClCompile Include="TestStep_Bonds.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Test.h" />
+    <ClInclude Include="assets.gen.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSteps.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{85abffaf-2b91-4a7c-be1a-9fea31b9accb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="assets.lua" />
+  </ItemGroup>
+</Project>

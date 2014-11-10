@@ -4,8 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "periodic", "periodic\periodic.vcxproj", "{16888AC4-0062-4D0B-81C9-B35063AFFE40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF} = {4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontGen", "FontGen\FontGen.csproj", "{4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "periodic-tests", "periodic-tests\periodic-tests.vcxproj", "{B0387306-B94F-4286-BF18-839A61D2C64B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16888AC4-0062-4D0B-81C9-B35063AFFE40} = {16888AC4-0062-4D0B-81C9-B35063AFFE40}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,10 @@ Global
 		{4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{4ED82FEC-80C1-40F1-ABF7-53AF11DCFDEF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B0387306-B94F-4286-BF18-839A61D2C64B}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{B0387306-B94F-4286-BF18-839A61D2C64B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{B0387306-B94F-4286-BF18-839A61D2C64B}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{B0387306-B94F-4286-BF18-839A61D2C64B}.Release|Mixed Platforms.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
