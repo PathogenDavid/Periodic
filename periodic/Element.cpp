@@ -12,11 +12,11 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
     this->baseElement = NULL;
     this->name = name;
     this->symbol = symbol;
-	this->group = group;
+    this->group = group;
     this->atomicNumber = atomicNumber;
     this->elementWeight = elementWeight;
     this->numOuterElectrons = numOuterElectrons;
-	this->electroNegativity = electroNegativity;
+    this->electroNegativity = electroNegativity;
 }
 
 Element::Element(Element* baseElement)
@@ -30,11 +30,11 @@ void Element::ResetToBasicState()
 {
     this->name = baseElement->name;
     this->symbol = baseElement->symbol;
-	this->group = baseElement->group;
+    this->group = baseElement->group;
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
-	this->electroNegativity = baseElement->electroNegativity;
+    this->electroNegativity = baseElement->electroNegativity;
 }
 
 const char* Element::GetName() { return name; }
@@ -63,89 +63,89 @@ bool Element::ReactWith(Element* other)
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
-	//if any element is a noble gas, a bond won't occur.
-	if (strcmp(this->group, "noble") != 0 ||
-		strcmp(other->group, "noble") != 0)
-		return false;
-	//if both elements are alkali metals, no bonding will occur
-	else if (strcmp(this->group, "alkali") == 0 &&
-		strcmp(other->group, "alkali") == 0)
-		return false;
-	//if both elements are halogens, covalent bonding will occur
-	else if (strcmp(this->group, "halogen") == 0 &&
-		strcmp(other->group, "halogen") == 0)
-		return true;
-	//hydrogen will bond with any halogen and form a covalent bond
-	else if (strcmp(this->name, "Hydrogen") == 0 &&
-		strcmp(other->group, "halogen") == 0)
-		return true;
-	//The difference in electronegativity is 1.68, which is very near to 1.7
-	//This is an Ionic bond but a special case in which the difference isn't >= 1.7
-	//which is why we have a hard coded case (possible to clean up in the future?)
-	else if (strcmp(this->name, "Lithium") == 0 &&
-		strcmp(other->name, "Iodine") == 0)
-		return true;
+    //if any element is a noble gas, a bond won't occur.
+    if (strcmp(this->group, "noble") == 0 ||
+        strcmp(other->group, "noble") == 0)
+        return false;
+    //if both elements are alkali metals, no bonding will occur
+    else if (strcmp(this->group, "alkali") == 0 &&
+        strcmp(other->group, "alkali") == 0)
+        return false;
+    //if both elements are halogens, covalent bonding will occur
+    else if (strcmp(this->group, "halogen") == 0 &&
+        strcmp(other->group, "halogen") == 0)
+        return true;
+    //hydrogen will bond with any halogen and form a covalent bond
+    else if (strcmp(this->name, "Hydrogen") == 0 &&
+        strcmp(other->group, "halogen") == 0)
+        return true;
+    //The difference in electronegativity is 1.68, which is very near to 1.7
+    //This is an Ionic bond but a special case in which the difference isn't >= 1.7
+    //which is why we have a hard coded case (possible to clean up in the future?)
+    else if (strcmp(this->name, "Lithium") == 0 &&
+        strcmp(other->name, "Iodine") == 0)
+        return true;
 
-	//find the greater negativity
-	double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
-	double minNegativity = this->electroNegativity < other->electroNegativity ? this->electroNegativity : other->electroNegativity;
+    //find the greater negativity
+    double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
+    double minNegativity = this->electroNegativity < other->electroNegativity ? this->electroNegativity : other->electroNegativity;
 
-	//Ionic
-	if (maxNegativity - minNegativity > 1.7 &&
-		this->numOuterElectrons + other->numOuterElectrons == 8)
-	{
-		if (this->numOuterElectrons < other->numOuterElectrons)
-		{
-			int electronsDonated = 8 - other->numOuterElectrons;
-			this->numOuterElectrons -= electronsDonated;
-			other->numOuterElectrons += electronsDonated;
-		}
-		else
-		{
-			int electronsDonated = 8 - this->numOuterElectrons;
-			other->numOuterElectrons -= electronsDonated;
-			this->numOuterElectrons += electronsDonated;
-		}
-		return true;
-	}
-		
-	//covalent
-	else if (maxNegativity - minNegativity <= 1.7)
-		return true;
+    //Ionic
+    if (maxNegativity - minNegativity > 1.7 &&
+        this->numOuterElectrons + other->numOuterElectrons == 8)
+    {
+        if (this->numOuterElectrons < other->numOuterElectrons)
+        {
+            int electronsDonated = 8 - other->numOuterElectrons;
+            this->numOuterElectrons -= electronsDonated;
+            other->numOuterElectrons += electronsDonated;
+        }
+        else
+        {
+            int electronsDonated = 8 - this->numOuterElectrons;
+            other->numOuterElectrons -= electronsDonated;
+            this->numOuterElectrons += electronsDonated;
+        }
+        return true;
+    }
+        
+    //covalent
+    else if (maxNegativity - minNegativity <= 1.7)
+        return true;
 
-	return false;
+    return false;
 }
 
 static Element rawElements[] =
 {
     //Alkali Metals
-	Element("Hydrogen", "H", "nonmetal", 1, 1.008, 1, 2.20),
+    Element("Hydrogen", "H", "nonmetal", 1, 1.008, 1, 2.20),
     Element("Lithium", "Li", "alkali", 3, 6.94, 1, 0.98),
-	Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
-	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
-	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
-	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79), //don't remember if we need this one or not
+    Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
+    Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
+    Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
+    Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79), //don't remember if we need this one or not
     
     //Halogens
     Element("Flourine", "F", "halogen", 9, 18.998403163, 7, 3.98),
-	Element("Chlorine", "Cl", "halogen", 17, 35.45, 7, 3.16),
-	Element("Bromine", "Br", "halogen", 35, 79.094, 7, 2.96),
-	Element("Iodine", "I", "halogen", 53, 126.90447, 7, 2.66),
+    Element("Chlorine", "Cl", "halogen", 17, 35.45, 7, 3.16),
+    Element("Bromine", "Br", "halogen", 35, 79.094, 7, 2.96),
+    Element("Iodine", "I", "halogen", 53, 126.90447, 7, 2.66),
     
     //Noble Gases
     Element("Helium", "He", "noble", 2, 4.002602, 2, 0),
-	Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
-	Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
-	Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
-	
-	//alkali earth metals
-	Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.27),
-	Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
-	Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
-	Element("Strontium", "Sr", "alkaliEarth", 38, 87.62, 2, 0.95),
-	Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
-	Element("Radium", "Ra", "alkaliEarth", 88, 226, 2, 0.9), //not sure if needed
-	
+    Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
+    Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
+    Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
+    
+    //alkali earth metals
+    Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.27),
+    Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
+    Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
+    Element("Strontium", "Sr", "alkaliEarth", 38, 87.62, 2, 0.95),
+    Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
+    Element("Radium", "Ra", "alkaliEarth", 88, 226, 2, 0.9), //not sure if needed
+    
 };
 
 void Element::GetRawElement(int num, Element* elementOut)
