@@ -7,16 +7,18 @@ class Element
         Element* baseElement;
         const char* name;
         const char* symbol;
+		const char* group;
         short atomicNumber;
         double elementWeight;
         int numOuterElectrons;
     public:
         Element();
-        Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons);
+        Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons);
         Element(Element* baseElement);
 
         const char* GetName();
         const char* GetSymbol();
+		const char* GetGroup();
         short GetAtomicNumber();
         double GetElementWeight();
         int GetNumOuterElectrons();

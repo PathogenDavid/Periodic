@@ -7,11 +7,12 @@ Element::Element()
 {
 }
 
-Element::Element(const char* name, const char* symbol, short atomicNumber, double elementWeight, int numOuterElectrons)
+Element::Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons)
 {
     this->baseElement = NULL;
     this->name = name;
     this->symbol = symbol;
+	this->group = group;
     this->atomicNumber = atomicNumber;
     this->elementWeight = elementWeight;
     this->numOuterElectrons = numOuterElectrons;
@@ -35,6 +36,7 @@ void Element::ResetToBasicState()
 
 const char* Element::GetName() { return name; }
 const char* Element::GetSymbol() { return symbol; }
+const char* Element::GetGroup() { return group; }
 short Element::GetAtomicNumber() { return atomicNumber; }
 double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
