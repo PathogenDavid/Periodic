@@ -30,9 +30,11 @@ void Element::ResetToBasicState()
 {
     this->name = baseElement->name;
     this->symbol = baseElement->symbol;
+	this->group = baseElement->group;
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
+	this->electroNegativity = baseElement->electroNegativity;
 }
 
 const char* Element::GetName() { return name; }
