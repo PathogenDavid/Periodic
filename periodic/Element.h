@@ -11,9 +11,10 @@ class Element
         short atomicNumber;
         double elementWeight;
         int numOuterElectrons;
+		double electroNegativity;
     public:
         Element();
-        Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons);
+        Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
         Element(Element* baseElement);
 
         const char* GetName();
@@ -22,6 +23,7 @@ class Element
         short GetAtomicNumber();
         double GetElementWeight();
         int GetNumOuterElectrons();
+		double GetElectroNegativity();
 
         bool IsRawElement();
 
