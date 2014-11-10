@@ -91,41 +91,27 @@ bool Element::ReactWith(Element* other)
 	//Ionic
 	if (maxNegativity - minNegativity > 1.7 &&
 		this->numOuterElectrons + other->numOuterElectrons == 8)
+	{
+		if (this->numOuterElectrons < other->numOuterElectrons)
+		{
+			int electronsDonated = 8 - other->numOuterElectrons;
+			this->numOuterElectrons -= electronsDonated;
+			other->numOuterElectrons += electronsDonated;
+		}
+		else
+		{
+			int electronsDonated = 8 - this->numOuterElectrons;
+			other->numOuterElectrons -= electronsDonated;
+			this->numOuterElectrons += electronsDonated;
+		}
 		return true;
-
+	}
+		
 	//covalent
 	else if (maxNegativity - minNegativity <= 1.7)
 		return true;
 
-
-
-
-
-
-
-	/**
-    //Check for ionic bond:
-    if ((this->numOuterElectrons + other->numOuterElectrons) == 8)
-    {
-        //Check if we should be an electron donor. (This is probably not scientficially accurate.)
-        if (this->numOuterElectrons < other->numOuterElectrons)
-        {
-            int electronsDonated = 8 - other->numOuterElectrons;
-            this->numOuterElectrons -= electronsDonated;
-            other->numOuterElectrons += electronsDonated;
-        }
-        else
-        {
-            int electronsDonated = 8 - this->numOuterElectrons;
-            other->numOuterElectrons -= electronsDonated;
-            this->numOuterElectrons += electronsDonated;
-        }
-
-        return true;
-    }
-
-    return false;
-	*/
+	return false;
 }
 
 static Element rawElements[] =
@@ -135,7 +121,7 @@ static Element rawElements[] =
     Element("Lithium", "Li", "alkali", 3, 6.94, 1, 0.98),
 	Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
 	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
-	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1. 0.82),
+	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
 	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79), //don't remember if we need this one or not
     
     //Halogens
@@ -163,7 +149,7 @@ bool Element::GetRawElement(const char* name, Element* elementOut)
 
     if (num < 0)
     {
-        *elementOut = Element("INVALID", "INV", 0, 0.0, 0);
+        *elementOut = Element("INVALID", "INV", "INV", 0, 0.0, 0, 0.0);
         return false;
     }
     else
