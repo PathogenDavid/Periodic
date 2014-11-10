@@ -8,9 +8,6 @@
 
 using namespace Sifteo;
 
-static AssetSlot MainSlot = AssetSlot::allocate()
-    .bootstrap(GameAssets);
-
 #define NUM_CUBES 2
 
 static Metadata M = Metadata()
@@ -22,11 +19,10 @@ static Metadata M = Metadata()
 
 ElementCube cubes[NUM_CUBES] =
 {
-    ElementCube(0, 0),
-    ElementCube(1, 5) // 5 is Flourine
+    ElementCube(0, "Li"),
+    ElementCube(1, "F")
 };
 
-//5
 static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
 
 void ProcessNeighborhood();

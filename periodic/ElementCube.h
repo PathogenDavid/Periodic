@@ -18,8 +18,11 @@ class ElementCube
         bool isDirty;
         int currentElementNum;
         Element currentElement;
+
+        void Init(int cubeId, int initialElementNum);
     public:
         ElementCube(int cubeId, int initialElementNum = 0);
+        ElementCube(int cubeId, const char* initialElementSymbol);
 
         void GoToNextElement();
         void ResetElement();

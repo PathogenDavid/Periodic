@@ -26,6 +26,8 @@ class Element
         int GetCharge();
 
         static void GetRawElement(int num, Element* elementOut);
+        static bool GetRawElement(const char* name, Element* elementOut);
+        static int GetRawElementNum(const char* name);
         static int GetRawElementCount();
 
         void ResetToBasicState();

@@ -3,7 +3,7 @@
 #include "Element.h"
 #include "periodic.h"
 
-ElementCube::ElementCube(int cubeId, int initialElementNum)
+void ElementCube::Init(int cubeId, int initialElementNum)
 {
     this->cube = CubeID(cubeId);
 
@@ -15,12 +15,22 @@ ElementCube::ElementCube(int cubeId, int initialElementNum)
     v.attach(cube);
     v.initMode(FB32);
     v.fb32.fill(BG_COLOR);
-    
+
     // Load the palette:
     for (int j = 0, h = 0; j < PALETTE_COUNT; j++, h += 3)
     {
         v.colormap[j].set(palette[h], palette[h + 1], palette[h + 2]);
     }
+}
+
+ElementCube::ElementCube(int cubeId, int initialElementNum)
+{
+    Init(cubeId, initialElementNum);
+}
+
+ElementCube::ElementCube(int cubeId, const char* initialElementSymbol)
+{
+    Init(cubeId, Element::GetRawElementNum(initialElementSymbol));
 }
 
 void ElementCube::GoToNextElement()

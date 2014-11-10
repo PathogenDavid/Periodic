@@ -108,6 +108,35 @@ void Element::GetRawElement(int num, Element* elementOut)
     *elementOut = Element(&rawElements[num]);
 }
 
+bool Element::GetRawElement(const char* name, Element* elementOut)
+{
+    int num = GetRawElementNum(name);
+
+    if (num < 0)
+    {
+        *elementOut = Element("INVALID", "INV", 0, 0.0, 0);
+        return false;
+    }
+    else
+    {
+        *elementOut = Element(&rawElements[num]);
+        return true;
+    }
+}
+
+int Element::GetRawElementNum(const char* name)
+{
+    for (int i = 0; i < GetRawElementCount(); i++)
+    {
+        if (strcmp(name, rawElements[i].GetSymbol()) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int Element::GetRawElementCount()
 {
     return CountOfArray(rawElements);
