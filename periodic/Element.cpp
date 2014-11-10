@@ -135,6 +135,15 @@ static Element rawElements[] =
 	Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
 	Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
 	Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
+	
+	//alkali earth metals
+	Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.27),
+	Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
+	Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
+	Element("Strontium", "Sr", "alkaliEarth", 38, 87.62, 2, 0.95),
+	Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
+	Element("Radium", "Ra", "alkaliEarth", 88, 226, 2, 0.9), //not sure if needed
+	
 };
 
 void Element::GetRawElement(int num, Element* elementOut)
