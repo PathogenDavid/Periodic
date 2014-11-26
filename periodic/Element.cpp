@@ -62,8 +62,8 @@ bool Element::ReactWith(Element* other)
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
 	//if any element is a noble gas, a bond won't occur.
-	if (strcmp(this->group, "noble") != 0 ||
-		strcmp(other->group, "noble") != 0)
+	if (strcmp(this->group, "noble") == 0 ||
+		strcmp(other->group, "noble") == 0)
 		return false;
 	//if both elements are alkali metals, no bonding will occur
 	else if (strcmp(this->group, "alkali") == 0 &&
