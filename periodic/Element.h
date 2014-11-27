@@ -25,7 +25,7 @@ class Element
         double GetElementWeight();
         int GetNumOuterElectrons();
 		double GetElectroNegativity();
-		int GetReturnType();
+		int GetBondType();
 
         bool IsRawElement();
 
