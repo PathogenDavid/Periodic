@@ -39,6 +39,7 @@ class Element
         void ResetToBasicState();
 
         bool ReactWith(Element* other);
+		bool ReactWith(Element* other1, Element* other2);
 };
 
 #endif

@@ -2,8 +2,8 @@
 #include "Element.h"
 #include <sifteo.h>
 
-//Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond.
-enum bondState { NONE, IONIC, COVALENT,  POTENTIAL};
+/*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
+enum bondState { NONE, IONIC, COVALENT,  POTENTIAL}; 
 
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
@@ -11,7 +11,7 @@ Element::Element()
 }
 
 
-//Constructor for element type.  We don't pass in the bond type because it will always initially be none.  
+/*Constructor for element type.  We don't pass in the bond type because it will always initially be none.  */
 Element::Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity)
 {
     this->baseElement = NULL;
@@ -32,6 +32,7 @@ Element::Element(Element* baseElement)
     ResetToBasicState();
 }
 
+/*Resets an element that has already changed to its original state.  */
 void Element::ResetToBasicState()
 {
     this->name = baseElement->name;
@@ -42,6 +43,7 @@ void Element::ResetToBasicState()
 	this->bondType = NONE;
 }
 
+//Getters
 const char* Element::GetName() { return name; }
 const char* Element::GetSymbol() { return symbol; }
 const char* Element::GetGroup() { return group; }
@@ -51,11 +53,13 @@ int Element::GetNumOuterElectrons() { return numOuterElectrons; }
 double Element::GetElectroNegativity() { return electroNegativity; }
 int Element::GetBondType() { return bondType; } 
 
+/*Returns if the element is in its base state or not. */
 bool Element::IsRawElement()
 {
     return baseElement == NULL;
 }
 
+//Gets the charge of the current element
 int Element::GetCharge()
 {
     if (IsRawElement())
@@ -64,6 +68,10 @@ int Element::GetCharge()
     return baseElement->numOuterElectrons - this->numOuterElectrons;
 }
 
+/*Checks to see if two elements will react.  If they do react, we need to change the bondType of the elements to show which way they react.  
+In a Ionic type reaction, we need to show which element gives an electron to the other element and update their respective counts.
+In certain cases where a bond would occur if another element (for now the same kind as one of the two in question) then we change 
+the bondType to POTENTIAL.*/
 bool Element::ReactWith(Element* other)
 {
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
@@ -73,24 +81,38 @@ bool Element::ReactWith(Element* other)
 	if (strcmp(this->group, "noble") == 0 ||
 		strcmp(other->group, "noble") == 0)
 		return false;
+		
 	//if both elements are alkali metals, no bonding will occur
 	else if (strcmp(this->group, "alkali") == 0 &&
 		strcmp(other->group, "alkali") == 0)
 		return false;
+		
 	//if both elements are halogens, covalent bonding will occur
 	else if (strcmp(this->group, "halogen") == 0 &&
 		strcmp(other->group, "halogen") == 0)
 		return true;
+		
 	//hydrogen will bond with any halogen and form a covalent bond
 	else if (strcmp(this->name, "Hydrogen") == 0 &&
 		strcmp(other->group, "halogen") == 0)
 		return true;
+		
+	//reverse case of the above.
+    else if (strcmp(this->group, "halogen") == 0 &&
+	    strcmp(this->name, "Hydrogen") == 0)
+	    return true;
+		
 	//The difference in electronegativity is 1.68, which is very near to 1.7
 	//This is an Ionic bond but a special case in which the difference isn't >= 1.7
 	//which is why we have a hard coded case (possible to clean up in the future?)
 	else if (strcmp(this->name, "Lithium") == 0 &&
 		strcmp(other->name, "Iodine") == 0)
 		return true;
+	
+    //reverse case of the above 	
+    else if (strcmp(this->name, "Iodine") == 0 &&
+        strcmp(other->name, "Lithium") == 0)
+        return true;
 
 	//find the greater negativity
 	double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
@@ -119,6 +141,12 @@ bool Element::ReactWith(Element* other)
 	else if (maxNegativity - minNegativity <= 1.7)
 		return true;
 
+	return false;
+}
+
+/* Checks reactions that require 3 elements to form a bond) */
+bool Element::ReactWith(Element* other1, Element* other2)
+{
 	return false;
 }
 
