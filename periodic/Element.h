@@ -12,6 +12,7 @@ class Element
         double elementWeight;
         int numOuterElectrons;
 		double electroNegativity;
+		int bondType;
     public:
         Element();
         Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
@@ -24,6 +25,7 @@ class Element
         double GetElementWeight();
         int GetNumOuterElectrons();
 		double GetElectroNegativity();
+		int GetReturnType();
 
         bool IsRawElement();
 

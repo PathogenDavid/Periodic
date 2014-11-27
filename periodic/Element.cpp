@@ -2,14 +2,16 @@
 #include "Element.h"
 #include <sifteo.h>
 
-//Enumeration to keep track of bond types.  Potential is in there to show if a bond may have the potential to bond.
-enum bondType { NONE, IONIC, COVALENT,  POTENTIAL};
+//Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond.
+enum bondState { NONE, IONIC, COVALENT,  POTENTIAL};
 
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
 {
 }
 
+
+//Constructor for element type.  We don't pass in the bond type because it will always initially be none.  
 Element::Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity)
 {
     this->baseElement = NULL;
@@ -20,6 +22,7 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
     this->elementWeight = elementWeight;
     this->numOuterElectrons = numOuterElectrons;
 	this->electroNegativity = electroNegativity;
+	this->bondType = NONE;
 }
 
 Element::Element(Element* baseElement)
@@ -36,6 +39,7 @@ void Element::ResetToBasicState()
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
+	this->bondType = NONE;
 }
 
 const char* Element::GetName() { return name; }
@@ -45,6 +49,7 @@ short Element::GetAtomicNumber() { return atomicNumber; }
 double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
 double Element::GetElectroNegativity() { return electroNegativity; }
+int Element::GetBondType() { return bondType; } 
 
 bool Element::IsRawElement()
 {
