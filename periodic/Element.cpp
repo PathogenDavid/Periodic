@@ -2,6 +2,9 @@
 #include "Element.h"
 #include <sifteo.h>
 
+//Enumeration to keep track of bond types.  Potential is in there to show if a bond may have the potential to bond.
+enum bondType { NONE, IONIC, COVALENT,  POTENTIAL};
+
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
 {
