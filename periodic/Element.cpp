@@ -71,7 +71,11 @@ int Element::GetCharge()
 /*Checks to see if two elements will react.  If they do react, we need to change the bondType of the elements to show which way they react.  
 In a Ionic type reaction, we need to show which element gives an electron to the other element and update their respective counts.
 In certain cases where a bond would occur if another element (for now the same kind as one of the two in question) then we change 
-the bondType to POTENTIAL.*/
+the bondType to POTENTIAL.
+
+This algorithm was written with help by:
+Christopher Culbertson, Associate Professor at Kansas State University
+Michael Ayala, Chemistry Major at UC Davis */
 bool Element::ReactWith(Element* other)
 {
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
@@ -189,9 +193,53 @@ bool Element::ReactWith(Element* other)
 	return false;
 }
 
-/* Checks reactions that require 3 elements to form a bond) */
+/* Checks reactions that require 3 elements to form a bond) 
+
+This algorithm was written with help by:
+Christopher Culbertson, Associate Professor at Kansas State University
+Michael Ayala, Chemistry Major at UC Davis */
 bool Element::ReactWith(Element* other1, Element* other2)
 {
+    //If we have an alkali earth metal, there is a chance we can have a bond.
+    //initial check to ensure we don't waste our time.
+    if(strcmp(this->group, "alkaliEarth") == 0 ||
+        strcmp(other1->group, "alkaliEarth") == 0 ||
+        strcmp(other2->group, "alkaliEarth") == 0)
+    {
+        //If we have two halogens of the same type (plus an alkali earth already checked above, we have a covalent bond)
+        if(((strcmp(this->group, "halogen") == 0 && strcmp(other1->group, "halogen") == 0 && strcmp(this->name, other1->name) == 0) ||
+            (strcmp(this->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(this->name, other2->name) == 0) ||
+            (strcmp(other1->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(other1->name, other2->name) == 0)))
+        {
+            this->bondType = COVALENT;
+            other1->bondType = COVALENT;
+            other2->bondType = COVALENT;
+            return true;
+        }
+
+        //If we have two hydrogens and either Beryllium or Magnesium, we have a covalent bond.  If statement has a lot of overhead, look for more efficient ways in the future
+        else if (((strcmp(this->name, "Beryllium") == 0 || strcmp(this->name, "Magnesium") == 0) && strcmp(other1->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0) ||
+                    (strcmp(this->name, "Hydrogen") == 0 && (strcmp(other1->name, "Beryllium") == 0 || strcmp(other1->name, "Magnesium") == 0) && strcmp(other2->name, "Hydrogen") == 0) ||
+                    (strcmp(this->name, "Hydrogen") == 0 && strcmp(other1->name, "Hydrogen") == 0 && (strcmp(other2->name, "Beryllium") == 0 || strcmp(other2->name, "Magnesium") == 0)))
+        {
+            this->bondType = COVALENT;
+            other1->bondType = COVALENT;
+            other2->bondType = COVALENT;
+            return true;
+        }
+
+        //If we have two hydrogens plus the other alkali earth metals, we have a ionic bond.  Since we've already ensured we have an alkali earth metal, we can simply check for two hydrogens.
+        else if ((strcmp(this->name, "Hydrogen") == 0 && strcmp(other1->name, "Hydrogen") == 0) ||
+                    (strcmp(this->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0) ||
+                    (strcmp(other1->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0))
+        {
+            this->bondType = IONIC;
+            other1->bondType = IONIC;
+            other2->bondType = IONIC;
+            return true;
+        }
+        
+    }
 	return false;
 }
 
