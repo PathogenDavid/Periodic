@@ -20,7 +20,7 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
 	this->group = group;
     this->atomicNumber = atomicNumber;
     this->elementWeight = elementWeight;
-    this->numOuterElectrons = numOuterElectrons;
+    this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
 	this->bondType = NONE;
 }
@@ -90,29 +90,48 @@ bool Element::ReactWith(Element* other)
 	//if both elements are halogens, covalent bonding will occur
 	else if (strcmp(this->group, "halogen") == 0 &&
 		strcmp(other->group, "halogen") == 0)
+	{
+        this->bondType = COVALENT;
+        other->bondType = COVALENT;
 		return true;
+	}
 		
 	//hydrogen will bond with any halogen and form a covalent bond
 	else if (strcmp(this->name, "Hydrogen") == 0 &&
 		strcmp(other->group, "halogen") == 0)
+    {
+        this->bondType = COVALENT;
+        other->bondType = COVALENT;
 		return true;
-		
+    }	
 	//reverse case of the above.
     else if (strcmp(this->group, "halogen") == 0 &&
 	    strcmp(this->name, "Hydrogen") == 0)
+    {
+        this->bondType = COVALENT;
+        this->bondType = COVALENT;
 	    return true;
+    }
 		
 	//The difference in electronegativity is 1.68, which is very near to 1.7
 	//This is an Ionic bond but a special case in which the difference isn't >= 1.7
 	//which is why we have a hard coded case (possible to clean up in the future?)
 	else if (strcmp(this->name, "Lithium") == 0 &&
 		strcmp(other->name, "Iodine") == 0)
+    {
+        this->bondType = IONIC;
+        other->bondType = IONIC;
 		return true;
+    }
 	
     //reverse case of the above 	
     else if (strcmp(this->name, "Iodine") == 0 &&
         strcmp(other->name, "Lithium") == 0)
+    {
+        this->bondType = IONIC;
+        other->bondType = IONIC;
         return true;
+    }
 
 	//find the greater negativity
 	double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
@@ -134,13 +153,18 @@ bool Element::ReactWith(Element* other)
 			other->numOuterElectrons -= electronsDonated;
 			this->numOuterElectrons += electronsDonated;
 		}
+        this->bondType = IONIC;
+        this->bondType = IONIC;
 		return true;
 	}
 		
 	//covalent
 	else if (maxNegativity - minNegativity <= 1.7)
+    {
+        this->bondType = COVALENT;
+        this->bondType = COVALENT;
 		return true;
-
+    }
 	return false;
 }
 
@@ -159,6 +183,13 @@ static Element rawElements[] =
 	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
 	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
 	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79), //don't remember if we need this one or not
+
+    //Alkali Earth Metals
+    Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.57),
+    Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
+	Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
+	Element("Strontium", "Sr", "alkaliEarth", 38, 87.60, 2, 0.95),
+	Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
     
     //Halogens
     Element("Flourine", "F", "halogen", 9, 18.998403163, 7, 3.98),
