@@ -92,8 +92,8 @@ bool Element::ReactWith(Element* other)
 		return false;
 
     //if we have 2 hydrogens, they have the potential to become hydrides with an alkali earth metal
-    else if (strcmp(this->name, "Hydrogen") == 0 &&
-        strcmp(other->name, "Hydrogen") == 0)
+    else if (strcmp(this->symbol, "H") == 0 &&
+        strcmp(other->symbol, "H") == 0)
     {
         this->bondType = POTENTIAL;
         other->bondType = POTENTIAL;
@@ -122,7 +122,7 @@ bool Element::ReactWith(Element* other)
 	}
 		
 	//hydrogen will bond with any halogen and form a covalent bond
-	else if (strcmp(this->name, "Hydrogen") == 0 &&
+	else if (strcmp(this->symbol, "H") == 0 &&
 		strcmp(other->group, "halogen") == 0)
     {
         this->bondType = COVALENT;
@@ -131,7 +131,7 @@ bool Element::ReactWith(Element* other)
     }	
 	//reverse case of the above.
     else if (strcmp(this->group, "halogen") == 0 &&
-	    strcmp(this->name, "Hydrogen") == 0)
+	    strcmp(this->symbol, "H") == 0)
     {
         this->bondType = COVALENT;
         this->bondType = COVALENT;
@@ -141,8 +141,8 @@ bool Element::ReactWith(Element* other)
 	//The difference in electronegativity is 1.68, which is very near to 1.7
 	//This is an Ionic bond but a special case in which the difference isn't >= 1.7
 	//which is why we have a hard coded case (possible to clean up in the future?)
-	else if (strcmp(this->name, "Lithium") == 0 &&
-		strcmp(other->name, "Iodine") == 0)
+	else if (strcmp(this->symbol, "Li") == 0 &&
+		strcmp(other->symbol, "I") == 0)
     {
         this->bondType = IONIC;
         other->bondType = IONIC;
@@ -150,8 +150,8 @@ bool Element::ReactWith(Element* other)
     }
 	
     //reverse case of the above 	
-    else if (strcmp(this->name, "Iodine") == 0 &&
-        strcmp(other->name, "Lithium") == 0)
+    else if (strcmp(this->symbol, "I") == 0 &&
+        strcmp(other->symbol, "Li") == 0)
     {
         this->bondType = IONIC;
         other->bondType = IONIC;
@@ -218,9 +218,9 @@ bool Element::ReactWith(Element* other1, Element* other2)
         }
 
         //If we have two hydrogens and either Beryllium or Magnesium, we have a covalent bond.  If statement has a lot of overhead, look for more efficient ways in the future
-        else if (((strcmp(this->name, "Beryllium") == 0 || strcmp(this->name, "Magnesium") == 0) && strcmp(other1->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0) ||
-                    (strcmp(this->name, "Hydrogen") == 0 && (strcmp(other1->name, "Beryllium") == 0 || strcmp(other1->name, "Magnesium") == 0) && strcmp(other2->name, "Hydrogen") == 0) ||
-                    (strcmp(this->name, "Hydrogen") == 0 && strcmp(other1->name, "Hydrogen") == 0 && (strcmp(other2->name, "Beryllium") == 0 || strcmp(other2->name, "Magnesium") == 0)))
+        else if (((strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0) && strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
+                    (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
+                    (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "B") == 0 || strcmp(other2->symbol, "Mg") == 0)))
         {
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
@@ -229,9 +229,9 @@ bool Element::ReactWith(Element* other1, Element* other2)
         }
 
         //If we have two hydrogens plus the other alkali earth metals, we have a ionic bond.  Since we've already ensured we have an alkali earth metal, we can simply check for two hydrogens.
-        else if ((strcmp(this->name, "Hydrogen") == 0 && strcmp(other1->name, "Hydrogen") == 0) ||
-                    (strcmp(this->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0) ||
-                    (strcmp(other1->name, "Hydrogen") == 0 && strcmp(other2->name, "Hydrogen") == 0))
+        else if ((strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0) ||
+                    (strcmp(this->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
+                    (strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0))
         {
             this->bondType = IONIC;
             other1->bondType = IONIC;
