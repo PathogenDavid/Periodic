@@ -86,11 +86,32 @@ bool Element::ReactWith(Element* other)
 	else if (strcmp(this->group, "alkali") == 0 &&
 		strcmp(other->group, "alkali") == 0)
 		return false;
+
+    //if we have 2 hydrogens, they have the potential to become hydrides with an alkali earth metal
+    else if (strcmp(this->name, "Hydrogen") == 0 &&
+        strcmp(other->name, "Hydrogen") == 0)
+    {
+        this->bondType = POTENTIAL;
+        other->bondType = POTENTIAL;
+        return false;
+    }
+
 		
 	//if both elements are halogens, covalent bonding will occur
 	else if (strcmp(this->group, "halogen") == 0 &&
 		strcmp(other->group, "halogen") == 0)
-	{
+	{   
+        //If we have two of the same halogen, they can pair with an alkali earth metal to form a compoud.
+        //But, for example, F2 is Flourine Gas, which I guess is technically a compound.  If we want
+        //To Say its a compoud, leave the uncommented part uncommented.  I'm keeping it in for now.
+        /*
+        if(strcmp(this->name, other->name) == 0)
+        {
+            this->bondType = POTENTIAL;
+            other->bondType = POTENTIAL;
+            return false;
+        }
+        */
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
