@@ -116,6 +116,10 @@ bool Element::ReactWith(Element* other)
             return false;
         }
         */
+
+        //for any halogen bonding with another halogen, 2 electrons will be shared between the two.
+        int sharedElectrons = 8 - this->numOuterElectrons;
+        sharedElectrons += 8 - other->numOuterElectrons;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -125,6 +129,9 @@ bool Element::ReactWith(Element* other)
 	else if (strcmp(this->symbol, "H") == 0 &&
 		strcmp(other->group, "halogen") == 0)
     {
+        //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
+        int sharedElectrons = 8 - this->numOuterElectrons;
+        sharedElectrons += 2 - other->numOuterElectrons;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -133,6 +140,9 @@ bool Element::ReactWith(Element* other)
     else if (strcmp(this->group, "halogen") == 0 &&
 	    strcmp(this->symbol, "H") == 0)
     {
+        //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
+        int sharedElectrons = 8 - this->numOuterElectrons;
+        sharedElectrons += 2 - other->numOuterElectrons;
         this->bondType = COVALENT;
         this->bondType = COVALENT;
 	    return true;
