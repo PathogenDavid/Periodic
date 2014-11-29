@@ -24,8 +24,6 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
 	this->electroNegativity = electroNegativity;
 	this->bondType = NONE;
     this->shared = 0;
-    this->numOuterElectrons = numOuterElectrons;
-    this->electroNegativity = electroNegativity;
 }
 
 Element::Element(Element* baseElement)
