@@ -17,13 +17,15 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
     this->baseElement = NULL;
     this->name = name;
     this->symbol = symbol;
-	this->group = group;
+    this->group = group;
     this->atomicNumber = atomicNumber;
     this->elementWeight = elementWeight;
     this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
 	this->bondType = NONE;
     this->shared = 0;
+    this->numOuterElectrons = numOuterElectrons;
+    this->electroNegativity = electroNegativity;
 }
 
 Element::Element(Element* baseElement)
@@ -38,11 +40,13 @@ void Element::ResetToBasicState()
 {
     this->name = baseElement->name;
     this->symbol = baseElement->symbol;
+    this->group = baseElement->group;
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
 	this->bondType = NONE;
     this->shared = 0;
+    this->electroNegativity = baseElement->electroNegativity;
 }
 
 //Getters
@@ -328,7 +332,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
 static Element rawElements[] =
 {
     //Alkali Metals
-	Element("Hydrogen", "H", "nonmetal", 1, 1.008, 1, 2.20),
+    Element("Hydrogen", "H", "nonmetal", 1, 1.008, 1, 2.20),
     Element("Lithium", "Li", "alkali", 3, 6.94, 1, 0.98),
 	Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
 	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
@@ -344,15 +348,24 @@ static Element rawElements[] =
     
     //Halogens
     Element("Flourine", "F", "halogen", 9, 18.998403163, 7, 3.98),
-	Element("Chlorine", "Cl", "halogen", 17, 35.45, 7, 3.16),
-	Element("Bromine", "Br", "halogen", 35, 79.094, 7, 2.96),
-	Element("Iodine", "I", "halogen", 53, 126.90447, 7, 2.66),
+    Element("Chlorine", "Cl", "halogen", 17, 35.45, 7, 3.16),
+    Element("Bromine", "Br", "halogen", 35, 79.094, 7, 2.96),
+    Element("Iodine", "I", "halogen", 53, 126.90447, 7, 2.66),
     
     //Noble Gases
     Element("Helium", "He", "noble", 2, 4.002602, 2, 0),
-	Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
-	Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
-	Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
+    Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
+    Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
+    Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
+    
+    //alkali earth metals
+    Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.27),
+    Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
+    Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
+    Element("Strontium", "Sr", "alkaliEarth", 38, 87.62, 2, 0.95),
+    Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
+    Element("Radium", "Ra", "alkaliEarth", 88, 226, 2, 0.9), //not sure if needed
+    
 };
 
 void Element::GetRawElement(int num, Element* elementOut)
