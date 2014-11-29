@@ -257,7 +257,24 @@ bool Element::ReactWith(Element* other1, Element* other2)
             (strcmp(this->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(this->name, other2->name) == 0) ||
             (strcmp(other1->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(other1->name, other2->name) == 0)))
         {
-            int sharedElectrons = 4;
+            if(strcmp(this->group, "alkaliEarth") == 0)
+            {
+                this->shared = 4;
+                other1->shared = 2;
+                other2->shared = 2;
+            }
+            else if (strcmp(other1->group, "alkaliEarth") == 0)
+            {
+                this->shared = 2;
+                other1->shared = 4;
+                other2->shared = 2;
+            }
+            else 
+            {
+                this->shared = 2;
+                other1->shared = 2;
+                other2->shared = 4;
+            }
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
             other2->bondType = COVALENT;
@@ -269,7 +286,24 @@ bool Element::ReactWith(Element* other1, Element* other2)
                     (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
                     (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "B") == 0 || strcmp(other2->symbol, "Mg") == 0)))
         {
-            int sharedElectrons = 4;
+            if(strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
+            {
+                this->shared = 4;
+                other1->shared = 2;
+                other2->shared = 2;
+            }
+            else if (strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
+            {
+                this->shared = 2;
+                other1->shared = 4;
+                other2->shared = 2;
+            }
+            else
+            {
+                this->shared = 2;
+                other1->shared = 2;
+                other2->shared = 4;
+            }
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
             other2->bondType = COVALENT;
