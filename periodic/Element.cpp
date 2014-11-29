@@ -23,6 +23,7 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
     this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
 	this->bondType = NONE;
+    this->shared = 0;
 }
 
 Element::Element(Element* baseElement)
@@ -41,6 +42,7 @@ void Element::ResetToBasicState()
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
 	this->bondType = NONE;
+    this->shared = 0;
 }
 
 //Getters
@@ -52,6 +54,7 @@ double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
 double Element::GetElectroNegativity() { return electroNegativity; }
 int Element::GetBondType() { return bondType; } 
+int Element::GetShared() { return shared; }
 
 /*Returns if the element is in its base state or not. */
 bool Element::IsRawElement()
@@ -118,8 +121,17 @@ bool Element::ReactWith(Element* other)
         */
 
         //for any halogen bonding with another halogen, 2 electrons will be shared between the two.
-        int sharedElectrons = 8 - this->numOuterElectrons;
-        sharedElectrons += 8 - other->numOuterElectrons;
+        int sharedElectronsElem1 = 8 - this->numOuterElectrons;
+        this->numOuterElectrons -= sharedElectronsElem1;
+        int sharedElectronsElem2 = 8 - other->numOuterElectrons;
+        other->numOuterElectrons -+ sharedElectronsElem2;
+
+        int shared = sharedElectronsElem1 + sharedElectronsElem2;
+        this->numOuterElectrons += shared;
+        other->numOuterElectrons += shared;
+
+        this->shared = shared;
+        other->shared = shared;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -130,8 +142,17 @@ bool Element::ReactWith(Element* other)
 		strcmp(other->group, "halogen") == 0)
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectrons = 8 - this->numOuterElectrons;
-        sharedElectrons += 2 - other->numOuterElectrons;
+        int sharedElectronsElem1 = 8 - this->numOuterElectrons;
+        this->numOuterElectrons -= sharedElectronsElem1;
+        int sharedElectronsElem2 = 2 - other->numOuterElectrons;
+        other->numOuterElectrons -= sharedElectronsElem2;
+
+        int shared = sharedElectronsElem1 + sharedElectronsElem2;
+        this->numOuterElectrons += shared;
+        other->numOuterElectrons += shared;
+
+        this->shared = shared;
+        other->shared = shared;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -141,8 +162,17 @@ bool Element::ReactWith(Element* other)
 	    strcmp(this->symbol, "H") == 0)
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectrons = 8 - this->numOuterElectrons;
-        sharedElectrons += 2 - other->numOuterElectrons;
+        int sharedElectronsElem1 = 8 - other->numOuterElectrons;
+        other->numOuterElectrons -= sharedElectronsElem1;
+        int sharedElectronsElem2 = 2 - this->numOuterElectrons;
+        this->numOuterElectrons -= sharedElectronsElem2;
+
+        int shared = sharedElectronsElem1 + sharedElectronsElem2;
+        this->numOuterElectrons += shared;
+        other->numOuterElectrons += shared;
+
+        this->shared = shared;
+        other->shared = shared;
         this->bondType = COVALENT;
         this->bondType = COVALENT;
 	    return true;
@@ -154,6 +184,9 @@ bool Element::ReactWith(Element* other)
 	else if (strcmp(this->symbol, "Li") == 0 &&
 		strcmp(other->symbol, "I") == 0)
     {
+        int electronsDonated = 8 - this->numOuterElectrons;
+        other->numOuterElectrons += electronsDonated;
+        this->numOuterElectrons -+ electronsDonated;
         this->bondType = IONIC;
         other->bondType = IONIC;
 		return true;
@@ -162,7 +195,10 @@ bool Element::ReactWith(Element* other)
     //reverse case of the above 	
     else if (strcmp(this->symbol, "I") == 0 &&
         strcmp(other->symbol, "Li") == 0)
-    {
+    {   
+        int electronsDonated = 8 - other->numOuterElectrons;
+        this->numOuterElectrons += electronsDonated;
+        other->numOuterElectrons -= electroNegativity;
         this->bondType = IONIC;
         other->bondType = IONIC;
         return true;
@@ -221,6 +257,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
             (strcmp(this->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(this->name, other2->name) == 0) ||
             (strcmp(other1->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(other1->name, other2->name) == 0)))
         {
+            int sharedElectrons = 4;
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
             other2->bondType = COVALENT;
@@ -232,6 +269,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
                     (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
                     (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "B") == 0 || strcmp(other2->symbol, "Mg") == 0)))
         {
+            int sharedElectrons = 4;
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
             other2->bondType = COVALENT;
