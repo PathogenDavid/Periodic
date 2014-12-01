@@ -53,7 +53,7 @@ void __TestEqBool(const char* message, const char* file, unsigned int line, bool
 
 void __TestEqString(const char* message, const char* file, unsigned int line, const char* actual, const char* expected)
 {
-    if (strcmp(actual, expected) == 0)
+    if (strcmp(actual, expected) != 0)
     {
         PrintTestFailure("EQ", "%s");
         testIsFailing = true;
