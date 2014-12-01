@@ -12,6 +12,8 @@ class Element
         double elementWeight;
         int numOuterElectrons;
 		double electroNegativity;
+		int bondType;
+        int shared;
     public:
         Element();
         Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
@@ -24,6 +26,8 @@ class Element
         double GetElementWeight();
         int GetNumOuterElectrons();
 		double GetElectroNegativity();
+		int GetBondType();
+        int GetShared();
 
         bool IsRawElement();
 
@@ -37,6 +41,7 @@ class Element
         void ResetToBasicState();
 
         bool ReactWith(Element* other);
+		bool ReactWith(Element* other1, Element* other2);
 };
 
 #endif
