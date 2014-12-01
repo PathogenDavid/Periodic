@@ -3,6 +3,7 @@
 
 #include "Element.h"
 
+//! Supporting function for TestCovalentBond
 void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, const char* message)
 {
     Element ea;
@@ -16,9 +17,10 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
     TestForceFail("It is currently impossible to check for a covalent bond in this build.");
 }
 
-// Note: Cation is the positively charged ion.
+//! Supporting function for TestIonicBond
 void __TestIonicBond(const char* cation, const char* anion, int numElectronsDonated, const char* message)
 {
+    // Note: Cation is the positively charged ion.
     Element c;
     Element a;
     TestMessage(message);
@@ -31,11 +33,17 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
     TestEqInt("Check the anion's charge after the reaction", a.GetCharge(), -numElectronsDonated);
 }
 
+//! Supporting macro for TestCovalentBond
 #define _TestCovalentBond(a, b, numElectronsShared) __TestCovalentBond(a, b, numElectronsShared, "React " a " and " b " with expected electrons shared count of " #numElectronsShared)
+//! Supporting macro for TestIonicBond
 #define _TestIonicBond(cation, anion, numElectronsDonated) __TestIonicBond(cation, anion, numElectronsDonated, "React " cation " and " anion " with expected charge of " #numElectronsDonated)
 
-// Automatically test that all reactions are commutative
+//! Tests that two elements covalently bond as expected.
+//! This is a supporting macro that ensures bonds are commutative.
 #define TestCovalentBond(a, b, numElectronsShared) _TestCovalentBond(a, b, numElectronsShared); _TestCovalentBond(b, a, numElectronsShared)
+
+//! Tests that two elements ionically bond as expected.
+//! This is a supporting macro that ensures opposite bonds are mirrored.
 #define TestIonicBond(cation, anion, numElectronsDonated) _TestIonicBond(cation, anion, numElectronsDonated); _TestIonicBond(anion, cation, -numElectronsDonated)
 
 void TestStep_Bonds()

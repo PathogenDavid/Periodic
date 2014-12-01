@@ -2,10 +2,15 @@
 #include "periodic.h"
 #include <sifteo.h>
 
+//! Internal state to check if test has entered a failure state yet.
+//! Should only ever be set to true by testing functions, never false.
 static bool testIsFailing = false;
 
+//! Prefix used for messages printed by the testing framework.
 #define TEST_PREFIX "TEST: "
 
+//! Prints a formatted test failure message to the test reviwer.
+//! dataFormat must be a pure string as it is used for compile-timer concatenation.
 #define PrintTestFailure(comparisonType, dataFormat) \
     LOG(TEST_PREFIX "VERIFICATION FAILURE ON %s:%d\n", file, line); \
     LOG(TEST_PREFIX "\tWhile checking condition: '%s'\n", message); \

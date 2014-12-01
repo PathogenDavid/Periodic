@@ -6,6 +6,7 @@
 
 using namespace Sifteo;
 
+//! Sifteo framework metadata
 static Metadata M = Metadata()
     .title("Periodic Project Unit Tests")
     .package("edu.ksu.periodic.tests", "0.1")
@@ -13,9 +14,11 @@ static Metadata M = Metadata()
     .cubeRange(1)
 ;
 
+//! Runs the given test step, will print a message to the test reviewer to verify the test was run.
 #define RUN_TEST(x) \
     TestMessage("Running test step " #x "..."); x()
 
+//! Global test entry point, runs all tests steps and prints overall test status to the test reviewer.
 void main()
 {
     RUN_TEST(TestStep_Strcmp);
