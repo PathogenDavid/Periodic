@@ -5,6 +5,7 @@
 
 void ElementCube::Init(int cubeId, int initialElementNum)
 {
+    this->cubeId = cubeId;
     this->cube = CubeID(cubeId);
 
     currentElementNum = initialElementNum;
@@ -60,6 +61,24 @@ void ElementCube::ReactWith(ElementCube* other)
         this->isDirty = true;
         other->isDirty = true;
     }
+}
+
+void ElementCube::ReactWith(ElementCube* other1, ElementCube* other2)
+{
+    LOG("Attempting to react %s, %s, and %s.\n", this->currentElement.GetName(), other1->currentElement.GetName(), other2->currentElement.GetName());
+
+    if (this->currentElement.ReactWith(&other1->currentElement, &other2->currentElement))
+    {
+        LOG("They react!\n");
+        this->isDirty = true;
+        other1->isDirty = true;
+        other2->isDirty = true;
+    }
+}
+
+int ElementCube::GetCubeId()
+{
+    return cubeId;
 }
 
 void ElementCube::Render()

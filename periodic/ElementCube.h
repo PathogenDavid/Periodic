@@ -13,6 +13,7 @@ using namespace Sifteo;
 class ElementCube
 {
     private:
+        int cubeId;
         CubeID cube;
         VideoBuffer v;
         bool isDirty;
@@ -29,6 +30,9 @@ class ElementCube
         void Render();
 
         void ReactWith(ElementCube* other);
+        void ReactWith(ElementCube* other1, ElementCube* other2);
+
+        int GetCubeId();
     
     private:
         void DrawCharAt(int x, int y, char c);
