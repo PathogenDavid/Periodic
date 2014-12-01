@@ -123,7 +123,7 @@ bool Element::ReactWith(Element* other)
         int sharedElectronsElem1 = 8 - this->numOuterElectrons;
         this->numOuterElectrons -= sharedElectronsElem1;
         int sharedElectronsElem2 = 8 - other->numOuterElectrons;
-        other->numOuterElectrons -+ sharedElectronsElem2;
+        other->numOuterElectrons -= sharedElectronsElem2;
 
         int shared = sharedElectronsElem1 + sharedElectronsElem2;
         this->numOuterElectrons += shared;
@@ -183,9 +183,9 @@ bool Element::ReactWith(Element* other)
 	else if (strcmp(this->symbol, "Li") == 0 &&
 		strcmp(other->symbol, "I") == 0)
     {
-        int electronsDonated = 8 - this->numOuterElectrons;
+        int electronsDonated = 8 - other->numOuterElectrons;
         other->numOuterElectrons += electronsDonated;
-        this->numOuterElectrons -+ electronsDonated;
+        this->numOuterElectrons -= electronsDonated;
         this->bondType = IONIC;
         other->bondType = IONIC;
 		return true;
@@ -194,10 +194,10 @@ bool Element::ReactWith(Element* other)
     //reverse case of the above 	
     else if (strcmp(this->symbol, "I") == 0 &&
         strcmp(other->symbol, "Li") == 0)
-    {   
-        int electronsDonated = 8 - other->numOuterElectrons;
+    {
+        int electronsDonated = 8 - this->numOuterElectrons;
         this->numOuterElectrons += electronsDonated;
-        other->numOuterElectrons -= electroNegativity;
+        other->numOuterElectrons -= electronsDonated;
         this->bondType = IONIC;
         other->bondType = IONIC;
         return true;
@@ -332,7 +332,8 @@ static Element rawElements[] =
 	Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
 	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
 	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
-	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79), //don't remember if we need this one or not
+	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79),
+    Element("Francium", "Fr", "alkali", 87, 223.0, 1,  0.79),
 
     //Alkali Earth Metals
     Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.57),

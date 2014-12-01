@@ -28,7 +28,7 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
     TestEqBool("Get the anion", Element::GetRawElement(anion, &a), true);
 
     // React the two elements:
-    c.ReactWith(&a);
+    TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
     TestEqInt("Check the cation's charge after the reaction", c.GetCharge(), numElectronsDonated);
     TestEqInt("Check the anion's charge after the reaction", a.GetCharge(), -numElectronsDonated);
 }
@@ -49,7 +49,6 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
 void TestStep_Bonds()
 {
     TestMessage("Test covalent bonds");
-    TestForceFail("It is currently impossible to check for a covalent bond in this build.");
     #if 0
     TestCovalentBond("H", "H", 1);
     TestCovalentBond("Li", "H", 1);
