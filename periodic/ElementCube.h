@@ -9,6 +9,8 @@ using namespace Sifteo;
 #define BG_COLOR 7 //White
 #define CHARGE_COLOR 8 //Red
 #define ELECTRON_COLOR 15 //Pink
+#define COVALENT_COLOR 3 // Gray
+#define POTENTIAL_COLOR 9 // Yellow
 
 class ElementCube
 {

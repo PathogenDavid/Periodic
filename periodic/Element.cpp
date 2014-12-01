@@ -291,7 +291,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
                 other1->sharedElectrons = 2;
                 other2->sharedElectrons = 2;
             }
-            else if (strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
+            else if (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0)
             {
                 this->sharedElectrons = 2;
                 other1->sharedElectrons = 4;

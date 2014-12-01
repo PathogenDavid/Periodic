@@ -133,6 +133,29 @@ void ElementCube::Render()
         }
     }
 
+    // Draw covalent bond (basic):
+    if (currentElement.GetBondType() == COVALENT)
+    {
+        for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
+        {
+            v.fb32.plot(vec(SCREEN_WIDTH - 2, 1 + i * 2), COVALENT_COLOR);
+        }
+    }
+
+    // Draw potential reaction:
+    if (currentElement.GetBondType() == POTENTIAL)
+    {
+        // Draw border on the cube
+        //NOTE: Relies on screen being square.
+        for (int i = 0; i < SCREEN_WIDTH; i++)
+        {
+            v.fb32.plot(vec(i, 0), POTENTIAL_COLOR);
+            v.fb32.plot(vec(i, SCREEN_HEIGHT - 1), POTENTIAL_COLOR);
+            v.fb32.plot(vec(0, i), POTENTIAL_COLOR);
+            v.fb32.plot(vec(SCREEN_WIDTH - 1, i), POTENTIAL_COLOR);
+        }
+    }
+
     // Draw electrons:
     DrawLewisDots(stringWidth, stringHeight);
 
