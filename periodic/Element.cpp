@@ -2,9 +2,6 @@
 #include "Element.h"
 #include <sifteo.h>
 
-/*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
-enum bondState { NONE, IONIC, COVALENT,  POTENTIAL}; 
-
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
 {
@@ -23,7 +20,7 @@ Element::Element(const char* name, const char* symbol, const char* group, short 
     this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
 	this->bondType = NONE;
-    this->shared = 0;
+    this->sharedElectrons = 0;
 }
 
 Element::Element(Element* baseElement)
@@ -43,7 +40,7 @@ void Element::ResetToBasicState()
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
 	this->bondType = NONE;
-    this->shared = 0;
+    this->sharedElectrons = 0;
     this->electroNegativity = baseElement->electroNegativity;
 }
 
@@ -55,8 +52,8 @@ short Element::GetAtomicNumber() { return atomicNumber; }
 double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
 double Element::GetElectroNegativity() { return electroNegativity; }
-int Element::GetBondType() { return bondType; } 
-int Element::GetShared() { return shared; }
+bondState Element::GetBondType() { return bondType; }
+int Element::GetSharedElectrons() { return sharedElectrons; }
 
 /*Returns if the element is in its base state or not. */
 bool Element::IsRawElement()
@@ -132,8 +129,8 @@ bool Element::ReactWith(Element* other)
         this->numOuterElectrons += shared;
         other->numOuterElectrons += shared;
 
-        this->shared = shared;
-        other->shared = shared;
+        this->sharedElectrons = shared;
+        other->sharedElectrons = shared;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -153,8 +150,8 @@ bool Element::ReactWith(Element* other)
         this->numOuterElectrons += shared;
         other->numOuterElectrons += shared;
 
-        this->shared = shared;
-        other->shared = shared;
+        this->sharedElectrons = shared;
+        other->sharedElectrons = shared;
         this->bondType = COVALENT;
         other->bondType = COVALENT;
 		return true;
@@ -173,8 +170,8 @@ bool Element::ReactWith(Element* other)
         this->numOuterElectrons += shared;
         other->numOuterElectrons += shared;
 
-        this->shared = shared;
-        other->shared = shared;
+        this->sharedElectrons = shared;
+        other->sharedElectrons = shared;
         this->bondType = COVALENT;
         this->bondType = COVALENT;
 	    return true;
@@ -261,21 +258,21 @@ bool Element::ReactWith(Element* other1, Element* other2)
         {
             if(strcmp(this->group, "alkaliEarth") == 0)
             {
-                this->shared = 4;
-                other1->shared = 2;
-                other2->shared = 2;
+                this->sharedElectrons = 4;
+                other1->sharedElectrons = 2;
+                other2->sharedElectrons = 2;
             }
             else if (strcmp(other1->group, "alkaliEarth") == 0)
             {
-                this->shared = 2;
-                other1->shared = 4;
-                other2->shared = 2;
+                this->sharedElectrons = 2;
+                other1->sharedElectrons = 4;
+                other2->sharedElectrons = 2;
             }
             else 
             {
-                this->shared = 2;
-                other1->shared = 2;
-                other2->shared = 4;
+                this->sharedElectrons = 2;
+                other1->sharedElectrons = 2;
+                other2->sharedElectrons = 4;
             }
             this->bondType = COVALENT;
             other1->bondType = COVALENT;
@@ -290,21 +287,21 @@ bool Element::ReactWith(Element* other1, Element* other2)
         {
             if(strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
             {
-                this->shared = 4;
-                other1->shared = 2;
-                other2->shared = 2;
+                this->sharedElectrons = 4;
+                other1->sharedElectrons = 2;
+                other2->sharedElectrons = 2;
             }
             else if (strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
             {
-                this->shared = 2;
-                other1->shared = 4;
-                other2->shared = 2;
+                this->sharedElectrons = 2;
+                other1->sharedElectrons = 4;
+                other2->sharedElectrons = 2;
             }
             else
             {
-                this->shared = 2;
-                other1->shared = 2;
-                other2->shared = 4;
+                this->sharedElectrons = 2;
+                other1->sharedElectrons = 2;
+                other2->sharedElectrons = 4;
             }
             this->bondType = COVALENT;
             other1->bondType = COVALENT;

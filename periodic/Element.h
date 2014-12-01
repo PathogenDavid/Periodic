@@ -1,6 +1,9 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+/*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
+enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
+
 class Element
 {
     private:
@@ -12,8 +15,8 @@ class Element
         double elementWeight;
         int numOuterElectrons;
 		double electroNegativity;
-		int bondType;
-        int shared;
+        bondState bondType;
+        int sharedElectrons;
     public:
         Element();
         Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
@@ -26,8 +29,8 @@ class Element
         double GetElementWeight();
         int GetNumOuterElectrons();
 		double GetElectroNegativity();
-		int GetBondType();
-        int GetShared();
+        bondState GetBondType();
+        int GetSharedElectrons();
 
         bool IsRawElement();
 
