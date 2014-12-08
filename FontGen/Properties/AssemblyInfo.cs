@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FontGen")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Sifteo Cube Font Generator")]
+[assembly: AssemblyDescription("Aids in generating fonts for Sifteo FB32 graphics modes.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FontGen")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyProduct("Sifteo Cube Font Generator")]
+[assembly: AssemblyCopyright("© 2014 David Maas and Alex Lesperance")]
+[assembly: AssemblyTrademark("Licensed under the MIT License")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
