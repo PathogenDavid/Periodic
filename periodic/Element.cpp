@@ -9,7 +9,7 @@ Element::Element()
 
 
 /*Constructor for element type.  We don't pass in the bond type because it will always initially be none.  */
-Element::Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity)
+Element::Element(const char* name, const char* symbol, groupState group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity)
 {
     this->baseElement = NULL;
     this->name = name;
@@ -47,7 +47,7 @@ void Element::ResetToBasicState()
 //Getters
 const char* Element::GetName() { return name; }
 const char* Element::GetSymbol() { return symbol; }
-const char* Element::GetGroup() { return group; }
+groupState Element::GetGroup() { return group; }
 short Element::GetAtomicNumber() { return atomicNumber; }
 double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
@@ -84,13 +84,11 @@ bool Element::ReactWith(Element* other)
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
 	//if any element is a noble gas, a bond won't occur.
-	if (strcmp(this->group, "noble") == 0 ||
-		strcmp(other->group, "noble") == 0)
+	if ( this->group == NOBLE || other->group == NOBLE)
 		return false;
 		
 	//if both elements are alkali metals, no bonding will occur
-	else if (strcmp(this->group, "alkali") == 0 &&
-		strcmp(other->group, "alkali") == 0)
+	else if ( this->group == ALKALI && other->group == ALKALI)
 		return false;
 
     //if we have 2 hydrogens, they have the potential to become hydrides with an alkali earth metal
@@ -104,8 +102,7 @@ bool Element::ReactWith(Element* other)
 
 		
 	//if both elements are halogens, covalent bonding will occur
-	else if (strcmp(this->group, "halogen") == 0 &&
-		strcmp(other->group, "halogen") == 0)
+	else if (this->group == HALOGEN && other->group == HALOGEN)
 	{   
         //If we have two of the same halogen, they can pair with an alkali earth metal to form a compoud.
         //But, for example, F2 is Flourine Gas, which I guess is technically a compound.  If we want
@@ -137,8 +134,7 @@ bool Element::ReactWith(Element* other)
 	}
 		
 	//hydrogen will bond with any halogen and form a covalent bond
-	else if (strcmp(this->symbol, "H") == 0 &&
-		strcmp(other->group, "halogen") == 0)
+	else if (strcmp(this->symbol, "H") == 0 && other->group == HALOGEN )
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
         int sharedElectronsElem1 = 8 - this->numOuterElectrons;
@@ -157,8 +153,7 @@ bool Element::ReactWith(Element* other)
 		return true;
     }	
 	//reverse case of the above.
-    else if (strcmp(this->group, "halogen") == 0 &&
-	    strcmp(this->symbol, "H") == 0)
+    else if (this->group == HALOGEN && strcmp(this->symbol, "H") == 0)
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
         int sharedElectronsElem1 = 8 - other->numOuterElectrons;
@@ -247,22 +242,20 @@ bool Element::ReactWith(Element* other1, Element* other2)
 {
     //If we have an alkali earth metal, there is a chance we can have a bond.
     //initial check to ensure we don't waste our time.
-    if(strcmp(this->group, "alkaliEarth") == 0 ||
-        strcmp(other1->group, "alkaliEarth") == 0 ||
-        strcmp(other2->group, "alkaliEarth") == 0)
+    if (this->group == ALKALIEARTH || other1->group == ALKALIEARTH || other2->group == ALKALIEARTH )
     {
         //If we have two halogens of the same type (plus an alkali earth already checked above, we have a covalent bond)
-        if(((strcmp(this->group, "halogen") == 0 && strcmp(other1->group, "halogen") == 0 && strcmp(this->name, other1->name) == 0) ||
-            (strcmp(this->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(this->name, other2->name) == 0) ||
-            (strcmp(other1->group, "halogen") == 0 && strcmp(other2->group, "halogen") == 0 && strcmp(other1->name, other2->name) == 0)))
+        if ((this->group == HALOGEN && other1->group == HALOGEN && strcmp(this->name, other1->name) == 0) ||
+            (this->group == HALOGEN && other2->group == HALOGEN && strcmp(this->name, other2->name) == 0) ||
+            (other1->group == HALOGEN && other2->group == HALOGEN && strcmp(other1->name, other2->name) == 0))
         {
-            if(strcmp(this->group, "alkaliEarth") == 0)
+            if (this->group == ALKALIEARTH )
             {
                 this->sharedElectrons = 4;
                 other1->sharedElectrons = 2;
                 other2->sharedElectrons = 2;
             }
-            else if (strcmp(other1->group, "alkaliEarth") == 0)
+            else if (other1->group == ALKALIEARTH)
             {
                 this->sharedElectrons = 2;
                 other1->sharedElectrons = 4;
@@ -327,40 +320,32 @@ bool Element::ReactWith(Element* other1, Element* other2)
 static Element rawElements[] =
 {
     //Alkali Metals
-    Element("Hydrogen", "H", "nonmetal", 1, 1.008, 1, 2.20),
-    Element("Lithium", "Li", "alkali", 3, 6.94, 1, 0.98),
-	Element("Sodium", "Na", "alkali", 11, 22.9898, 1, 0.93),
-	Element("Potassium", "K", "alkali", 19, 39.0938, 1, 0.82),
-	Element("Rubidium", "Rb", "alkali", 37, 85.4678, 1, 0.82),
-	Element("Cesium", "Cs", "alkali", 55, 132.90545196, 1, 0.79),
-    Element("Francium", "Fr", "alkali", 87, 223.0, 1,  0.79),
+    Element("Hydrogen", "H", NONMETAL, 1, 1.008, 1, 2.20),
+    Element("Lithium", "Li", ALKALI, 3, 6.94, 1, 0.98),
+	Element("Sodium", "Na", ALKALI, 11, 22.9898, 1, 0.93),
+	Element("Potassium", "K", ALKALI, 19, 39.0938, 1, 0.82),
+	Element("Rubidium", "Rb", ALKALI, 37, 85.4678, 1, 0.82),
+	Element("Cesium", "Cs", ALKALI, 55, 132.90545196, 1, 0.79),
+    Element("Francium", "Fr", ALKALI, 87, 223.0, 1,  0.79),
 
     //Alkali Earth Metals
-    Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.57),
-    Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
-	Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
-	Element("Strontium", "Sr", "alkaliEarth", 38, 87.60, 2, 0.95),
-	Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
+    Element("Beryllium", "Be", ALKALIEARTH, 4, 9.0121831, 2, 1.57),
+    Element("Magnesium", "Mg", ALKALIEARTH, 12, 24.305, 2, 1.31),
+	Element("Calcium", "Ca", ALKALIEARTH, 20, 40.078, 2, 1.0),
+	Element("Strontium", "Sr", ALKALIEARTH, 38, 87.60, 2, 0.95),
+	Element("Barium", "Ba", ALKALIEARTH, 56, 137.327, 2, 0.89),
     
     //Halogens
-    Element("Flourine", "F", "halogen", 9, 18.998403163, 7, 3.98),
-    Element("Chlorine", "Cl", "halogen", 17, 35.45, 7, 3.16),
-    Element("Bromine", "Br", "halogen", 35, 79.094, 7, 2.96),
-    Element("Iodine", "I", "halogen", 53, 126.90447, 7, 2.66),
+    Element("Flourine", "F", HALOGEN, 9, 18.998403163, 7, 3.98),
+    Element("Chlorine", "Cl", HALOGEN, 17, 35.45, 7, 3.16),
+    Element("Bromine", "Br", HALOGEN, 35, 79.094, 7, 2.96),
+    Element("Iodine", "I", HALOGEN, 53, 126.90447, 7, 2.66),
     
     //Noble Gases
-    Element("Helium", "He", "noble", 2, 4.002602, 2, 0),
-    Element("Neon", "Ne", "noble", 10, 20.1797, 8, 0),
-    Element("Argon", "Ar", "noble", 18, 39.948, 8, 0),
-    Element("Krypton", "Kr", "noble", 36, 83.798, 8, 0),
-    
-    //alkali earth metals
-    Element("Beryllium", "Be", "alkaliEarth", 4, 9.0121831, 2, 1.27),
-    Element("Magnesium", "Mg", "alkaliEarth", 12, 24.305, 2, 1.31),
-    Element("Calcium", "Ca", "alkaliEarth", 20, 40.078, 2, 1.0),
-    Element("Strontium", "Sr", "alkaliEarth", 38, 87.62, 2, 0.95),
-    Element("Barium", "Ba", "alkaliEarth", 56, 137.327, 2, 0.89),
-    Element("Radium", "Ra", "alkaliEarth", 88, 226, 2, 0.9), //not sure if needed
+    Element("Helium", "He", NOBLE, 2, 4.002602, 2, 0),
+    Element("Neon", "Ne", NOBLE, 10, 20.1797, 8, 0),
+    Element("Argon", "Ar", NOBLE, 18, 39.948, 8, 0),
+    Element("Krypton", "Kr", NOBLE, 36, 83.798, 8, 0),
     
 };
 
@@ -376,7 +361,7 @@ bool Element::GetRawElement(const char* name, Element* elementOut)
 
     if (num < 0)
     {
-        *elementOut = Element("INVALID", "INV", "INV", 0, 0.0, 0, 0.0);
+        *elementOut = Element("INVALID", "INV", NONMETAL, 0, 0.0, 0, 0.0);
         return false;
     }
     else

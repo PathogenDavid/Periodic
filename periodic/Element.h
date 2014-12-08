@@ -4,13 +4,16 @@
 /*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
 enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
 
+/*Enumeration to keep track of the group a element belongs in */
+enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, NONMETAL };
+
 class Element
 {
     private:
         Element* baseElement;
         const char* name;
         const char* symbol;
-		const char* group;
+		groupState group;
         short atomicNumber;
         double elementWeight;
         int numOuterElectrons;
@@ -19,12 +22,12 @@ class Element
         int sharedElectrons;
     public:
         Element();
-        Element(const char* name, const char* symbol, const char* group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
+        Element(const char* name, const char* symbol, groupState group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
         Element(Element* baseElement);
 
         const char* GetName();
         const char* GetSymbol();
-		const char* GetGroup();
+		groupState GetGroup();
         short GetAtomicNumber();
         double GetElementWeight();
         int GetNumOuterElectrons();
