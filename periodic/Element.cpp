@@ -146,12 +146,12 @@ bool Element::ReactWith(Element* other)
 	}
 		
 	//hydrogen will bond with any halogen and form a covalent bond
-	else if (strcmp(this->symbol, "H") == 0 && other->group == HALOGEN )
+	else if ((strcmp(this->symbol, "H") == 0) && other->group == HALOGEN )
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectronsElem1 = 8 - this->numOuterElectrons;
+        int sharedElectronsElem1 = 2 - this->numOuterElectrons;
         this->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 2 - other->numOuterElectrons;
+        int sharedElectronsElem2 = 8 - other->numOuterElectrons;
         other->numOuterElectrons -= sharedElectronsElem2;
 
         int shared = sharedElectronsElem1 + sharedElectronsElem2;
@@ -165,12 +165,12 @@ bool Element::ReactWith(Element* other)
 		return true;
     }	
 	//reverse case of the above.
-    else if (this->group == HALOGEN && strcmp(this->symbol, "H") == 0)
+    else if (this->group == HALOGEN && (strcmp(other->symbol, "H") == 0))
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectronsElem1 = 8 - other->numOuterElectrons;
+        int sharedElectronsElem1 = 2 - other->numOuterElectrons;
         other->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 2 - this->numOuterElectrons;
+        int sharedElectronsElem2 = 8 - this->numOuterElectrons;
         this->numOuterElectrons -= sharedElectronsElem2;
 
         int shared = sharedElectronsElem1 + sharedElectronsElem2;
@@ -319,6 +319,14 @@ bool Element::ReactWith(Element* other1, Element* other2)
                     (strcmp(this->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
                     (strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0))
         {
+            int electronsDonated = 1;
+			if(strcmp(this->symbol, "H") == 0)
+				this->numOuterElectrons += electronsDonated;
+			if(strcmp(other1->symbol, "H") == 0)
+				other1->numOuterElectrons += electronsDonated;
+			if(strcmp(other2->symbol, "H") == 0)
+				other2->numOuterElectrons += electronsDonated;
+
             this->bondType = IONIC;
             other1->bondType = IONIC;
             other2->bondType = IONIC;
