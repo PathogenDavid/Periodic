@@ -1,17 +1,16 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TestRunner")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Sifteo Cube Test Runner")]
+[assembly: AssemblyDescription("Aids in running unit tests for the Sifteo Cube platform")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TestRunner")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyProduct("Sifteo Cube Test Runner")]
+[assembly: AssemblyCopyright("© 2014 David Maas and Alex Lesperance")]
+[assembly: AssemblyTrademark("Licensed under the MIT License")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

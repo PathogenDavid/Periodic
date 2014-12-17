@@ -1,4 +1,4 @@
-#include "coders_crux.gen.h" //Contains FB32 palette
+#include "coders_crux.gen.h" // Contains FB32 palette
 #include "ElementCube.h"
 #include "Element.h"
 #include "periodic.h"
@@ -118,7 +118,7 @@ void ElementCube::Render()
     }
 
     // Draw the +/- symbol:
-    if (currentElement.GetCharge() != 0)
+    if (currentElement.GetCharge() != 0 && currentElement.GetBondType() == IONIC)
     {
         // Draw the line for the dash
         v.fb32.plot(vec(x + 0, y + 1), CHARGE_COLOR);
@@ -138,7 +138,24 @@ void ElementCube::Render()
     {
         for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
         {
-            v.fb32.plot(vec(SCREEN_WIDTH - 2, 1 + i * 2), COVALENT_COLOR);
+            const int size = 5;
+            int x = SCREEN_WIDTH - size - 1;
+            int y = 1 + i * (size + 1);
+
+            for (int xoff = 0; xoff < size; xoff++)
+            {
+                for (int yoff = 0; yoff < size; yoff++)
+                {
+                    int color = COVALENT_COLOR_OUTTER;
+
+                    if (xoff > 0 && xoff < (size - 1) && yoff > 0 && yoff < (size - 1))
+                    {
+                        color = COVALENT_COLOR_INNER;
+                    }
+
+                    v.fb32.plot(vec(x + xoff, y + yoff), color);
+                }
+            }
         }
     }
 

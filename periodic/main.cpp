@@ -18,6 +18,7 @@ static Metadata M = Metadata()
     .cubeRange(NUM_CUBES)
 ;
 
+//! Array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
 ElementCube cubes[NUM_CUBES] =
 {
     ElementCube(0, "H"),
@@ -25,17 +26,32 @@ ElementCube cubes[NUM_CUBES] =
     ElementCube(2, "H")
 };
 
+//! Internal accounting for OnTouch, used to separate presses from releases.
 static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
 
+//! Counts the number of neighbors in the given neighborhood
+int CountNeighbors(Neighborhood* nh);
+//! Returns true if elementCube is found in the specified reactants array of size numReactants
+bool IsReactant(ElementCube** reactants, int numReactants, ElementCube* elementCube);
+//! This function recursively walks all cubes currently touching or indirectly touching the specified root cube and adds them to the speicifed reactants array.
+//! The size of the reactants array must be at least MAX_REACTION_SIZE, the used size will be placed in numReactants.
+void FindReactants(ElementCube** reactants, int* numReactants, ElementCube* root);
+//! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
 
+//! Called when a specific cube is pressed (as in, touched after not being touched.)
 void OnPress(unsigned cubeId);
+//! Called when a specific cube is released (as in, not touched after being touched.)
 void OnRelease(unsigned cubeId);
+//! Raw Sifteo event handler for OnTocuh, you probably want to use OnPress and OnRelease instead.
 void OnTouch(void* sender, unsigned cubeId);
 
+//! Raw Sifteo event handler used to process cubes touching
 void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+//! Raw Sifteo event handler used to process cubes untouching
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
 
+//! Program entry-point, initializes all state and event handlers, and handles the main program loop
 void main()
 {
     Events::cubeTouch.set(OnTouch);
