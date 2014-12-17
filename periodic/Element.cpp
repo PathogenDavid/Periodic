@@ -210,9 +210,9 @@ bool Element::ReactWith(Element* other)
         return true;
     }
 
-	//If we have an alkali earth and a hydrogen, we have the potential
-	else if (strcmp(this->symbol, "H") == 0 &&
-		(other->group = ALKALIEARTH))
+	//If we have a alkali earth and a halogen, we have a potential
+	else if (this->group == ALKALIEARTH &&
+		other->group == HALOGEN)
 	{
 		this->bondType = POTENTIAL;
 		other->bondType = POTENTIAL;
@@ -220,7 +220,25 @@ bool Element::ReactWith(Element* other)
 	}
 
 	//reverse case of the above
-	else if ((this->group = ALKALIEARTH) && 
+	else if (this->group == HALOGEN &&
+		other->group == ALKALIEARTH)
+	{
+		this->bondType = POTENTIAL;
+		other->bondType = POTENTIAL;
+		return false;
+	}
+
+	//If we have an alkali earth and a hydrogen, we have the potential
+	else if (strcmp(this->symbol, "H") == 0 &&
+		(other->group == ALKALIEARTH))
+	{
+		this->bondType = POTENTIAL;
+		other->bondType = POTENTIAL;
+		return false;
+	}
+
+	//reverse case of the above
+	else if ((this->group == ALKALIEARTH) && 
 		(strcmp(other->symbol, "H") == 0))
 	{
 		this->bondType = POTENTIAL;
