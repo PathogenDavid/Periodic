@@ -146,7 +146,7 @@ bool Element::ReactWith(Element* other)
 	}
 		
 	//hydrogen will bond with any halogen and form a covalent bond
-	else if (strcmp(this->symbol, "H") == 0 && other->group == HALOGEN )
+	else if ((strcmp(this->symbol, "H") == 0) && other->group == HALOGEN )
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
         int sharedElectronsElem1 = 8 - this->numOuterElectrons;
@@ -165,7 +165,7 @@ bool Element::ReactWith(Element* other)
 		return true;
     }	
 	//reverse case of the above.
-    else if (this->group == HALOGEN && strcmp(this->symbol, "H") == 0)
+    else if (this->group == HALOGEN && (strcmp(this->symbol, "H") == 0))
     {
         //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
         int sharedElectronsElem1 = 8 - other->numOuterElectrons;
