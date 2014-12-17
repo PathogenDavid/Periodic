@@ -91,13 +91,25 @@ bool Element::ReactWith(Element* other)
 	else if ( this->group == ALKALI && other->group == ALKALI)
 		return false;
 
-    //if we have 2 hydrogens, they have the potential to become hydrides with an alkali earth metal
+    //if we have 2 hydrogens, they form a covalent bond
     else if (strcmp(this->symbol, "H") == 0 &&
         strcmp(other->symbol, "H") == 0)
     {
-        this->bondType = POTENTIAL;
-        other->bondType = POTENTIAL;
-        return false;
+        int sharedElectronsElem1 = 2 - this->numOuterElectrons;
+        this->numOuterElectrons -= sharedElectronsElem1;
+        int sharedElectronsElem2 = 2 - other->numOuterElectrons;
+        other->numOuterElectrons -= sharedElectronsElem2;
+
+		int shared = sharedElectronsElem1 + sharedElectronsElem2;
+        this->numOuterElectrons += shared;
+        other->numOuterElectrons += shared;
+
+		this->sharedElectrons = shared;
+		other->sharedElectrons = shared;
+
+        this->bondType = COVALENT;
+        other->bondType = COVALENT;
+        return true;
     }
 
 		
