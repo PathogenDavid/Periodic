@@ -138,7 +138,24 @@ void ElementCube::Render()
     {
         for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
         {
-            v.fb32.plot(vec(SCREEN_WIDTH - 2, 1 + i * 2), COVALENT_COLOR);
+            const int size = 5;
+            int x = SCREEN_WIDTH - size - 1;
+            int y = 1 + i * (size + 1);
+
+            for (int xoff = 0; xoff < size; xoff++)
+            {
+                for (int yoff = 0; yoff < size; yoff++)
+                {
+                    int color = COVALENT_COLOR_OUTTER;
+
+                    if (xoff > 0 && xoff < (size - 1) && yoff > 0 && yoff < (size - 1))
+                    {
+                        color = COVALENT_COLOR_INNER;
+                    }
+
+                    v.fb32.plot(vec(x + xoff, y + yoff), color);
+                }
+            }
         }
     }
 
