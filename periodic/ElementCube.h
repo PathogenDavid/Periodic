@@ -13,32 +13,53 @@ using namespace Sifteo;
 #define COVALENT_COLOR_INNER 9 // Yellow
 #define POTENTIAL_COLOR 9 // Yellow
 
+//! ElementCube is responsible for linking an Element to a Sifteo Cube.
+//! Its primary role is rendering the element to the screen.
+//! Note: Cube events are handled in main.cpp, not here.
 class ElementCube
 {
     private:
+        //! The cube ID associated with this ElementCube.
         int cubeId;
+        //! A Sifteo CubeID handle associated with this ElementCube.
         CubeID cube;
+        //! The video buffer for this cube's screen
         VideoBuffer v;
+        //! True when the video buffer is dirty and should be re-rendered
         bool isDirty;
+        //! The current element index used for the currentElement.
         int currentElementNum;
+        //! The underlying Element info used for this ElementCube.
         Element currentElement;
 
+        //! Initializes this ElementCube with the specified cube ID and initial element index
         void Init(int cubeId, int initialElementNum);
     public:
+        //! Creates a new ElementCube with the specified cube ID and initial element index
         ElementCube(int cubeId, int initialElementNum = 0);
+        //! Creates a new ElementCube with the specified cube ID and initial element symbol
         ElementCube(int cubeId, const char* initialElementSymbol);
 
+        //! Changes the current element to the next element in the element database
         void GoToNextElement();
+        //! Resets this current element to its natural, basic state
         void ResetElement();
+        //! Renders this ElementCube
         void Render();
 
+        //! Reacts this ElementCube with one other ElementCube.
         void ReactWith(ElementCube* other);
+        //! Reacts this ElementCube with two other ElementCube instances.
         void ReactWith(ElementCube* other1, ElementCube* other2);
 
+        //! Returns the cube ID associated with this ElementCube.
         int GetCubeId();
     
     private:
+        //! Internal supporting function for drawing a bitmap font character at the speciifed location
         void DrawCharAt(int x, int y, char c);
+        //! Internal supporting function for drawing the lewis dot structure dots for this cube.
+        //! The dots will be draw about the center of the cube, around the text assosicated with the given text dimensions.
         void DrawLewisDots(int stringWidth, int stringHeight);
 };
 
