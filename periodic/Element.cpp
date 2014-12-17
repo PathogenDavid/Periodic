@@ -210,40 +210,40 @@ bool Element::ReactWith(Element* other)
         return true;
     }
 
-	//If we have a alkali earth and a halogen, we have a potential
-	else if (this->group == ALKALIEARTH &&
-		other->group == HALOGEN)
-	{
-		this->bondType = POTENTIAL;
-		other->bondType = POTENTIAL;
-		return false;
-	}
+    //If we have a alkali earth and a halogen, we have a potential
+    else if (this->group == ALKALIEARTH &&
+        other->group == HALOGEN)
+    {
+        this->bondType = POTENTIAL;
+        other->bondType = POTENTIAL;
+        return false;
+    }
 
-	//reverse case of the above
-	else if (this->group == HALOGEN &&
-		other->group == ALKALIEARTH)
-	{
-		this->bondType = POTENTIAL;
-		other->bondType = POTENTIAL;
-		return false;
-	}
+    //reverse case of the above
+    else if (this->group == HALOGEN &&
+        other->group == ALKALIEARTH)
+    {
+        this->bondType = POTENTIAL;
+        other->bondType = POTENTIAL;
+        return false;
+    }
 
-	//If we have an alkali earth and a hydrogen, we have the potential
-	else if (strcmp(this->symbol, "H") == 0 &&
-		(other->group == ALKALIEARTH))
-	{
-		this->bondType = POTENTIAL;
-		other->bondType = POTENTIAL;
-		return false;
-	}
+    //If we have an alkali earth and a hydrogen, we have the potential
+    else if (strcmp(this->symbol, "H") == 0 &&
+         (other->group == ALKALIEARTH))
+    {
+        this->bondType = POTENTIAL;
+        other->bondType = POTENTIAL;
+        return false;
+    }
 
-	//reverse case of the above
-	else if ((this->group == ALKALIEARTH) && 
-		(strcmp(other->symbol, "H") == 0))
+    //reverse case of the above
+    else if ((this->group == ALKALIEARTH) && 
+        (strcmp(other->symbol, "H") == 0))
 	{
-		this->bondType = POTENTIAL;
-		other->bondType = POTENTIAL;
-	}
+        this->bondType = POTENTIAL;
+        other->bondType = POTENTIAL;
+    }
 
 	//find the greater negativity
 	double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
