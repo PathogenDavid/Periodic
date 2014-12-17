@@ -319,6 +319,14 @@ bool Element::ReactWith(Element* other1, Element* other2)
                     (strcmp(this->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
                     (strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0))
         {
+            int electronsDonated = 1;
+			if(strcmp(this->symbol, "H") == 0)
+				this->numOuterElectrons += electronsDonated;
+			if(strcmp(other1->symbol, "H") == 0)
+				other1->numOuterElectrons += electronsDonated;
+			if(strcmp(other2->symbol, "H") == 0)
+				other2->numOuterElectrons += electronsDonated;
+
             this->bondType = IONIC;
             other1->bondType = IONIC;
             other2->bondType = IONIC;
