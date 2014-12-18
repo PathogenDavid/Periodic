@@ -243,7 +243,7 @@ bool Element::ReactWith(Element* other)
 	{
         this->bondType = POTENTIAL;
         other->bondType = POTENTIAL;
-        false;
+        return false;
     }
 
 	//find the greater negativity
