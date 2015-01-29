@@ -280,6 +280,11 @@ bool Element::ReactWith(Element* other)
 	return false;
 }
 
+bool Element::EfficientReactWith(Element* other)
+{
+
+}
+
 /* Checks reactions that require 3 elements to form a bond) 
 
 This algorithm was written with help by:
