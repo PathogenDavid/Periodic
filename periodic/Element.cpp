@@ -375,7 +375,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
 static Element rawElements[] =
 {
     //Alkali Metals
-    Element("Hydrogen", "H", NONMETAL, 1, 1.008, 1, 2.20),
+    Element("Hydrogen", "H", HYDROGEN, 1, 1.008, 1, 2.20),
     Element("Lithium", "Li", ALKALI, 3, 6.94, 1, 0.98),
 	Element("Sodium", "Na", ALKALI, 11, 22.9898, 1, 0.93),
 	Element("Potassium", "K", ALKALI, 19, 39.0938, 1, 0.82),

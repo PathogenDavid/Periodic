@@ -5,7 +5,7 @@
 enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
 
 /*Enumeration to keep track of the group a element belongs in */
-enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, NONMETAL };
+enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL };
 
 //! Element represents a chemical element
 class Element
