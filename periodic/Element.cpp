@@ -357,7 +357,7 @@ bool Element::EfficientReactWith(Element* other)
 				strcmp(other->symbol, "I") == 0)
 			{
 				this->bondType = IONIC;
-				other->bondType = IONIC
+				other->bondType = IONIC;
 			}
 			break;
 		}
@@ -379,6 +379,69 @@ bool Element::EfficientReactWith(Element* other)
 		}
 		default:
 			break;
+	}
+
+	//logic to add/share electrons
+	int typeOfBond = this->bondType;
+	switch(typeOfBond)
+	{
+		case COVALENT:
+		{
+			int sharedElectronsElem1;
+			int sharedElectronsElem2;
+			if(this->group == HYDROGEN)
+			{
+				sharedElectronsElem1 = 2 - this->numOuterElectrons;
+				this->numOuterElectrons -= sharedElectronsElem1;
+			}
+			else
+			{
+				sharedElectronsElem1 = 8 - this->numOuterElectrons;
+				this->numOuterElectrons -= sharedElectronsElem1;
+			}
+			if(other->group == HYDROGEN)
+			{
+				sharedElectronsElem2 = 2 - other->numOuterElectrons;
+				other->numOuterElectrons -= sharedElectronsElem2;
+			}
+			else
+			{
+				sharedElectronsElem2 = 8 - other->numOuterElectrons;
+				other->numOuterElectrons -= sharedElectronsElem2;
+			}
+			
+			int shared = sharedElectronsElem1 + sharedElectronsElem2;
+			this->numOuterElectrons += shared;
+			other->numOuterElectrons += shared;
+			this->sharedElectrons = shared;
+			other->sharedElectrons = shared;
+			return true;
+			break;
+		}
+		case IONIC:
+		{
+			int electronsDonated;
+			//determine which element shares electrons
+			if(this->numOuterElectrons > other->numOuterElectrons)
+			{
+				electronsDonated = 8 - this->numOuterElectrons;
+				this->numOuterElectrons += electronsDonated;
+				other->numOuterElectrons -= electronsDonated;
+			}
+			else 
+			{
+				electronsDonated = 8 - other->numOuterElectrons;
+				other->numOuterElectrons += electronsDonated;
+				this->numOuterElectrons -= electronsDonated;
+			}
+			return true;
+			break;
+		}
+		default:
+		{
+			return false;
+			break;
+		}
 	}
 }
 
