@@ -282,7 +282,104 @@ bool Element::ReactWith(Element* other)
 
 bool Element::EfficientReactWith(Element* other)
 {
-
+	//if any element is a noble gas, return immedeatly
+	if ( this->group == NOBLE || other->group == NOBLE)
+		return false;
+	
+	//figure out which group the first element is in and make a switch out of it
+	//as to avoid trudging through if after if after if statement
+	//and because we like efficiency :)
+	int firstElement = this->group;
+	switch(firstElement)
+	{
+		case NONMETAL:
+		{
+			//if we have 2 hydrogens, they form a covalent bond
+			if(other->group == HYDROGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			//hydrogen will bond with any halogen and form a covalent bond
+			else if (other->group == HALOGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			else if (other->group == ALKALIEARTH)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+			}
+			break;
+		}
+		case HALOGEN:
+		{
+			//if both elements are halogens, covalent bonding will occur
+			if(other->group == HALOGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			//hydrogen will bond with any halogen and form a covalent bond
+			else if (other->group == HYDROGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			//if we have a alkali earth metal and a halogen we have the potential for a bond
+			else if (other->group == ALKALIEARTH)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			//unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			else if (strcmp(this->symbol, "I") == 0 &&
+				strcmp(other->symbol, "Li") == 0)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC;
+			}
+			break;
+		}
+		case ALKALI:
+		{
+			//if two alkali metals, nothing will occur
+			if(other->group == ALKALI)
+				return false;
+			//unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			else if (strcmp(this->symbol, "Li") == 0 &&
+				strcmp(other->symbol, "I") == 0)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC
+			}
+			break;
+		}
+		case ALKALIEARTH:
+		{
+			if(other->group == HALOGEN)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			else if (other->group == HYDROGEN)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 /* Checks reactions that require 3 elements to form a bond) 
