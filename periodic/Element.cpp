@@ -280,6 +280,8 @@ bool Element::ReactWith(Element* other)
 	return false;
 }
 
+//Function will replace ReactWith in the near future, currently different
+//to felp with testing purposes
 bool Element::EfficientReactWith(Element* other)
 {
 	//if any element is a noble gas, return immedeatly
@@ -292,7 +294,7 @@ bool Element::EfficientReactWith(Element* other)
 	int firstElement = this->group;
 	switch(firstElement)
 	{
-		case NONMETAL:
+		case HYDROGEN:
 		{
 			//if we have 2 hydrogens, they form a covalent bond
 			if(other->group == HYDROGEN)
