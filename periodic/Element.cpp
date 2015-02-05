@@ -291,7 +291,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
         //If we have two hydrogens and either Beryllium or Magnesium, we have a covalent bond.  If statement has a lot of overhead, look for more efficient ways in the future
         else if (((strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0) && strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
                     (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "B") == 0 || strcmp(other2->symbol, "Mg") == 0)))
+                    (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "Be") == 0 || strcmp(other2->symbol, "Mg") == 0)))
         {
             if(strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
             {
