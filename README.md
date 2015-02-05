@@ -13,5 +13,5 @@ Running in the Siftulator can be accomplished be running `make run` or by starti
 Deploying to hardware currently is only possible by running `make install`, and cannot be accomplished through Visual Studio.
 
 ##Third Party Licenses
-Included in the repository is a modified copy of the font "[Coder's Crux](http://fontstruct.com/fontstructions/show/619715)" by "NAL", which is licensed under [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/).
+Included in the repository is a modified copy of the font [Coder's Crux](http://fontstruct.com/fontstructions/show/619715) by NAL, which is licensed under [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/).
 It has been modified from its original state into a reduced character set bitmap font for use on Sifteo Cubes.
