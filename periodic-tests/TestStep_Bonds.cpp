@@ -49,7 +49,6 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
 void TestStep_Bonds()
 {
     TestMessage("Test covalent bonds");
-    #if 0
     TestCovalentBond("H", "H", 1);
     TestCovalentBond("Li", "H", 1);
     TestCovalentBond("Na", "H", 1);
@@ -70,7 +69,6 @@ void TestStep_Bonds()
     TestCovalentBond("H", "Br", 1);
     TestCovalentBond("H", "I", 1);
     TestCovalentBond("H", "At", 1);
-    #endif
 
     TestMessage("Test ionic compounds");
     TestIonicBond("Li", "F", 1);
