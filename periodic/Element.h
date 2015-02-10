@@ -5,7 +5,7 @@
 enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
 
 /*Enumeration to keep track of the group a element belongs in */
-enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, NONMETAL };
+enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL };
 
 //! Element represents a chemical element
 class Element
@@ -79,7 +79,7 @@ class Element
 
         //! Reacts this element with another one
         bool ReactWith(Element* other);
-        //! Reacts thie element with two other elements
+        //! Reacts this element with two other elements
 		bool ReactWith(Element* other1, Element* other2);
 };
 

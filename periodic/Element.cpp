@@ -83,203 +83,191 @@ bool Element::ReactWith(Element* other)
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
-	//if any element is a noble gas, a bond won't occur.
+	// if any element is a noble gas, return immedeatly
 	if ( this->group == NOBLE || other->group == NOBLE)
 		return false;
-		
-	//if both elements are alkali metals, no bonding will occur
-	else if ( this->group == ALKALI && other->group == ALKALI)
-		return false;
-
-    //if we have 2 hydrogens, they form a covalent bond
-    else if (strcmp(this->symbol, "H") == 0 &&
-        strcmp(other->symbol, "H") == 0)
-    {
-        int sharedElectronsElem1 = 2 - this->numOuterElectrons;
-        this->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 2 - other->numOuterElectrons;
-        other->numOuterElectrons -= sharedElectronsElem2;
-
-		int shared = sharedElectronsElem1 + sharedElectronsElem2;
-        this->numOuterElectrons += shared;
-        other->numOuterElectrons += shared;
-
-		this->sharedElectrons = shared;
-		other->sharedElectrons = shared;
-
-        this->bondType = COVALENT;
-        other->bondType = COVALENT;
-        return true;
-    }
-
-		
-	//if both elements are halogens, covalent bonding will occur
-	else if (this->group == HALOGEN && other->group == HALOGEN)
-	{   
-        //If we have two of the same halogen, they can pair with an alkali earth metal to form a compoud.
-        //But, for example, F2 is Flourine Gas, which I guess is technically a compound.  If we want
-        //To Say its a compoud, leave the uncommented part uncommented.  I'm keeping it in for now.
-        /*
-        if(strcmp(this->name, other->name) == 0)
-        {
-            this->bondType = POTENTIAL;
-            other->bondType = POTENTIAL;
-            return false;
-        }
-        */
-
-        //for any halogen bonding with another halogen, 2 electrons will be shared between the two.
-        int sharedElectronsElem1 = 8 - this->numOuterElectrons;
-        this->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 8 - other->numOuterElectrons;
-        other->numOuterElectrons -= sharedElectronsElem2;
-
-        int shared = sharedElectronsElem1 + sharedElectronsElem2;
-        this->numOuterElectrons += shared;
-        other->numOuterElectrons += shared;
-
-        this->sharedElectrons = shared;
-        other->sharedElectrons = shared;
-        this->bondType = COVALENT;
-        other->bondType = COVALENT;
-		return true;
-	}
-		
-	//hydrogen will bond with any halogen and form a covalent bond
-	else if ((strcmp(this->symbol, "H") == 0) && other->group == HALOGEN )
-    {
-        //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectronsElem1 = 2 - this->numOuterElectrons;
-        this->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 8 - other->numOuterElectrons;
-        other->numOuterElectrons -= sharedElectronsElem2;
-
-        int shared = sharedElectronsElem1 + sharedElectronsElem2;
-        this->numOuterElectrons += shared;
-        other->numOuterElectrons += shared;
-
-        this->sharedElectrons = shared;
-        other->sharedElectrons = shared;
-        this->bondType = COVALENT;
-        other->bondType = COVALENT;
-		return true;
-    }	
-	//reverse case of the above.
-    else if (this->group == HALOGEN && (strcmp(other->symbol, "H") == 0))
-    {
-        //for any halogen bonding with hydrogen, 2 electrons will be shared between the two.
-        int sharedElectronsElem1 = 2 - other->numOuterElectrons;
-        other->numOuterElectrons -= sharedElectronsElem1;
-        int sharedElectronsElem2 = 8 - this->numOuterElectrons;
-        this->numOuterElectrons -= sharedElectronsElem2;
-
-        int shared = sharedElectronsElem1 + sharedElectronsElem2;
-        this->numOuterElectrons += shared;
-        other->numOuterElectrons += shared;
-
-        this->sharedElectrons = shared;
-        other->sharedElectrons = shared;
-        this->bondType = COVALENT;
-        this->bondType = COVALENT;
-	    return true;
-    }
-		
-	//The difference in electronegativity is 1.68, which is very near to 1.7
-	//This is an Ionic bond but a special case in which the difference isn't >= 1.7
-	//which is why we have a hard coded case (possible to clean up in the future?)
-	else if (strcmp(this->symbol, "Li") == 0 &&
-		strcmp(other->symbol, "I") == 0)
-    {
-        int electronsDonated = 8 - other->numOuterElectrons;
-        other->numOuterElectrons += electronsDonated;
-        this->numOuterElectrons -= electronsDonated;
-        this->bondType = IONIC;
-        other->bondType = IONIC;
-		return true;
-    }
 	
-    //reverse case of the above 	
-    else if (strcmp(this->symbol, "I") == 0 &&
-        strcmp(other->symbol, "Li") == 0)
-    {
-        int electronsDonated = 8 - this->numOuterElectrons;
-        this->numOuterElectrons += electronsDonated;
-        other->numOuterElectrons -= electronsDonated;
-        this->bondType = IONIC;
-        other->bondType = IONIC;
-        return true;
-    }
-
-    //If we have a alkali earth and a halogen, we have a potential
-    else if (this->group == ALKALIEARTH &&
-        other->group == HALOGEN)
-    {
-        this->bondType = POTENTIAL;
-        other->bondType = POTENTIAL;
-        return false;
-    }
-
-    //reverse case of the above
-    else if (this->group == HALOGEN &&
-        other->group == ALKALIEARTH)
-    {
-        this->bondType = POTENTIAL;
-        other->bondType = POTENTIAL;
-        return false;
-    }
-
-    //If we have an alkali earth and a hydrogen, we have the potential
-    else if (strcmp(this->symbol, "H") == 0 &&
-         (other->group == ALKALIEARTH))
-    {
-        this->bondType = POTENTIAL;
-        other->bondType = POTENTIAL;
-        return false;
-    }
-
-    //reverse case of the above
-    else if ((this->group == ALKALIEARTH) && 
-        (strcmp(other->symbol, "H") == 0))
+	// figure out which group the first element is in and make a switch out of it
+	// as to avoid trudging through if after if after if statement
+	// and because we like efficiency :)
+	int firstElement = this->group;
+	switch(firstElement)
 	{
-        this->bondType = POTENTIAL;
-        other->bondType = POTENTIAL;
-        return false;
-    }
-
-	//find the greater negativity
-	double maxNegativity = this->electroNegativity > other->electroNegativity ? this->electroNegativity : other->electroNegativity;
-	double minNegativity = this->electroNegativity < other->electroNegativity ? this->electroNegativity : other->electroNegativity;
-
-	//Ionic
-	if (maxNegativity - minNegativity > 1.7 &&
-		this->numOuterElectrons + other->numOuterElectrons == 8)
-	{
-		if (this->numOuterElectrons < other->numOuterElectrons)
+		// If the first element is Hydrogen
+		case HYDROGEN:
 		{
-			int electronsDonated = 8 - other->numOuterElectrons;
-			this->numOuterElectrons -= electronsDonated;
-			other->numOuterElectrons += electronsDonated;
+			// if we have 2 hydrogens, they form a covalent bond
+			if(other->group == HYDROGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			// hydrogen will bond with any halogen and form a covalent bond
+			else if (other->group == HALOGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			// Hydrogen and any alkali earth have the potential to bond (such as another hydrogen)
+			// but cannot bond on their own.
+			else if (other->group == ALKALIEARTH)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+
+			break;
 		}
-		else
+		// If the first element is a halogen
+		case HALOGEN:
 		{
-			int electronsDonated = 8 - this->numOuterElectrons;
-			other->numOuterElectrons -= electronsDonated;
-			this->numOuterElectrons += electronsDonated;
+			// if both elements are halogens, covalent bonding will occur
+			if(other->group == HALOGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			// hydrogen will bond with any halogen and form a covalent bond
+			else if (other->group == HYDROGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+			// if we have an alkali earth metal and a halogen we have the potential for a bond
+			else if (other->group == ALKALIEARTH)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			else if (strcmp(this->symbol, "I") == 0 &&
+				strcmp(other->symbol, "Li") == 0)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC;
+			}
+			break;
 		}
-        this->bondType = IONIC;
-        this->bondType = IONIC;
-		return true;
+		//If the first element is an alkali metal
+		case ALKALI:
+		{
+			// if two alkali metals, nothing will occur
+			if(other->group == ALKALI)
+				return false;
+
+			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			else if (strcmp(this->symbol, "Li") == 0 &&
+				strcmp(other->symbol, "I") == 0)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC;
+			}
+			break;
+		}
+		// if the first element is an alkali earth metal
+		case ALKALIEARTH:
+		{
+			// if we have an alkali earth metal and a halogen, we have the potential for a bond
+			if(other->group == HALOGEN)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			// if we have an alkali earth metal and a halogen, we have the potential for a bond
+			else if (other->group == HYDROGEN)
+			{
+				this->bondType = POTENTIAL;
+				other->bondType = POTENTIAL;
+				return false;
+			}
+			break;
+		}
+		default:
+			break;
 	}
-		
-	//covalent
-	else if (maxNegativity - minNegativity <= 1.7)
-    {
-        this->bondType = COVALENT;
-        this->bondType = COVALENT;
-		return true;
-    }
-	return false;
+
+	//logic to add/share electrons
+	int typeOfBond = this->bondType;
+	switch(typeOfBond)
+	{
+		case COVALENT:
+		{
+			// Covalent bonds are bonds in which electrons are shared between each other.  
+			// Therefore, we take the maxmimum number of electrons allowed in the outer shell 
+			// (2 for hydrogen and helium, 8 for everything else) and subtract from that the number of
+			// current outer electrons.  Then we will subject that value from the actual number of outer
+			// electrons (effectively making it zero).  Then we do the same process for the second element
+			// and add the two shared values together.  For our purposes here and now, that value will be 2.
+			// we will then add that shared combined value to both elements outer electrons shell and we'll
+			// get a full outer shell.
+			int sharedElectronsElem1;
+			int sharedElectronsElem2;
+			if(this->group == HYDROGEN)
+			{
+				sharedElectronsElem1 = 2 - this->numOuterElectrons;
+				this->numOuterElectrons -= sharedElectronsElem1;
+			}
+			else
+			{
+				sharedElectronsElem1 = 8 - this->numOuterElectrons;
+				this->numOuterElectrons -= sharedElectronsElem1;
+			}
+			if(other->group == HYDROGEN)
+			{
+				sharedElectronsElem2 = 2 - other->numOuterElectrons;
+				other->numOuterElectrons -= sharedElectronsElem2;
+			}
+			else
+			{
+				sharedElectronsElem2 = 8 - other->numOuterElectrons;
+				other->numOuterElectrons -= sharedElectronsElem2;
+			}
+			
+			int shared = sharedElectronsElem1 + sharedElectronsElem2;
+			this->numOuterElectrons += shared;
+			other->numOuterElectrons += shared;
+			this->sharedElectrons = shared;
+			other->sharedElectrons = shared;
+			return true;
+			break;
+		}
+		case IONIC:
+		{
+			// Ionic bonds are bonds in which electrons are donated from one element to the next.
+			// 
+			int electronsDonated;
+			//determine which element shares electrons
+			if(this->numOuterElectrons > other->numOuterElectrons)
+			{
+				electronsDonated = 8 - this->numOuterElectrons;
+				this->numOuterElectrons += electronsDonated;
+				other->numOuterElectrons -= electronsDonated;
+			}
+			else 
+			{
+				electronsDonated = 8 - other->numOuterElectrons;
+				other->numOuterElectrons += electronsDonated;
+				this->numOuterElectrons -= electronsDonated;
+			}
+			return true;
+			break;
+		}
+		default:
+		{
+			return false;
+			break;
+		}
+	}
 }
+
+
 
 /* Checks reactions that require 3 elements to form a bond) 
 
@@ -288,95 +276,111 @@ Christopher Culbertson, Associate Professor at Kansas State University
 Michael Ayala, Chemistry Major at UC Davis */
 bool Element::ReactWith(Element* other1, Element* other2)
 {
-    //If we have an alkali earth metal, there is a chance we can have a bond.
-    //initial check to ensure we don't waste our time.
-    if (this->group == ALKALIEARTH || other1->group == ALKALIEARTH || other2->group == ALKALIEARTH )
-    {
-        //If we have two halogens of the same type (plus an alkali earth already checked above, we have a covalent bond)
-        if ((this->group == HALOGEN && other1->group == HALOGEN && strcmp(this->name, other1->name) == 0) ||
-            (this->group == HALOGEN && other2->group == HALOGEN && strcmp(this->name, other2->name) == 0) ||
-            (other1->group == HALOGEN && other2->group == HALOGEN && strcmp(other1->name, other2->name) == 0))
-        {
-            if (this->group == ALKALIEARTH )
-            {
-                this->sharedElectrons = 4;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 2;
-            }
-            else if (other1->group == ALKALIEARTH)
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 4;
-                other2->sharedElectrons = 2;
-            }
-            else 
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 4;
-            }
-            this->bondType = COVALENT;
-            other1->bondType = COVALENT;
-            other2->bondType = COVALENT;
-            return true;
-        }
+    bool containsAlkaliEarth = false;
+	int alkaliEarthPosition;
+	
+	// Element array used so we can keep track of which element is at what position.  
+	// Consequently, we don't have to do a lot of pointless statements to keep checking
+	// that position
+	Element *elementArray[3] = {this, other1, other2};
 
-        //If we have two hydrogens and either Beryllium or Magnesium, we have a covalent bond.  If statement has a lot of overhead, look for more efficient ways in the future
-        else if (((strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0) && strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "B") == 0 || strcmp(other2->symbol, "Mg") == 0)))
-        {
-            if(strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
-            {
-                this->sharedElectrons = 4;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 2;
-            }
-            else if (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0)
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 4;
-                other2->sharedElectrons = 2;
-            }
-            else
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 4;
-            }
-            this->bondType = COVALENT;
-            other1->bondType = COVALENT;
-            other2->bondType = COVALENT;
-            return true;
-        }
+	// initial check to see if we have an alkali earth (currently we only have 3 element bonding if
+	// there is an alkali earth metal.  If there is, we mark which element it is to make our lives
+	// easier later on
+	if(this->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 0;
+	}
+	else if (other1->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 1;
+	}
+	else if (other2->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 2;
+	}
 
-        //If we have two hydrogens plus the other alkali earth metals, we have a ionic bond.  Since we've already ensured we have an alkali earth metal, we can simply check for two hydrogens.
-        else if ((strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0))
-        {
-            int electronsDonated = 1;
-			if(strcmp(this->symbol, "H") == 0)
-				this->numOuterElectrons += electronsDonated;
-			if(strcmp(other1->symbol, "H") == 0)
-				other1->numOuterElectrons += electronsDonated;
-			if(strcmp(other2->symbol, "H") == 0)
-				other2->numOuterElectrons += electronsDonated;
+	if(containsAlkaliEarth)
+	{
+		//get the positions of the other elements in the array
+		int otherElement1Position = (alkaliEarthPosition + 1) % 3;
+		int otherElement2Position = (alkaliEarthPosition + 2) % 3;
 
-            this->bondType = IONIC;
-            other1->bondType = IONIC;
-            other2->bondType = IONIC;
-            return true;
-        }
-        
-    }
+		//check to see if the other two elements are halogens (leads to covalent bonding)
+		bool containsTwoHalogens = elementArray[otherElement1Position]->group == HALOGEN && 
+			elementArray[otherElement2Position]->group == HALOGEN;
+
+		if(containsTwoHalogens)
+		{
+
+				//Logic to see how many electrons are shared with each element
+				elementArray[alkaliEarthPosition]->sharedElectrons = 4;
+				elementArray[otherElement1Position]->sharedElectrons = 2;
+				elementArray[otherElement2Position]->sharedElectrons = 2;
+
+				//set the bond type
+				elementArray[alkaliEarthPosition]->bondType = COVALENT;
+				elementArray[otherElement1Position]->bondType = COVALENT;
+				elementArray[otherElement2Position]->bondType = COVALENT;
+				
+				//we have a covalent bond, return
+				return true;
+		}
+
+		//check to see if the other two elements are hydrogen (leads to either covalent or ionic bonding)
+		bool containsTwoHydrogens = elementArray[otherElement1Position]->group == HYDROGEN && 
+			elementArray[otherElement2Position]->group == HYDROGEN;
+			
+		if(containsTwoHydrogens)
+		{
+				//If the alkali earth metals are either Beryllium or Magnesium, the bond will be covalent
+				//If they are the other alkali earth metals, they will make an ionic bond
+				
+				if(strcmp(elementArray[alkaliEarthPosition]->symbol, "Be") == 0 ||
+					(strcmp(elementArray[alkaliEarthPosition]->symbol, "Mg") == 0))
+				{
+					//logic to see how many electrons are shared with each element
+					elementArray[alkaliEarthPosition]->sharedElectrons = 4;
+					elementArray[otherElement1Position]->sharedElectrons = 2;
+					elementArray[otherElement2Position]->sharedElectrons = 2;
+
+					//set the bond type
+					elementArray[alkaliEarthPosition]->bondType = COVALENT;
+					elementArray[otherElement1Position]->bondType = COVALENT;
+					elementArray[otherElement2Position]->bondType = COVALENT;
+
+					//we have a covalent bond, return
+					return true;
+				}
+				else
+				{
+					//logic to see how any electrons are donated
+					int electronsDonated = 1;
+					elementArray[otherElement1Position]->numOuterElectrons += electronsDonated;
+					elementArray[otherElement2Position]->numOuterElectrons += electronsDonated;
+					
+					//set the bond type
+					elementArray[alkaliEarthPosition]->bondType = IONIC;
+					elementArray[otherElement1Position]->bondType = IONIC;
+					elementArray[otherElement2Position]->bondType = IONIC;
+					
+					//we have an ionic bond, return 
+					return true;
+				}
+		}
+	}
+
 	return false;
 }
+
 
 static Element rawElements[] =
 {
     //Alkali Metals
-    Element("Hydrogen", "H", NONMETAL, 1, 1.008, 1, 2.20),
+    Element("Hydrogen", "H", HYDROGEN, 1, 1.008, 1, 2.20),
     Element("Lithium", "Li", ALKALI, 3, 6.94, 1, 0.98),
 	Element("Sodium", "Na", ALKALI, 11, 22.9898, 1, 0.93),
 	Element("Potassium", "K", ALKALI, 19, 39.0938, 1, 0.82),
@@ -396,6 +400,7 @@ static Element rawElements[] =
     Element("Chlorine", "Cl", HALOGEN, 17, 35.45, 7, 3.16),
     Element("Bromine", "Br", HALOGEN, 35, 79.094, 7, 2.96),
     Element("Iodine", "I", HALOGEN, 53, 126.90447, 7, 2.66),
+	Element("Astatine", "At", HALOGEN, 85, 210, 7, 2.2), 
     
     //Noble Gases
     Element("Helium", "He", NOBLE, 2, 4.002602, 2, 0),
