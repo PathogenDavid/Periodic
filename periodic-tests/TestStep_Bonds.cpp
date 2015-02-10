@@ -8,13 +8,22 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
 {
     Element ea;
     Element eb;
+	int numOuterElectronA;
+	int numOuterElectronB;
     TestMessage(message);
     TestEqBool("Get the first element", Element::GetRawElement(a, &ea), true);
     TestEqBool("Get the second element", Element::GetRawElement(b, &eb), true);
+	numOuterElectronA = ea.GetNumOuterElectrons();
+	numOuterElectronB = eb.GetNumOuterElectrons();
 
-    ea.ReactWith(&eb);
-    //TODO: IMEPLEMENT ME
-    TestForceFail("It is currently impossible to check for a covalent bond in this build.");
+	// React the two elements:ea.ReactWith(&eb);
+    //TestForceFail("It is currently impossible to check for a covalent bond in this build.");
+	TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
+	TestEqInt("Check the first element's shared electron number after the reaction", ea.GetSharedElectrons(), numElectronsShared);
+	TestEqInt("Check the second element's shared electron number after the reaction", eb.GetSharedElectrons(), numElectronsShared);
+	TestEqInt("Check the first element's outer electron number after the reaction", ea.GetNumOuterElectrons(), (numOuterElectronA+1));
+	TestEqInt("Check the second element's outer electron number after the reaction", eb.GetNumOuterElectrons(), (numOuterElectronB+1));
+
 }
 
 //! Supporting function for TestIonicBond
@@ -48,28 +57,29 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
 
 void TestStep_Bonds()
 {
-    TestMessage("Test covalent bonds");
-    TestCovalentBond("H", "H", 1);
-    TestCovalentBond("Li", "H", 1);
-    TestCovalentBond("Na", "H", 1);
-    TestCovalentBond("K", "H", 1);
-    TestCovalentBond("Cs", "H", 1);
-    TestCovalentBond("Fr", "H", 1);
-    TestCovalentBond("F", "F", 1);
-    TestCovalentBond("Cl", "Cl", 1);
-    TestCovalentBond("Br", "Br", 1);
-    TestCovalentBond("I", "I", 1);
-    TestCovalentBond("F", "Cl", 1);
-    TestCovalentBond("F", "Br", 1);
-    TestCovalentBond("F", "I", 1);
-    TestCovalentBond("Cl", "Br", 1);
-    TestCovalentBond("Cl", "I", 1);
-    TestCovalentBond("H", "F", 1);
-    TestCovalentBond("H", "Cl", 1);
-    TestCovalentBond("H", "Br", 1);
-    TestCovalentBond("H", "I", 1);
-    TestCovalentBond("H", "At", 1);
-
+	TestMessage("Test covalent bonds");
+    //#if 0
+    TestCovalentBond("H", "H", 2);
+    TestCovalentBond("Li", "H", 2);
+    TestCovalentBond("Na", "H", 2);
+    TestCovalentBond("K", "H", 2);
+    TestCovalentBond("Cs", "H", 2);
+    TestCovalentBond("Fr", "H", 2);
+    TestCovalentBond("F", "F", 2);
+    TestCovalentBond("Cl", "Cl", 2);
+    TestCovalentBond("Br", "Br", 2);
+    TestCovalentBond("I", "I", 2);
+    TestCovalentBond("F", "Cl", 2);
+    TestCovalentBond("F", "Br", 2);
+    TestCovalentBond("F", "I", 2);
+    TestCovalentBond("Cl", "Br", 2);
+    TestCovalentBond("Cl", "I", 2);
+    TestCovalentBond("H", "F", 2);
+    TestCovalentBond("H", "Cl", 2);
+    TestCovalentBond("H", "Br", 2);
+    TestCovalentBond("H", "I", 2);
+    //TestCovalentBond("H", "At", 2);  // no At in rawElements[]
+    //#endif
     TestMessage("Test ionic compounds");
     TestIonicBond("Li", "F", 1);
     TestIonicBond("Li", "Cl", 1);
