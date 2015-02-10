@@ -344,11 +344,15 @@ bool Element::EfficientReactWith(Element* other1, Element* other2)
 {
 	bool containsAlkaliEarth = false;
 	int alkaliEarthPosition;
+	
+	// Element array used so we can keep track of which element is at what position.  
+	// Consequently, we don't have to do a lot of pointless statements to keep checking
+	// that position
 	Element *elementArray[3] = {this, other1, other2};
 
-	//initial check to see if we have an alkali earth (currently we only have 3 element bonding if
-	//there is an alkali earth metal.  If there is, we mark which element it is to make our lives
-	//easier later on
+	// initial check to see if we have an alkali earth (currently we only have 3 element bonding if
+	// there is an alkali earth metal.  If there is, we mark which element it is to make our lives
+	// easier later on
 	if(this->group == ALKALIEARTH)
 	{
 		containsAlkaliEarth = true;
@@ -367,51 +371,70 @@ bool Element::EfficientReactWith(Element* other1, Element* other2)
 
 	if(containsAlkaliEarth)
 	{
-		bool containsTwoHalogens = elementArray[(alkaliEarthPosition + 1) % 3]->group == HALOGEN && 
-			elementArray[(alkaliEarthPosition + 2) % 3]->group == HALOGEN;
+		//get the positions of the other elements in the array
+		int otherElement1Position = (alkaliEarthPosition + 1) % 3;
+		int otherElement2Position = (alkaliEarthPosition + 2) % 3;
+
+		//check to see if the other two elements are halogens (leads to covalent bonding)
+		bool containsTwoHalogens = elementArray[otherElement1Position]->group == HALOGEN && 
+			elementArray[otherElement2Position]->group == HALOGEN;
 
 		if(containsTwoHalogens)
 		{
 
-
+				//Logic to see how many electrons are shared with each element
 				elementArray[alkaliEarthPosition]->sharedElectrons = 4;
-				elementArray[(alkaliEarthPosition + 1) % 3]->sharedElectrons = 2;
-				elementArray[(alkaliEarthPosition + 2) % 3]->sharedElectrons = 2;
+				elementArray[otherElement1Position]->sharedElectrons = 2;
+				elementArray[otherElement2Position]->sharedElectrons = 2;
+
+				//set the bond type
 				elementArray[alkaliEarthPosition]->bondType = COVALENT;
-				elementArray[(alkaliEarthPosition + 1) % 3]->bondType = COVALENT;
-				elementArray[(alkaliEarthPosition + 2) % 3]->bondType = COVALENT;
+				elementArray[otherElement1Position]->bondType = COVALENT;
+				elementArray[otherElement2Position]->bondType = COVALENT;
 				
+				//we have a covalent bond, return
 				return true;
 		}
 
-		bool containsTwoHydrogens = elementArray[(alkaliEarthPosition + 1) % 3]->group == HYDROGEN && 
-			elementArray[(alkaliEarthPosition + 2) % 3]->group == HYDROGEN;
+		//check to see if the other two elements are hydrogen (leads to either covalent or ionic bonding)
+		bool containsTwoHydrogens = elementArray[otherElement1Position]->group == HYDROGEN && 
+			elementArray[otherElement2Position]->group == HYDROGEN;
 			
 		if(containsTwoHydrogens)
 		{
+				//If the alkali earth metals are either Beryllium or Magnesium, the bond will be covalent
+				//If they are the other alkali earth metals, they will make an ionic bond
 				bool isCovalentType = strcmp(elementArray[alkaliEarthPosition]->symbol, "Be") || 
-					strcmp(elementArray[alkaliEarthPosition]->symbol, "Ge");
+					strcmp(elementArray[alkaliEarthPosition]->symbol, "Mg");
 				
 				if(isCovalentType)
 				{
+					//logic to see how many electrons are shared with each element
 					elementArray[alkaliEarthPosition]->sharedElectrons = 4;
-					elementArray[(alkaliEarthPosition + 1) % 3]->sharedElectrons = 2;
-					elementArray[(alkaliEarthPosition + 2) % 3]->sharedElectrons = 2;
+					elementArray[otherElement1Position]->sharedElectrons = 2;
+					elementArray[otherElement2Position]->sharedElectrons = 2;
+
+					//set the bond type
 					elementArray[alkaliEarthPosition]->bondType = COVALENT;
-					elementArray[(alkaliEarthPosition + 1) % 3]->bondType = COVALENT;
-					elementArray[(alkaliEarthPosition + 2) % 3]->bondType = COVALENT;
+					elementArray[otherElement1Position]->bondType = COVALENT;
+					elementArray[otherElement2Position]->bondType = COVALENT;
+
+					//we have a covalent bond, return
+					return true;
 				}
 				else
 				{
-					//ionic
+					//logic to see how any electrons are donated
 					int electronsDonated = 1;
-					elementArray[(alkaliEarthPosition + 1) % 3]->numOuterElectrons += electronsDonated;
-					elementArray[(alkaliEarthPosition + 2) % 3]->numOuterElectrons += electronsDonated;
+					elementArray[otherElement1Position]->numOuterElectrons += electronsDonated;
+					elementArray[otherElement2Position]->numOuterElectrons += electronsDonated;
 					
+					//set the bond type
 					elementArray[alkaliEarthPosition]->bondType = IONIC;
-					elementArray[(alkaliEarthPosition + 1) % 3]->bondType = IONIC;
-					elementArray[(alkaliEarthPosition + 2) % 3]->bondType = IONIC;
+					elementArray[otherElement1Position]->bondType = IONIC;
+					elementArray[otherElement2Position]->bondType = IONIC;
 					
+					//we have an ionic bond, return 
 					return true;
 				}
 		}
