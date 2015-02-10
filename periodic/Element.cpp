@@ -116,7 +116,9 @@ bool Element::ReactWith(Element* other)
 			{
 				this->bondType = POTENTIAL;
 				other->bondType = POTENTIAL;
+				return false;
 			}
+
 			break;
 		}
 		// If the first element is a halogen
@@ -158,6 +160,7 @@ bool Element::ReactWith(Element* other)
 			// if two alkali metals, nothing will occur
 			if(other->group == ALKALI)
 				return false;
+
 			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "Li") == 0 &&
 				strcmp(other->symbol, "I") == 0)
