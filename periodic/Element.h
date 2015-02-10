@@ -79,9 +79,6 @@ class Element
 
         //! Reacts this element with another one
         bool ReactWith(Element* other);
-		//! More Efficient version of ReactWith (will replace react with once all testing ensures
-		//! everything still holds true the way it should
-		bool EfficientReactWith(Element* other1, Element* other2);
         //! Reacts this element with two other elements
 		bool ReactWith(Element* other1, Element* other2);
 };

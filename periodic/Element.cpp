@@ -255,94 +255,7 @@ Christopher Culbertson, Associate Professor at Kansas State University
 Michael Ayala, Chemistry Major at UC Davis */
 bool Element::ReactWith(Element* other1, Element* other2)
 {
-    //If we have an alkali earth metal, there is a chance we can have a bond.
-    //initial check to ensure we don't waste our time.
-    if (this->group == ALKALIEARTH || other1->group == ALKALIEARTH || other2->group == ALKALIEARTH )
-    {
-        //If we have two halogens of the same type (plus an alkali earth already checked above, we have a covalent bond)
-        if ((this->group == HALOGEN && other1->group == HALOGEN && strcmp(this->name, other1->name) == 0) ||
-            (this->group == HALOGEN && other2->group == HALOGEN && strcmp(this->name, other2->name) == 0) ||
-            (other1->group == HALOGEN && other2->group == HALOGEN && strcmp(other1->name, other2->name) == 0))
-        {
-            if (this->group == ALKALIEARTH )
-            {
-                this->sharedElectrons = 4;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 2;
-            }
-            else if (other1->group == ALKALIEARTH)
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 4;
-                other2->sharedElectrons = 2;
-            }
-            else 
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 4;
-            }
-            this->bondType = COVALENT;
-            other1->bondType = COVALENT;
-            other2->bondType = COVALENT;
-            return true;
-        }
-
-        //If we have two hydrogens and either Beryllium or Magnesium, we have a covalent bond.  If statement has a lot of overhead, look for more efficient ways in the future
-        else if (((strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0) && strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0) && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0 && (strcmp(other2->symbol, "Be") == 0 || strcmp(other2->symbol, "Mg") == 0)))
-        {
-            if(strcmp(this->symbol, "Be") == 0 || strcmp(this->symbol, "Mg") == 0)
-            {
-                this->sharedElectrons = 4;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 2;
-            }
-            else if (strcmp(other1->symbol, "Be") == 0 || strcmp(other1->symbol, "Mg") == 0)
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 4;
-                other2->sharedElectrons = 2;
-            }
-            else
-            {
-                this->sharedElectrons = 2;
-                other1->sharedElectrons = 2;
-                other2->sharedElectrons = 4;
-            }
-            this->bondType = COVALENT;
-            other1->bondType = COVALENT;
-            other2->bondType = COVALENT;
-            return true;
-        }
-
-        //If we have two hydrogens plus the other alkali earth metals, we have a ionic bond.  Since we've already ensured we have an alkali earth metal, we can simply check for two hydrogens.
-        else if ((strcmp(this->symbol, "H") == 0 && strcmp(other1->symbol, "H") == 0) ||
-                    (strcmp(this->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0) ||
-                    (strcmp(other1->symbol, "H") == 0 && strcmp(other2->symbol, "H") == 0))
-        {
-            int electronsDonated = 1;
-			if(strcmp(this->symbol, "H") == 0)
-				this->numOuterElectrons += electronsDonated;
-			if(strcmp(other1->symbol, "H") == 0)
-				other1->numOuterElectrons += electronsDonated;
-			if(strcmp(other2->symbol, "H") == 0)
-				other2->numOuterElectrons += electronsDonated;
-
-            this->bondType = IONIC;
-            other1->bondType = IONIC;
-            other2->bondType = IONIC;
-            return true;
-        }
-        
-    }
-	return false;
-}
-
-bool Element::EfficientReactWith(Element* other1, Element* other2)
-{
-	bool containsAlkaliEarth = false;
+    bool containsAlkaliEarth = false;
 	int alkaliEarthPosition;
 	
 	// Element array used so we can keep track of which element is at what position.  
@@ -441,6 +354,7 @@ bool Element::EfficientReactWith(Element* other1, Element* other2)
 
 	return false;
 }
+
 
 static Element rawElements[] =
 {
