@@ -404,10 +404,9 @@ bool Element::EfficientReactWith(Element* other1, Element* other2)
 		{
 				//If the alkali earth metals are either Beryllium or Magnesium, the bond will be covalent
 				//If they are the other alkali earth metals, they will make an ionic bond
-				bool isCovalentType = strcmp(elementArray[alkaliEarthPosition]->symbol, "Be") || 
-					strcmp(elementArray[alkaliEarthPosition]->symbol, "Mg");
 				
-				if(isCovalentType)
+				if(strcmp(elementArray[alkaliEarthPosition]->symbol, "Be") == 0 ||
+					(strcmp(elementArray[alkaliEarthPosition]->symbol, "Mg") == 0))
 				{
 					//logic to see how many electrons are shared with each element
 					elementArray[alkaliEarthPosition]->sharedElectrons = 4;
