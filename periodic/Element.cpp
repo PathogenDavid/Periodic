@@ -83,32 +83,35 @@ bool Element::ReactWith(Element* other)
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 
-	//if any element is a noble gas, return immedeatly
+	// if any element is a noble gas, return immedeatly
 	if ( this->group == NOBLE || other->group == NOBLE)
 		return false;
 	
-	//figure out which group the first element is in and make a switch out of it
-	//as to avoid trudging through if after if after if statement
-	//and because we like efficiency :)
+	// figure out which group the first element is in and make a switch out of it
+	// as to avoid trudging through if after if after if statement
+	// and because we like efficiency :)
 	int firstElement = this->group;
 	switch(firstElement)
 	{
+		// If the first element is Hydrogen
 		case HYDROGEN:
 		{
-			//if we have 2 hydrogens, they form a covalent bond
+			// if we have 2 hydrogens, they form a covalent bond
 			if(other->group == HYDROGEN)
 			{
 				this->bondType = COVALENT;
 				other->bondType = COVALENT;
 				break;
 			}
-			//hydrogen will bond with any halogen and form a covalent bond
+			// hydrogen will bond with any halogen and form a covalent bond
 			else if (other->group == HALOGEN)
 			{
 				this->bondType = COVALENT;
 				other->bondType = COVALENT;
 				break;
 			}
+			// Hydrogen and any alkali earth have the potential to bond (such as another hydrogen)
+			// but cannot bond on their own.
 			else if (other->group == ALKALIEARTH)
 			{
 				this->bondType = POTENTIAL;
@@ -116,30 +119,31 @@ bool Element::ReactWith(Element* other)
 			}
 			break;
 		}
+		// If the first element is a halogen
 		case HALOGEN:
 		{
-			//if both elements are halogens, covalent bonding will occur
+			// if both elements are halogens, covalent bonding will occur
 			if(other->group == HALOGEN)
 			{
 				this->bondType = COVALENT;
 				other->bondType = COVALENT;
 				break;
 			}
-			//hydrogen will bond with any halogen and form a covalent bond
+			// hydrogen will bond with any halogen and form a covalent bond
 			else if (other->group == HYDROGEN)
 			{
 				this->bondType = COVALENT;
 				other->bondType = COVALENT;
 				break;
 			}
-			//if we have a alkali earth metal and a halogen we have the potential for a bond
+			// if we have an alkali earth metal and a halogen we have the potential for a bond
 			else if (other->group == ALKALIEARTH)
 			{
 				this->bondType = POTENTIAL;
 				other->bondType = POTENTIAL;
 				return false;
 			}
-			//unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "I") == 0 &&
 				strcmp(other->symbol, "Li") == 0)
 			{
@@ -148,12 +152,13 @@ bool Element::ReactWith(Element* other)
 			}
 			break;
 		}
+		//If the first element is an alkali metal
 		case ALKALI:
 		{
-			//if two alkali metals, nothing will occur
+			// if two alkali metals, nothing will occur
 			if(other->group == ALKALI)
 				return false;
-			//unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
+			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "Li") == 0 &&
 				strcmp(other->symbol, "I") == 0)
 			{
@@ -162,14 +167,17 @@ bool Element::ReactWith(Element* other)
 			}
 			break;
 		}
+		// if the first element is an alkali earth metal
 		case ALKALIEARTH:
 		{
+			// if we have an alkali earth metal and a halogen, we have the potential for a bond
 			if(other->group == HALOGEN)
 			{
 				this->bondType = POTENTIAL;
 				other->bondType = POTENTIAL;
 				return false;
 			}
+			// if we have an alkali earth metal and a halogen, we have the potential for a bond
 			else if (other->group == HYDROGEN)
 			{
 				this->bondType = POTENTIAL;
@@ -188,6 +196,14 @@ bool Element::ReactWith(Element* other)
 	{
 		case COVALENT:
 		{
+			// Covalent bonds are bonds in which electrons are shared between each other.  
+			// Therefore, we take the maxmimum number of electrons allowed in the outer shell 
+			// (2 for hydrogen and helium, 8 for everything else) and subtract from that the number of
+			// current outer electrons.  Then we will subject that value from the actual number of outer
+			// electrons (effectively making it zero).  Then we do the same process for the second element
+			// and add the two shared values together.  For our purposes here and now, that value will be 2.
+			// we will then add that shared combined value to both elements outer electrons shell and we'll
+			// get a full outer shell.
 			int sharedElectronsElem1;
 			int sharedElectronsElem2;
 			if(this->group == HYDROGEN)
@@ -221,6 +237,8 @@ bool Element::ReactWith(Element* other)
 		}
 		case IONIC:
 		{
+			// Ionic bonds are bonds in which electrons are donated from one element to the next.
+			// 
 			int electronsDonated;
 			//determine which element shares electrons
 			if(this->numOuterElectrons > other->numOuterElectrons)
@@ -379,6 +397,7 @@ static Element rawElements[] =
     Element("Chlorine", "Cl", HALOGEN, 17, 35.45, 7, 3.16),
     Element("Bromine", "Br", HALOGEN, 35, 79.094, 7, 2.96),
     Element("Iodine", "I", HALOGEN, 53, 126.90447, 7, 2.66),
+	Element("Astatine", "At", HALOGEN, 85, 210, 7, 2.2), 
     
     //Noble Gases
     Element("Helium", "He", NOBLE, 2, 4.002602, 2, 0),
