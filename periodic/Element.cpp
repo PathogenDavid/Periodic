@@ -340,6 +340,86 @@ bool Element::ReactWith(Element* other1, Element* other2)
 	return false;
 }
 
+bool Element::EfficientReactWith(Element* other1, Element* other2)
+{
+	bool containsAlkaliEarth = false;
+	int alkaliEarthPosition;
+	Element *elementArray[3] = {this, other1, other2};
+
+	//initial check to see if we have an alkali earth (currently we only have 3 element bonding if
+	//there is an alkali earth metal.  If there is, we mark which element it is to make our lives
+	//easier later on
+	if(this->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 0;
+	}
+	else if (other1->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 1;
+	}
+	else if (other2->group == ALKALIEARTH)
+	{
+		containsAlkaliEarth = true;
+		alkaliEarthPosition = 2;
+	}
+
+	if(containsAlkaliEarth)
+	{
+		bool containsTwoHalogens = elementArray[(alkaliEarthPosition + 1) % 3]->group == HALOGEN && 
+			elementArray[(alkaliEarthPosition + 2) % 3]->group == HALOGEN;
+
+		if(containsTwoHalogens)
+		{
+
+
+				elementArray[alkaliEarthPosition]->sharedElectrons = 4;
+				elementArray[(alkaliEarthPosition + 1) % 3]->sharedElectrons = 2;
+				elementArray[(alkaliEarthPosition + 2) % 3]->sharedElectrons = 2;
+				elementArray[alkaliEarthPosition]->bondType = COVALENT;
+				elementArray[(alkaliEarthPosition + 1) % 3]->bondType = COVALENT;
+				elementArray[(alkaliEarthPosition + 2) % 3]->bondType = COVALENT;
+				
+				return true;
+		}
+
+		bool containsTwoHydrogens = elementArray[(alkaliEarthPosition + 1) % 3]->group == HYDROGEN && 
+			elementArray[(alkaliEarthPosition + 2) % 3]->group == HYDROGEN;
+			
+		if(containsTwoHydrogens)
+		{
+				bool isCovalentType = strcmp(elementArray[alkaliEarthPosition]->symbol, "Be") || 
+					strcmp(elementArray[alkaliEarthPosition]->symbol, "Ge");
+				
+				if(isCovalentType)
+				{
+					elementArray[alkaliEarthPosition]->sharedElectrons = 4;
+					elementArray[(alkaliEarthPosition + 1) % 3]->sharedElectrons = 2;
+					elementArray[(alkaliEarthPosition + 2) % 3]->sharedElectrons = 2;
+					elementArray[alkaliEarthPosition]->bondType = COVALENT;
+					elementArray[(alkaliEarthPosition + 1) % 3]->bondType = COVALENT;
+					elementArray[(alkaliEarthPosition + 2) % 3]->bondType = COVALENT;
+				}
+				else
+				{
+					//ionic
+					int electronsDonated = 1;
+					elementArray[(alkaliEarthPosition + 1) % 3]->numOuterElectrons += electronsDonated;
+					elementArray[(alkaliEarthPosition + 2) % 3]->numOuterElectrons += electronsDonated;
+					
+					elementArray[alkaliEarthPosition]->bondType = IONIC;
+					elementArray[(alkaliEarthPosition + 1) % 3]->bondType = IONIC;
+					elementArray[(alkaliEarthPosition + 2) % 3]->bondType = IONIC;
+					
+					return true;
+				}
+		}
+	}
+
+	return false;
+}
+
 static Element rawElements[] =
 {
     //Alkali Metals
