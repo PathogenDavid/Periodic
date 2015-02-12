@@ -166,8 +166,9 @@ bool Element::ReactWith(Element* other)
 				this->bondType = IONIC;
 				other->bondType = IONIC;
 			}
-			break;
 			*/
+			break;
+
 		}
 		//If the first element is an alkali metal
 		case ALKALI:
@@ -198,8 +199,9 @@ bool Element::ReactWith(Element* other)
 				this->bondType = IONIC;
 				other->bondType = IONIC;
 			}
-			break;
 			*/
+			break;
+
 		}
 		// if the first element is an alkali earth metal
 		case ALKALIEARTH:
@@ -279,7 +281,6 @@ bool Element::ReactWith(Element* other)
 			this->sharedElectrons = shared;
 			other->sharedElectrons = shared;
 			return true;
-			break;
 		}
 		case IONIC:
 		{
@@ -300,12 +301,10 @@ bool Element::ReactWith(Element* other)
 				this->numOuterElectrons -= electronsDonated;
 			}
 			return true;
-			break;
 		}
 		default:
 		{
 			return false;
-			break;
 		}
 	}
 }
