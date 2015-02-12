@@ -359,6 +359,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
 				{
 					//logic to see how any electrons are donated
 					int electronsDonated = 1;
+					elementArray[alkaliEarthPosition]->numOuterElectrons -= 2*electronsDonated;
 					elementArray[otherElement1Position]->numOuterElectrons += electronsDonated;
 					elementArray[otherElement2Position]->numOuterElectrons += electronsDonated;
 					
