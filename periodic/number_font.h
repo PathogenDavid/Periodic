@@ -1,0 +1,12 @@
+#ifndef __NUMBER_FONT_H__
+#define __NUMBER_FONT_H__
+
+#define NUMBER_FONT_GLYPH_WIDTH 3
+#define NUMBER_FONT_GLYPH_HEIGHT 5
+#define NUMBER_FONT_GLYPH_COUNT 11 // 10 digits and the bad number symbol
+#define NUMBER_FONT_GLYPH_SIZE (NUMBER_FONT_GLYPH_WIDTH * NUMBER_FONT_GLYPH_HEIGHT)
+#define NUMBER_FONT_SIZE (NUMBER_FONT_GLYPH_SIZE * NUMBER_FONT_GLYPH_COUNT)
+
+extern const unsigned char number_font[NUMBER_FONT_SIZE];
+
+#endif
