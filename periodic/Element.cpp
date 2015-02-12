@@ -110,6 +110,13 @@ bool Element::ReactWith(Element* other)
 				other->bondType = COVALENT;
 				break;
 			}
+
+			else if (other->group == ALKALI)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
 			// Hydrogen and any alkali earth have the potential to bond (such as another hydrogen)
 			// but cannot bond on their own.
 			else if (other->group == ALKALIEARTH)
@@ -161,6 +168,13 @@ bool Element::ReactWith(Element* other)
 			if(other->group == ALKALI)
 				return false;
 
+			else if (other->group == HYDROGEN)
+			{
+				this->bondType = COVALENT;
+				other->bondType = COVALENT;
+				break;
+			}
+
 			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "Li") == 0 &&
 				strcmp(other->symbol, "I") == 0)
@@ -209,9 +223,15 @@ bool Element::ReactWith(Element* other)
 			// get a full outer shell.
 			int sharedElectronsElem1;
 			int sharedElectronsElem2;
+			//first element
 			if(this->group == HYDROGEN)
 			{
 				sharedElectronsElem1 = 2 - this->numOuterElectrons;
+				this->numOuterElectrons -= sharedElectronsElem1;
+			}
+			else if (this->group == ALKALI)
+			{
+				sharedElectronsElem1 = 1;
 				this->numOuterElectrons -= sharedElectronsElem1;
 			}
 			else
@@ -219,9 +239,15 @@ bool Element::ReactWith(Element* other)
 				sharedElectronsElem1 = 8 - this->numOuterElectrons;
 				this->numOuterElectrons -= sharedElectronsElem1;
 			}
+			//second element
 			if(other->group == HYDROGEN)
 			{
 				sharedElectronsElem2 = 2 - other->numOuterElectrons;
+				other->numOuterElectrons -= sharedElectronsElem2;
+			}
+			else if (other->group == ALKALI)
+			{
+				sharedElectronsElem2 = 1;
 				other->numOuterElectrons -= sharedElectronsElem2;
 			}
 			else
