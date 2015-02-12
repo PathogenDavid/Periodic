@@ -20,6 +20,7 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="number_font.cpp" />
     <ClCompile Include="periodic.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -30,6 +31,7 @@
     <ClInclude Include="coders_crux.gen.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementCube.h" />
+    <ClInclude Include="number_font.h" />
     <ClInclude Include="periodic.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

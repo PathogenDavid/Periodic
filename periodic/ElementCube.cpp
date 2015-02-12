@@ -1,4 +1,5 @@
 #include "coders_crux.gen.h" // Contains FB32 palette
+#include "number_font.h"
 #include "ElementCube.h"
 #include "Element.h"
 #include "periodic.h"
@@ -100,10 +101,15 @@ void ElementCube::Render()
     int stringHeight = CODERS_CRUX_GLYPH_HEIGHT - LETTER_DESCENDER_HEIGHT;
 
     // Add space for +/- symbol
-    //TODO: Need to handle other charges. (Like 2+) (Needs smaller font for numbers.)
     if (currentElement.GetCharge() != 0)
     {
         stringWidth += 3 + LETTER_SPACING;
+
+        // Add space for number
+        if (abs(currentElement.GetCharge()) > 1)
+        {
+            stringWidth += NUMBER_FONT_GLYPH_WIDTH + LETTER_SPACING;
+        }
     }
 
     int x = SCREEN_WIDTH / 2 - stringWidth / 2;
@@ -130,6 +136,12 @@ void ElementCube::Render()
         {
             v.fb32.plot(vec(x + 1, y + 0), CHARGE_COLOR);
             v.fb32.plot(vec(x + 1, y + 2), CHARGE_COLOR);
+        }
+
+        // Draw the number
+        if (abs(currentElement.GetCharge()) > 1)
+        {
+            DrawNumAt(x + 3 + LETTER_SPACING, y - 1, currentElement.GetCharge(), CHARGE_COLOR);
         }
     }
 
@@ -203,6 +215,25 @@ void ElementCube::DrawCharAt(int x, int y, char c)
         for (int j = 0; j < CODERS_CRUX_GLYPH_WIDTH; j++)
         {
             v.fb32.plot(vec(x + j, y + i), coders_crux[j + i * CODERS_CRUX_GLYPH_WIDTH + c * CODERS_CRUX_GLYPH_SIZE]);
+        }
+    }
+}
+
+void ElementCube::DrawNumAt(int x, int y, int num, int color)
+{
+    if (num < 0 || num >= 10)
+    {
+        num = 10; // Draw the bad number symbol
+    }
+
+    for (int i = 0; i < NUMBER_FONT_GLYPH_HEIGHT; i++)
+    {
+        for (int j = 0; j < NUMBER_FONT_GLYPH_WIDTH; j++)
+        {
+            if (number_font[j + i * NUMBER_FONT_GLYPH_WIDTH + num * NUMBER_FONT_GLYPH_SIZE])
+            {
+                v.fb32.plot(vec(x + j, y + i), color);
+            }
         }
     }
 }
