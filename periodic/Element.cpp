@@ -145,6 +145,12 @@ bool Element::ReactWith(Element* other)
 				other->bondType = COVALENT;
 				break;
 			}
+			else if (other->group == ALKALI)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC;
+				break;
+			}
 			// if we have an alkali earth metal and a halogen we have the potential for a bond
 			else if (other->group == ALKALIEARTH)
 			{
@@ -152,6 +158,7 @@ bool Element::ReactWith(Element* other)
 				other->bondType = POTENTIAL;
 				return false;
 			}
+			/*
 			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "I") == 0 &&
 				strcmp(other->symbol, "Li") == 0)
@@ -160,6 +167,7 @@ bool Element::ReactWith(Element* other)
 				other->bondType = IONIC;
 			}
 			break;
+			*/
 		}
 		//If the first element is an alkali metal
 		case ALKALI:
@@ -175,6 +183,14 @@ bool Element::ReactWith(Element* other)
 				break;
 			}
 
+			else if (other->group == HALOGEN)
+			{
+				this->bondType = IONIC;
+				other->bondType = IONIC;
+				break;
+			}
+
+			/*
 			// unfortuantly we need to hardcode in this case as it doens't follow the standard rule set
 			else if (strcmp(this->symbol, "Li") == 0 &&
 				strcmp(other->symbol, "I") == 0)
@@ -183,6 +199,7 @@ bool Element::ReactWith(Element* other)
 				other->bondType = IONIC;
 			}
 			break;
+			*/
 		}
 		// if the first element is an alkali earth metal
 		case ALKALIEARTH:
