@@ -31,3 +31,8 @@ int strcmp(const char* a, const char* b)
         b++;
     }
 }
+
+int abs(int x)
+{
+    return x < 0 ? -x : x;
+}
