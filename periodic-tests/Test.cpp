@@ -6,6 +6,9 @@
 //! Should only ever be set to true by testing functions, never false.
 static bool testIsFailing = false;
 
+static int numVerifications;
+static int numVerificationsFailing;
+
 //! Prefix used for messages printed by the testing framework.
 #define TEST_PREFIX "TEST: "
 
@@ -31,37 +34,45 @@ void __TestForceFail(const char* message, const char* file, unsigned int line)
 
 void __TestEqUint(const char* message, const char* file, unsigned int line, unsigned int actual, unsigned int expected)
 {
+    numVerifications++;
     if (actual != expected)
     {
         PrintTestFailure("EQ", "%d");
         testIsFailing = true;
+        numVerificationsFailing++;
     }
 }
 
 void __TestEqInt(const char* message, const char* file, unsigned int line, int actual, int expected)
 {
+    numVerifications++;
     if (actual != expected)
     {
         PrintTestFailure("EQ", "%d");
         testIsFailing = true;
+        numVerificationsFailing++;
     }
 }
 
 void __TestEqBool(const char* message, const char* file, unsigned int line, bool actual, bool expected)
 {
+    numVerifications++;
     if (actual != expected)
     {
         PrintTestFailure("EQ", "%d");
         testIsFailing = true;
+        numVerificationsFailing++;
     }
 }
 
 void __TestEqString(const char* message, const char* file, unsigned int line, const char* actual, const char* expected)
 {
+    numVerifications++;
     if (strcmp(actual, expected) != 0)
     {
         PrintTestFailure("EQ", "%s");
         testIsFailing = true;
+        numVerificationsFailing++;
     }
 }
 
@@ -69,3 +80,31 @@ bool TestIsFailing()
 {
     return testIsFailing;
 }
+
+void TestStart()
+{
+    numVerifications = 0;
+    numVerificationsFailing = 0;
+}
+
+void TestEnd()
+{
+    LOG(TEST_PREFIX "%d/%d verifications passed\n", numVerifications - numVerificationsFailing, numVerifications);
+}
+
+//void TestCovalentEnd()
+//{
+//    //each TestCovalentBond includes 7 tests 
+//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 7, numVerifications / 7);
+//}
+//void TestIonicEnd()
+//{
+//    //each TestIonicBond includes 5 tests
+//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 5, numVerifications / 5);
+//
+//}
+//void TestTripleEnd()
+//{
+//    //each TestTripleBond includes 5 tests
+//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 5, numVerifications / 5);
+//}

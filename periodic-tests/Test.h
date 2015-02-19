@@ -11,6 +11,13 @@ void __TestEqInt(const char* message, const char* file, unsigned int line, int a
 void __TestEqBool(const char* message, const char* file, unsigned int line, bool actual, bool expected);
 void __TestEqString(const char* message, const char* file, unsigned int line, const char* actual, const char* expected);
 
+void TestStart();
+void TestEnd();
+/*
+void TestCovalentEnd();
+void TestIonicEnd();
+void TestTripleEnd();*/
+
 //! Returns true if the current test is failing
 bool TestIsFailing();
 
