@@ -8,6 +8,15 @@ static bool testIsFailing = false;
 
 static int numVerifications;
 static int numVerificationsFailing;
+static int numVerificationsRecord[5][2];
+static int passTestStep[5] = {0,0,0,0,0};
+static char testSteps[5][40] = {"TestStep_Strcmp:                 ",
+                                "TestStep_ElementBasic:           ",
+                                "TestStep_2ElementsCovalentBonds: ",
+                                "TestStep_2ElementsInoictBonds:   ",
+                                "TestStep_3ElementsBonds:         "};
+const char* pass = "Pass!";
+const char* fail = "Fail!";
 
 //! Prefix used for messages printed by the testing framework.
 #define TEST_PREFIX "TEST: "
@@ -81,6 +90,17 @@ bool TestIsFailing()
     return testIsFailing;
 }
 
+void TestInit()
+{
+    for (int i = 0; i < 5; i++)
+        passTestStep[i] = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 2; j++)
+            numVerificationsRecord[i][j] = 0;
+    }
+}
+
 void TestStart()
 {
     numVerifications = 0;
@@ -89,22 +109,39 @@ void TestStart()
 
 void TestEnd()
 {
-    LOG(TEST_PREFIX "%d/%d verifications passed\n", numVerifications - numVerificationsFailing, numVerifications);
+    //LOG(TEST_PREFIX "%d/%d verifications passed\n", numVerifications - numVerificationsFailing, numVerifications);
+    for (int i = 0; i < 5; i++)
+    {
+        if (passTestStep[i] == 0)
+        {
+            if (numVerificationsFailing == 0)
+                passTestStep[i] = 1; 
+            else
+                passTestStep[i] = -1; 
+            break;
+        }
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        if (numVerificationsRecord[i][0] == 0)
+        {
+            numVerificationsRecord[i][0] = numVerifications - numVerificationsFailing;
+            numVerificationsRecord[i][1] = numVerifications;
+            break;
+        }
+    }
+}
+void TestResultPrint()
+{
+    TestMessage("----------------Test results-----------------");
+    for (int i = 0; i < 5; i++)
+    {
+        LOG(TEST_PREFIX "%s", testSteps[i]);
+        if (passTestStep[i]>0)
+            LOG("%s ", pass);
+        else
+            LOG("%s ", fail);
+        LOG("%d/%d verifications passed\n", numVerificationsRecord[i][0], numVerificationsRecord[i][1]);
+    }
 }
 
-//void TestCovalentEnd()
-//{
-//    //each TestCovalentBond includes 7 tests 
-//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 7, numVerifications / 7);
-//}
-//void TestIonicEnd()
-//{
-//    //each TestIonicBond includes 5 tests
-//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 5, numVerifications / 5);
-//
-//}
-//void TestTripleEnd()
-//{
-//    //each TestTripleBond includes 5 tests
-//    LOG(TEST_PREFIX "%d/%d verifications passed\n", (numVerifications - numVerificationsFailing) / 5, numVerifications / 5);
-//}

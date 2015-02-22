@@ -21,10 +21,15 @@ static Metadata M = Metadata()
 //! Global test entry point, runs all tests steps and prints overall test status to the test reviewer.
 void main()
 {
+    TestInit();
+    TestStart();
     RUN_TEST(TestStep_Strcmp);
+    TestEnd();
+    TestStart();
     RUN_TEST(TestStep_ElementBasic);
+    TestEnd();
     RUN_TEST(TestStep_Bonds);
-
+    TestResultPrint();
     if (TestIsFailing())
     {
         TestMessage("!!!TEST FAILURE!!!");

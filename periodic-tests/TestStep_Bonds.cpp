@@ -179,7 +179,7 @@ void TestStep_Bonds()
     _TestTripleBond("Be", "I", "I", "COVALENT");
     _TestTripleBond("Be", "At", "At", "COVALENT");
     TestEnd();
-#if 0 
+#if 0
     _TestTripleBond("Mg", "F", "F", "IONIC");
     _TestTripleBond("Mg", "Cl", "Cl", "IONIC");
     _TestTripleBond("Mg", "Br", "Br", "IONIC");
