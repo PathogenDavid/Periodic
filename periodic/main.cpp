@@ -13,7 +13,7 @@ using namespace Sifteo;
 
 static Metadata M = Metadata()
     .title("Periodic Project")
-    .package("edu.ksu.periodic", "0.1")
+    .package("edu.ksu.periodic", "0.2")
     .icon(Icon)
     .cubeRange(NUM_CUBES)
 ;
