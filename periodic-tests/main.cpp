@@ -24,6 +24,7 @@ void main()
     RUN_TEST(TestStep_Strcmp);
     RUN_TEST(TestStep_ElementBasic);
     RUN_TEST(TestStep_Bonds);
+    RUN_TEST(TestStep_ObjectPool);
 
     if (TestIsFailing())
     {

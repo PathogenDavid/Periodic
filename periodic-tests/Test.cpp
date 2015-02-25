@@ -65,6 +65,18 @@ void __TestEqString(const char* message, const char* file, unsigned int line, co
     }
 }
 
+void __TestNePointer(const char* message, const char* file, unsigned int line, void* actual, void* expected)
+{
+    // We test using pointer difference to ensure that the test output doesn't change just because the pointer offset changed.
+    unsigned char* pointerDifference = (unsigned char*)((unsigned char*)actual - (unsigned char*)expected);
+
+    if (pointerDifference == 0)
+    {
+        PrintTestFailure("NE", "0x%X");
+        testIsFailing = true;
+    }
+}
+
 bool TestIsFailing()
 {
     return testIsFailing;

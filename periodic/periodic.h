@@ -5,6 +5,7 @@
 // Macros
 //------------------------------------------------------------------------
 #define Assert(x) ASSERT(x)
+#define AssertAlways() Assert(false)
 
 #define CountOfArray(a) ( sizeof(a) / sizeof(*a) )
 
@@ -18,6 +19,11 @@
 
 #define LETTER_SPACING 1
 #define LETTER_DESCENDER_HEIGHT 2
+
+//------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------
+typedef unsigned long size_t; // Sifteo doesn't declare size_t for some reason.
 
 //------------------------------------------------------------------------
 // Generic Utility Functions

@@ -32,6 +32,7 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="number_font.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="periodic.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

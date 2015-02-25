@@ -10,4 +10,7 @@ void TestStep_ElementBasic();
 //! Tests that different types of two element bonds work as expected
 void TestStep_Bonds();
 
+//! Tests the operation of the ObjectPool allocator
+void TestStep_ObjectPool();
+
 #endif

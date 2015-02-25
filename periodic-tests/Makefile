@@ -12,5 +12,6 @@ ASSETS_BUILD_PROOF := yes
 OBJS += TestStep_ElementBasic.o
 OBJS += TestStep_Strcmp.o
 OBJS += TestStep_Bonds.o
+OBJS += TestStep_ObjectPool.o
 
 include $(SDK_DIR)/Makefile.rules
