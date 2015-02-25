@@ -4,6 +4,26 @@
 #include "Element.h"
 #include "periodic.h"
 
+/*
+Order of adding electrons according to WolframAlpha:
+1. Right
+2. Left
+3. Top
+4. Bottom
+Repeat pattern as needed.
+Also used when rendering lines for the covalent bonds.
+*/
+enum LewisSides
+{
+    LRight = 0,
+    LLeft = 1,
+    LTop = 2,
+    LBottom = 3,
+
+    LFirst = LRight,
+    LLast = LBottom
+};
+
 void ElementCube::Init(int cubeId, int initialElementNum)
 {
     this->cubeId = cubeId;
@@ -185,6 +205,12 @@ void ElementCube::Render()
         }
     }
 
+    // Draw lines for covalent bonds 
+    DrawCovalentLine(LRight, stringWidth, stringHeight);
+    DrawCovalentLine(LBottom, stringWidth, stringHeight);
+    DrawCovalentLine(LLeft, stringWidth, stringHeight);
+    DrawCovalentLine(LTop, stringWidth, stringHeight);
+
     // Draw electrons:
     DrawLewisDots(stringWidth, stringHeight);
 
@@ -238,25 +264,46 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
     }
 }
 
-/*
-Order of adding electrons according to WolframAlpha:
-1. Right
-2. Left
-3. Top
-4. Bottom
-Repeat pattern as needed.
-*/
-enum LewisSides
+void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
 {
-    LRight = 0,
-    LLeft = 1,
-    LTop = 2,
-    LBottom = 3,
-
-    LFirst = LRight,
-    LLast = LBottom
-};
-
+    int x = 0;
+    int y = 0;
+    switch (sides)
+    {
+    case LRight:
+        x = SCREEN_WIDTH / 2 + stringWidth / 2;
+        y = SCREEN_HEIGHT / 2;
+        for (int i = 6; (x + i) < SCREEN_WIDTH; i++)
+        {
+            v.fb32.plot(vec(x + i, y), CHARGE_COLOR);
+        }
+        break;
+    case LBottom:
+        x = SCREEN_WIDTH / 2;
+        y = SCREEN_HEIGHT / 2 + stringHeight / 2;
+        for (int i = 4; (y + i) < SCREEN_HEIGHT; i++)
+        {
+            v.fb32.plot(vec(x, y + i), CHARGE_COLOR);
+        }
+        break;
+    case LLeft:
+        x = SCREEN_WIDTH / 2 - stringWidth / 2;
+        y = SCREEN_HEIGHT / 2;
+        for (int i = 6; (x - i) >= 0; i++)
+        {
+            v.fb32.plot(vec(x - i, y), CHARGE_COLOR);
+        }
+        break;
+    case LTop:
+        x = SCREEN_WIDTH / 2;
+        y = SCREEN_HEIGHT / 2 - stringHeight / 2;
+        for (int i = 4; (y - i) >= 0; i++)
+        {
+            v.fb32.plot(vec(x, y - i), CHARGE_COLOR);
+        }
+        break;
+    }
+}
 void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 {
     for (int s = LFirst; s <= LLast; s++)
