@@ -13,6 +13,11 @@ void __TestEqString(const char* message, const char* file, unsigned int line, co
 
 void __TestNePointer(const char* message, const char* file, unsigned int line, void* actual, void* expected);
 
+void TestInit();
+void TestStart();
+void TestEnd();
+void TestResultPrint();
+
 //! Returns true if the current test is failing
 bool TestIsFailing();
 

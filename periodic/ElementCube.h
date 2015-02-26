@@ -56,13 +56,15 @@ class ElementCube
         
         void SetDirty();// TODO: Make it so we can subscribe to an event when the element is updated?
     private:
-        //! Internal supporting function for drawing a bitmap font character at the specifed location
+        //! Internal supporting function for drawing a bitmap font character at the specified location
         void DrawCharAt(int x, int y, char c);
         //! Internal supporting function for drawing a bitmap font number at the specified location
         void DrawNumAt(int x, int y, int num, int color);
         //! Internal supporting function for drawing the lewis dot structure dots for this cube.
         //! The dots will be draw about the center of the cube, around the text assosicated with the given text dimensions.
         void DrawLewisDots(int stringWidth, int stringHeight);
+        //! Internal supporting function for drawing the line rendering for covalent bonds on specified sides of the cubes
+        void DrawCovalentLine(int sides, int stringWidth, int stringHeight);
 };
 
 #endif
