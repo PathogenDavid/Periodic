@@ -71,7 +71,7 @@ void Reaction::Process()
     // Choose the ideal compound and apply it:
     //--------------------------------------------------------------------------
     //TODO: Allow multiple compounds to form in one reaction when they don't overlap.
-    Compound* idealCompound;
+    Compound* idealCompound = NULL;
     for (int i = 0; i < possibleCompounds.Count(); i++)
     {
         Compound* compound = possibleCompounds[i];

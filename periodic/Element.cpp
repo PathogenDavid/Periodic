@@ -46,6 +46,7 @@ void Element::ResetToBasicState()
 
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
+    this->currentCompound = NULL;
 }
 
 //Getters
@@ -540,7 +541,6 @@ int Element::GetBondDataFor(Compound* compound, BondSide side)
 
 void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data, int otherData)
 {
-
     // Validate arguments
     Assert(side >= 0 && side < BondSide_Count);
     Assert(type >= 0 && type < BondType_Cound);
@@ -672,7 +672,7 @@ void Element::ApplyCompound(Compound* compound)
         int data = GetBondDataFor(side);
         Element* other = GetBondWith(side);
         Assert(other != NULL);
-        int otherData = other->GetBondDataFor(Bond::GetOppositeSide(side));
+        int otherData = other->GetBondDataFor(compound, Bond::GetOppositeSide(side));
 
         if (type == BondType_Covalent)
         {
