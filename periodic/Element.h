@@ -3,6 +3,7 @@
 
 #include "Bond.h"
 #include "BondSolution.h"
+#include "ElementSet.h"
 
 class Reaction;
 class Compound;
@@ -105,6 +106,8 @@ class Element
         Element* GetBondWith(BondSide side);
         Element* GetBondWith(groupState group);
         Element* GetBondWith(const char* symbol);
+
+        ElementSet* GetBondsWith(groupState group);
 
         bool GetBondWith(BondSide side, Element** element_out);
         bool GetBondWith(groupState group, Element** element_out);

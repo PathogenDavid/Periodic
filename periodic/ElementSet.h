@@ -2,8 +2,9 @@
 #define __ELEMENTSET_H__
 
 #include "Set.h"
-#include "Element.h"
+#include "periodic.h"
 
+class Element;
 typedef Set<Element, NUM_CUBES> ElementSet;
 
 #endif

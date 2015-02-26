@@ -45,15 +45,49 @@ void main()
         ElementCube(0, "H"),
         ElementCube(1, "H"),
         ElementCube(2, "F"),
-        //ElementCube(3, "F"),
-        //ElementCube(4, "Li"),
-        //ElementCube(5, "I"),
-        //ElementCube(6, "Li"),
-        //ElementCube(7, "Be"),
-        //ElementCube(8, "H"),
-        //ElementCube(9, "H"),
-        //ElementCube(10, "H"),
-        //ElementCube(11, "H")
+        //TODO: Make this less terrible and just instantiate all the cubes, but only actually use the ones available.
+        /*
+        Yes this looks kinda terrible, but it is useful for manual testing.
+
+        Some reactions you can make with this set:
+        H-H    :: Covalent
+        H-F    :: Covalent
+        H-Li   :: Covalent
+        H-Be   :: Potential
+        F-Li   :: Ionic
+        F-Be   :: Potential
+        Li-I   :: Ionic
+        F-Be-F :: Covalent
+        F-Ca-F :: Ionic
+        H-Be-H :: Covalent
+        */
+#if NUM_CUBES > 3
+        ElementCube(3, "F"),
+#if NUM_CUBES > 4
+        ElementCube(4, "Li"),
+#if NUM_CUBES > 5
+        ElementCube(5, "I"),
+#if NUM_CUBES > 6
+        ElementCube(6, "Li"),
+#if NUM_CUBES > 7
+        ElementCube(7, "Be"),
+#if NUM_CUBES > 8
+        ElementCube(8, "Ca"),
+#if NUM_CUBES > 9
+        ElementCube(9, "H"),
+#if NUM_CUBES > 10
+        ElementCube(10, "H"),
+#if NUM_CUBES > 11
+        ElementCube(11, "H")
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
     };
     cubes = _cubes;
 
