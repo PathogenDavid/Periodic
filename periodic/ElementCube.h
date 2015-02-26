@@ -35,6 +35,7 @@ class ElementCube
         //! Initializes this ElementCube with the specified cube ID and initial element index
         void Init(int cubeId, int initialElementNum);
     public:
+        ElementCube();
         //! Creates a new ElementCube with the specified cube ID and initial element index
         ElementCube(int cubeId, int initialElementNum = 0);
         //! Creates a new ElementCube with the specified cube ID and initial element symbol
@@ -47,22 +48,23 @@ class ElementCube
         //! Renders this ElementCube
         void Render();
 
-        //! Reacts this ElementCube with one other ElementCube.
-        void ReactWith(ElementCube* other);
-        //! Reacts this ElementCube with two other ElementCube instances.
-        void ReactWith(ElementCube* other1, ElementCube* other2);
-
         //! Returns the cube ID associated with this ElementCube.
         int GetCubeId();
-    
+
+        //! Returns the Element associated with this ElementCube.
+        Element* GetElement();
+        
+        void SetDirty();// TODO: Make it so we can subscribe to an event when the element is updated?
     private:
-        //! Internal supporting function for drawing a bitmap font character at the specifed location
+        //! Internal supporting function for drawing a bitmap font character at the specified location
         void DrawCharAt(int x, int y, char c);
         //! Internal supporting function for drawing a bitmap font number at the specified location
         void DrawNumAt(int x, int y, int num, int color);
         //! Internal supporting function for drawing the lewis dot structure dots for this cube.
         //! The dots will be draw about the center of the cube, around the text assosicated with the given text dimensions.
         void DrawLewisDots(int stringWidth, int stringHeight);
+        //! Internal supporting function for drawing the line rendering for covalent bonds on specified sides of the cubes
+        void DrawCovalentLine(BondSide sides, int stringWidth, int stringHeight);
 };
 
 #endif

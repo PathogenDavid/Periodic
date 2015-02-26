@@ -4,6 +4,25 @@
 #include "Element.h"
 #include "periodic.h"
 
+/*
+Order of adding electrons according to WolframAlpha:
+1. Right
+2. Left
+3. Top
+4. Bottom
+Repeat pattern as needed.
+*/
+enum LewisSides
+{
+    LRight = 0,
+    LLeft = 1,
+    LTop = 2,
+    LBottom = 3,
+
+    LFirst = LRight,
+    LLast = LBottom
+};
+
 void ElementCube::Init(int cubeId, int initialElementNum)
 {
     this->cubeId = cubeId;
@@ -23,6 +42,10 @@ void ElementCube::Init(int cubeId, int initialElementNum)
     {
         v.colormap[j].set(palette[h], palette[h + 1], palette[h + 2]);
     }
+}
+
+ElementCube::ElementCube()
+{
 }
 
 ElementCube::ElementCube(int cubeId, int initialElementNum)
@@ -52,34 +75,19 @@ void ElementCube::ResetElement()
     isDirty = true;//TODO: Right now the cubes get marked as dirty when they shouldn't.
 }
 
-void ElementCube::ReactWith(ElementCube* other)
-{
-    LOG("Attempting to react %s with %s.\n", this->currentElement.GetName(), other->currentElement.GetName());
-
-    if (this->currentElement.ReactWith(&other->currentElement))
-    {
-        LOG("They react!\n");
-        this->isDirty = true;
-        other->isDirty = true;
-    }
-}
-
-void ElementCube::ReactWith(ElementCube* other1, ElementCube* other2)
-{
-    LOG("Attempting to react %s, %s, and %s.\n", this->currentElement.GetName(), other1->currentElement.GetName(), other2->currentElement.GetName());
-
-    if (this->currentElement.ReactWith(&other1->currentElement, &other2->currentElement))
-    {
-        LOG("They react!\n");
-        this->isDirty = true;
-        other1->isDirty = true;
-        other2->isDirty = true;
-    }
-}
-
 int ElementCube::GetCubeId()
 {
     return cubeId;
+}
+
+Element* ElementCube::GetElement()
+{
+    return &currentElement;
+}
+
+void ElementCube::SetDirty()
+{
+    isDirty = true;
 }
 
 void ElementCube::Render()
@@ -124,7 +132,7 @@ void ElementCube::Render()
     }
 
     // Draw the +/- symbol:
-    if (currentElement.GetCharge() != 0 && currentElement.GetBondType() == IONIC)
+    if (currentElement.GetCharge() != 0 && currentElement.HasBondType(BondType_Ionic))
     {
         // Draw the line for the dash
         v.fb32.plot(vec(x + 0, y + 1), CHARGE_COLOR);
@@ -145,34 +153,16 @@ void ElementCube::Render()
         }
     }
 
-    // Draw covalent bond (basic):
-    if (currentElement.GetBondType() == COVALENT)
+    // Draw covalent bond lines:
+    for (int i = 0; i < BondSide_Count; i++)
     {
-        for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
-        {
-            const int size = 5;
-            int x = SCREEN_WIDTH - size - 1;
-            int y = 1 + i * (size + 1);
-
-            for (int xoff = 0; xoff < size; xoff++)
-            {
-                for (int yoff = 0; yoff < size; yoff++)
-                {
-                    int color = COVALENT_COLOR_OUTTER;
-
-                    if (xoff > 0 && xoff < (size - 1) && yoff > 0 && yoff < (size - 1))
-                    {
-                        color = COVALENT_COLOR_INNER;
-                    }
-
-                    v.fb32.plot(vec(x + xoff, y + yoff), color);
-                }
-            }
-        }
+        BondSide side = (BondSide)i;
+        if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
+        { DrawCovalentLine(side, stringWidth, stringHeight); }
     }
 
     // Draw potential reaction:
-    if (currentElement.GetBondType() == POTENTIAL)
+    if (currentElement.HasBondType(BondType_Potential))
     {
         // Draw border on the cube
         //NOTE: Relies on screen being square.
@@ -238,31 +228,63 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
     }
 }
 
-/*
-Order of adding electrons according to WolframAlpha:
-1. Right
-2. Left
-3. Top
-4. Bottom
-Repeat pattern as needed.
-*/
-enum LewisSides
+void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHeight)
 {
-    LRight = 0,
-    LLeft = 1,
-    LTop = 2,
-    LBottom = 3,
-
-    LFirst = LRight,
-    LLast = LBottom
-};
+    int x = 0;
+    int y = 0;
+    switch (side)
+    {
+    case BondSide_Right:
+        x = SCREEN_WIDTH / 2 + stringWidth / 2;
+        y = SCREEN_HEIGHT / 2;
+        for (int i = 6; (x + i) < SCREEN_WIDTH; i++)
+        {
+            v.fb32.plot(vec(x + i, y), CHARGE_COLOR);
+        }
+        break;
+    case  BondSide_Bottom:
+        x = SCREEN_WIDTH / 2;
+        y = SCREEN_HEIGHT / 2 + stringHeight / 2;
+        for (int i = 4; (y + i) < SCREEN_HEIGHT; i++)
+        {
+            v.fb32.plot(vec(x, y + i), CHARGE_COLOR);
+        }
+        break;
+    case  BondSide_Left:
+        x = SCREEN_WIDTH / 2 - stringWidth / 2;
+        y = SCREEN_HEIGHT / 2;
+        for (int i = 6; (x - i) >= 0; i++)
+        {
+            v.fb32.plot(vec(x - i, y), CHARGE_COLOR);
+        }
+        break;
+    case  BondSide_Top:
+        x = SCREEN_WIDTH / 2;
+        y = SCREEN_HEIGHT / 2 - stringHeight / 2;
+        for (int i = 4; (y - i) >= 0; i++)
+        {
+            v.fb32.plot(vec(x, y - i), CHARGE_COLOR);
+        }
+        break;
+    default:
+        AssertAlways();
+    }
+}
 
 void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 {
+    //TODO: This is a bit of a hack. We need to properly set the outer electron count to 0 when the orbital is filled.
+    if (currentElement.GetCharge() != 0 && currentElement.GetNumOuterElectrons() == 8)
+    {
+        return;
+    }
+
+    int numOuterElectrons = currentElement.GetNumOuterElectrons() - currentElement.GetSharedElectrons();
+
     for (int s = LFirst; s <= LLast; s++)
     {
         // Calculate the number of electrons on this side
-        int e = (currentElement.GetNumOuterElectrons() + 3 - s) / 4;
+        int e = (numOuterElectrons + 3 - s) / 4;
 
         int x = SCREEN_WIDTH / 2;
         int y = SCREEN_HEIGHT / 2;
@@ -279,9 +301,11 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
                 y += LETTER_DESCENDER_HEIGHT / 2;
                 break;
             case LTop:
+                x++; // Looks more natural one pixel to the right
                 y -= stringHeight / 2 + 2;
                 break;
             case LBottom:
+                x++; // Looks more natural one pixel to the right
                 y += stringHeight / 2 + 2;
                 break;
         }

@@ -9,6 +9,7 @@
     <ClCompile Include="TestStep_ElementBasic.cpp" />
     <ClCompile Include="TestStep_Strcmp.cpp" />
     <ClCompile Include="TestStep_Bonds.cpp" />
+    <ClCompile Include="TestStep_ObjectPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Test.h" />

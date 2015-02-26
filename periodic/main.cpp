@@ -2,40 +2,23 @@
 #include "coders_crux.gen.h"
 #include "Element.h"
 #include "ElementCube.h"
+#include "Reaction.h"
 #include "periodic.h" 
 
 #include <sifteo.h>
 
 using namespace Sifteo;
 
-#define NUM_CUBES 3
-#define MAX_REACTION_SIZE 3
-
 static Metadata M = Metadata()
     .title("Periodic Project")
-    .package("edu.ksu.periodic", "0.1")
+    .package("edu.ksu.periodic", "0.2")
     .icon(Icon)
     .cubeRange(NUM_CUBES)
 ;
 
-//! Array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
-ElementCube cubes[NUM_CUBES] =
-{
-    ElementCube(0, "H"),
-    ElementCube(1, "Be"),
-    ElementCube(2, "H")
-};
+//! Pointer to the array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
+ElementCube* cubes;
 
-//! Internal accounting for OnTouch, used to separate presses from releases.
-static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
-
-//! Counts the number of neighbors in the given neighborhood
-int CountNeighbors(Neighborhood* nh);
-//! Returns true if elementCube is found in the specified reactants array of size numReactants
-bool IsReactant(ElementCube** reactants, int numReactants, ElementCube* elementCube);
-//! This function recursively walks all cubes currently touching or indirectly touching the specified root cube and adds them to the speicifed reactants array.
-//! The size of the reactants array must be at least MAX_REACTION_SIZE, the used size will be placed in numReactants.
-void FindReactants(ElementCube** reactants, int* numReactants, ElementCube* root);
 //! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
 
@@ -54,6 +37,61 @@ void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsign
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
 void main()
 {
+    // Initialize ElementCubes:
+    // Due to a bug in the Sifteo linker, we can't statically initialize these outside of main.
+    // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
+    ElementCube _cubes[NUM_CUBES] =
+    {
+        ElementCube(0, "H"),
+        ElementCube(1, "H"),
+        ElementCube(2, "F"),
+        //TODO: Make this less terrible and just instantiate all the cubes, but only actually use the ones available.
+        /*
+        Yes this looks kinda terrible, but it is useful for manual testing.
+
+        Some reactions you can make with this set:
+        H-H    :: Covalent
+        H-F    :: Covalent
+        H-Li   :: Covalent
+        H-Be   :: Potential
+        F-Li   :: Ionic
+        F-Be   :: Potential
+        Li-I   :: Ionic
+        F-Be-F :: Covalent
+        F-Ca-F :: Ionic
+        H-Be-H :: Covalent
+        */
+#if NUM_CUBES > 3
+        ElementCube(3, "F"),
+#if NUM_CUBES > 4
+        ElementCube(4, "Li"),
+#if NUM_CUBES > 5
+        ElementCube(5, "I"),
+#if NUM_CUBES > 6
+        ElementCube(6, "Li"),
+#if NUM_CUBES > 7
+        ElementCube(7, "Be"),
+#if NUM_CUBES > 8
+        ElementCube(8, "Ca"),
+#if NUM_CUBES > 9
+        ElementCube(9, "H"),
+#if NUM_CUBES > 10
+        ElementCube(10, "H"),
+#if NUM_CUBES > 11
+        ElementCube(11, "H")
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+    };
+    cubes = _cubes;
+
+    //InitCubes();
     Events::cubeTouch.set(OnTouch);
     Events::neighborAdd.set(OnNeighborAdd);
     Events::neighborRemove.set(OnNeighborRemove);
@@ -71,51 +109,30 @@ void main()
     }
 }
 
-int CountNeighbors(Neighborhood* nh)
+////////////////////////////////////////////////////////////////////////////////
+// Reaction Building and Processing
+////////////////////////////////////////////////////////////////////////////////
+void AddNeighbors(int forCube, bool* hasBeenUsed)
 {
-    int ret = 0;
-
+    Neighborhood nh(forCube);
     for (int i = 0; i < NUM_SIDES; i++)
     {
-        if (nh->hasCubeAt((Side)i))
-        {
-            ret++;
-        }
-    }
+        // If there is no neighbor on this side, skip
+        if (!nh.hasNeighborAt((Side)i))
+        { continue; }
 
-    return ret;
-}
+        // Get the cube at that side
+        int neighborCube = nh.cubeAt((Side)i);
 
-bool IsReactant(ElementCube** reactants, int numReactants, ElementCube* elementCube)
-{
-    for (int i = 0; i < numReactants; i++)
-    {
-        if (reactants[i] == elementCube)
-        {
-            return true;
-        }
-    }
+        // Don't doubly process cubes
+        if (hasBeenUsed[neighborCube])
+        { continue; }
 
-    return false;
-}
-
-void FindReactants(ElementCube** reactants, int* numReactants, ElementCube* root)
-{
-    LOG("Adding %d to reactant collection.\n", root->GetCubeId());
-    reactants[*numReactants] = root;
-    (*numReactants)++;
-
-    Neighborhood nh(root->GetCubeId());
-    for (int i = 0; i < NUM_SIDES; i++)
-    {
-        if (nh.hasNeighborAt((Side)i))
-        {
-            ElementCube* neighbor = &cubes[nh.cubeAt((Side)i)];
-
-            // If this neighbor isn't already in the reactant collection, we search it too.
-            if (!IsReactant(reactants, *numReactants, neighbor))
-            { FindReactants(reactants, numReactants, neighbor); }
-        }
+        // Add the new neighbor as a bond, mark it as used, and process its neighbors too
+        ElementCube* neighbor = &cubes[neighborCube];
+        cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+        hasBeenUsed[neighborCube] = true;
+        AddNeighbors(neighborCube, hasBeenUsed);
     }
 }
 
@@ -125,53 +142,37 @@ void ProcessNeighborhood()
     for (int i = 0; i < NUM_CUBES; i++)
     { cubes[i].ResetElement(); }
 
-    //TODO: Currently only handles a single reaction. (IE: You can't use 8 cubes and make two separate reactions.)
-    
-    // Look or a cube that has neighbors
-    int rootCube = -1;
+    static Reaction reaction; //TODO: Reaction is static so that it is reset the next time we process the neighborhood. (This should be fixed with the TODO below.)
+    bool hasBeenUsed[NUM_CUBES];
+    PeriodicMemset(hasBeenUsed, 0, sizeof(hasBeenUsed));
+
     for (int i = 0; i < NUM_CUBES; i++)
     {
-        Neighborhood nh(i);
-        int numNeighbors = CountNeighbors(&nh);
-
-        if (numNeighbors == 0)
+        LOG("ProcessNeighborhood, iter = %d\n", i);
+        if (hasBeenUsed[i])
         {
             continue;
         }
 
-        rootCube = i;
-        LOG("Cube #%d with %d neighbors chosen as root of reaction\n", i, numNeighbors);
-        break;
-    }
+        Neighborhood nh(i);
+        reaction.Reset();
 
-    // No reaction
-    if (rootCube == -1)
-    {
-        return;
-    }
+        // Find the entire reaction:
+        reaction.Add(cubes[i].GetElement());
+        AddNeighbors(i, hasBeenUsed);
 
-    // Find all cubes in reaction:
-    ElementCube* reactants[MAX_REACTION_SIZE];
-    int numReactants = 0;
-
-    FindReactants(reactants, &numReactants, &cubes[rootCube]);
-    LOG("Got %d reactants.\n", numReactants);
-
-    if (numReactants == 3)
-    {
-        reactants[0]->ReactWith(reactants[1], reactants[2]);
-    }
-    else if (numReactants == 2)
-    {
-        reactants[0]->ReactWith(reactants[1]);
-    }
-    else
-    {
-        // Currently this is an unexpected condition
-        ASSERT(false);
+        if (reaction.Process())
+        {
+            //TODO: Right now resetting the reaction destroys state being used by the elements involved in the reaction,
+            // so we need to add reference counting to instances of Compound or something.
+            return;
+        }
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Sifteo Events
+////////////////////////////////////////////////////////////////////////////////
 void OnPress(unsigned cubeId)
 {
 }
@@ -185,6 +186,9 @@ void OnRelease(unsigned cubeId)
 
     ProcessNeighborhood();
 }
+
+//! Internal accounting for OnTouch, used to separate presses from releases.
+static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
 
 void OnTouch(void* sender, unsigned cubeId)
 {

@@ -3,6 +3,7 @@
 #include "periodic.h"
 #include "Element.h"
 
+
 //! Supporting function for TestCovalentBond
 void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, const char* message)
 {
@@ -18,12 +19,12 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
 
 	// React the two elements:ea.ReactWith(&eb);
     //TestForceFail("It is currently impossible to check for a covalent bond in this build.");
-	TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
+	//TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
+    TestForceFail("Need to update this test for new reaction system.");
 	TestEqInt("Check the first element's shared electron number after the reaction", ea.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the second element's shared electron number after the reaction", eb.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the first element's outer electron number after the reaction", ea.GetNumOuterElectrons(), (numOuterElectronA+1));
 	TestEqInt("Check the second element's outer electron number after the reaction", eb.GetNumOuterElectrons(), (numOuterElectronB+1));
-
 }
 
 //! Supporting function for TestIonicBond
@@ -37,7 +38,8 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
     TestEqBool("Get the anion", Element::GetRawElement(anion, &a), true);
 
     // React the two elements:
-    TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
+    //TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
+    TestForceFail("Need to update this test for new reaction system.");
     TestEqInt("Check the cation's charge after the reaction", c.GetCharge(), numElectronsDonated);
     TestEqInt("Check the anion's charge after the reaction", a.GetCharge(), -numElectronsDonated);
 }
@@ -53,7 +55,8 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
     TestEqBool("Get the second element", Element::GetRawElement(b, &eb), true);
     TestEqBool("Get the third element", Element::GetRawElement(c, &ec), true);
 
-    TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb, &ec), true);
+    //TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb, &ec), true);
+    TestForceFail("Need to update this test for new reaction system.");
     // Element array used so we can keep track of which element is at what position.  
     // currently we only have 3 element bonding if
 	// there is an alkali earth metal.  Mark the position of the alkali earth metal
@@ -119,16 +122,9 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
 
 void TestStep_Bonds()
 {
+    TestStart();
 	TestMessage("Test 2 elements covalent bonds");
-    
     TestCovalentBond("H", "H", 2);
-    /* //no covalent bond between ALKALI and H
-    TestCovalentBond("Li", "H", 2);
-    TestCovalentBond("Na", "H", 2);
-    TestCovalentBond("K", "H", 2);
-    TestCovalentBond("Cs", "H", 2);
-    TestCovalentBond("Fr", "H", 2);
-    */
     TestCovalentBond("F", "F", 2);
     TestCovalentBond("Cl", "Cl", 2);
     TestCovalentBond("Br", "Br", 2);
@@ -142,10 +138,11 @@ void TestStep_Bonds()
     TestCovalentBond("H", "Cl", 2);
     TestCovalentBond("H", "Br", 2); 
     TestCovalentBond("H", "I", 2);
-    TestCovalentBond("H", "At", 2); 
+    TestCovalentBond("H", "At", 2);
+    TestEnd();
   
+    TestStart();
     TestMessage("Test 2 elements ionic compounds");
-    
     TestIonicBond("Li", "F", 1);
     TestIonicBond("Li", "Cl", 1);
     TestIonicBond("Li", "Br", 1);
@@ -170,7 +167,9 @@ void TestStep_Bonds()
     TestIonicBond("Fr", "Cl", 1);
     TestIonicBond("Fr", "Br", 1);
     TestIonicBond("Fr", "I", 1);
+    TestEnd();
 
+    TestStart(); 
     TestMessage("Test 3 elements bonds");
     _TestTripleBond("Be", "H", "H", "COVALENT");
     _TestTripleBond("Mg", "H", "H", "COVALENT");
@@ -182,7 +181,8 @@ void TestStep_Bonds()
     _TestTripleBond("Be", "Br", "Br", "COVALENT");
     _TestTripleBond("Be", "I", "I", "COVALENT");
     _TestTripleBond("Be", "At", "At", "COVALENT");
-#if 0 
+    TestEnd();
+#if 0
     _TestTripleBond("Mg", "F", "F", "IONIC");
     _TestTripleBond("Mg", "Cl", "Cl", "IONIC");
     _TestTripleBond("Mg", "Br", "Br", "IONIC");

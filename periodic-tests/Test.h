@@ -11,6 +11,13 @@ void __TestEqInt(const char* message, const char* file, unsigned int line, int a
 void __TestEqBool(const char* message, const char* file, unsigned int line, bool actual, bool expected);
 void __TestEqString(const char* message, const char* file, unsigned int line, const char* actual, const char* expected);
 
+void __TestNePointer(const char* message, const char* file, unsigned int line, void* actual, void* expected);
+
+void TestInit();
+void TestStart();
+void TestEnd();
+void TestResultPrint();
+
 //! Returns true if the current test is failing
 bool TestIsFailing();
 
@@ -26,5 +33,7 @@ bool TestIsFailing();
 #define TestEqInt(message, actual, expected) __TestEqInt(message, __FILE__, __LINE__, actual, expected)
 #define TestEqBool(message, actual, expected) __TestEqBool(message, __FILE__, __LINE__, actual, expected)
 #define TestEqString(message, actual, expected) __TestEqString(message, __FILE__, __LINE__, actual, expected)
+
+#define TestNePointer(message, actual, expected) __TestNePointer(message, __FILE__, __LINE__, actual, expected)
 
 #endif
