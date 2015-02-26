@@ -77,7 +77,6 @@ bool Reaction::Process()
     elements = Find(ALKALIEARTH);
     for (int i = 0; i < elements->Count(); i++)
     {
-        LOG("Processing alaklai earth #%d\n", i);
         element = elements->Get(i);
 
         // Two halogens
@@ -100,7 +99,6 @@ bool Reaction::Process()
 
         // Two hydrogens
         others = element->GetBondsWith(HYDROGEN);
-        LOG("Got %d hydrogens!\n", others->Count());
         if (others->Count() >= 2)
         {
             Compound* compound = StartNewCompound();

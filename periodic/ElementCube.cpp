@@ -11,7 +11,6 @@ Order of adding electrons according to WolframAlpha:
 3. Top
 4. Bottom
 Repeat pattern as needed.
-Also used when rendering lines for the covalent bonds.
 */
 enum LewisSides
 {
@@ -155,17 +154,12 @@ void ElementCube::Render()
     }
 
     // Draw covalent bond lines:
-    if (currentElement.GetBondTypeFor(BondSide_Right) == BondType_Covalent)
-    { DrawCovalentLine(LRight, stringWidth, stringHeight); }
-
-    if (currentElement.GetBondTypeFor(BondSide_Left) == BondType_Covalent)
-    { DrawCovalentLine(LLeft, stringWidth, stringHeight); }
-
-    if (currentElement.GetBondTypeFor(BondSide_Top) == BondType_Covalent)
-    { DrawCovalentLine(LTop, stringWidth, stringHeight); }
-
-    if (currentElement.GetBondTypeFor(BondSide_Bottom) == BondType_Covalent)
-    { DrawCovalentLine(LBottom, stringWidth, stringHeight); }
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        BondSide side = (BondSide)i;
+        if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
+        { DrawCovalentLine(side, stringWidth, stringHeight); }
+    }
 
     // Draw potential reaction:
     if (currentElement.HasBondType(BondType_Potential))
@@ -234,13 +228,13 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
     }
 }
 
-void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
+void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHeight)
 {
     int x = 0;
     int y = 0;
-    switch (sides)
+    switch (side)
     {
-    case LRight:
+    case BondSide_Right:
         x = SCREEN_WIDTH / 2 + stringWidth / 2;
         y = SCREEN_HEIGHT / 2;
         for (int i = 6; (x + i) < SCREEN_WIDTH; i++)
@@ -248,7 +242,7 @@ void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
             v.fb32.plot(vec(x + i, y), CHARGE_COLOR);
         }
         break;
-    case LBottom:
+    case  BondSide_Bottom:
         x = SCREEN_WIDTH / 2;
         y = SCREEN_HEIGHT / 2 + stringHeight / 2;
         for (int i = 4; (y + i) < SCREEN_HEIGHT; i++)
@@ -256,7 +250,7 @@ void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
             v.fb32.plot(vec(x, y + i), CHARGE_COLOR);
         }
         break;
-    case LLeft:
+    case  BondSide_Left:
         x = SCREEN_WIDTH / 2 - stringWidth / 2;
         y = SCREEN_HEIGHT / 2;
         for (int i = 6; (x - i) >= 0; i++)
@@ -264,7 +258,7 @@ void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
             v.fb32.plot(vec(x - i, y), CHARGE_COLOR);
         }
         break;
-    case LTop:
+    case  BondSide_Top:
         x = SCREEN_WIDTH / 2;
         y = SCREEN_HEIGHT / 2 - stringHeight / 2;
         for (int i = 4; (y - i) >= 0; i++)
@@ -272,8 +266,11 @@ void ElementCube::DrawCovalentLine(int sides, int stringWidth, int stringHeight)
             v.fb32.plot(vec(x, y - i), CHARGE_COLOR);
         }
         break;
+    default:
+        AssertAlways();
     }
 }
+
 void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 {
     //TODO: This is a bit of a hack. We need to properly set the outer electron count to 0 when the orbital is filled.

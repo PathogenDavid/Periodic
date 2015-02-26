@@ -64,7 +64,7 @@ class ElementCube
         //! The dots will be draw about the center of the cube, around the text assosicated with the given text dimensions.
         void DrawLewisDots(int stringWidth, int stringHeight);
         //! Internal supporting function for drawing the line rendering for covalent bonds on specified sides of the cubes
-        void DrawCovalentLine(int sides, int stringWidth, int stringHeight);
+        void DrawCovalentLine(BondSide sides, int stringWidth, int stringHeight);
 };
 
 #endif

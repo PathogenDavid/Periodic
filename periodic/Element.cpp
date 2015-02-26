@@ -153,6 +153,7 @@ void Element::AddBond(BondSide side, Element* with)
     if (bonds[side].GetElement() == with)
     { return; }
 
+    LOG("Element:0x%X[%s].AddBond(side=%d, with=Element:0x%X)\n", this, symbol, side, with);
     Assert(bonds[side].GetElement() == NULL);
     bonds[side] = Bond(side, with);
 
