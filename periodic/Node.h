@@ -2,6 +2,8 @@
 #include <sifteo/math.h>
 #include <sifteo/array.h>
 
+using namespace Sifteo;
+
 
 class Node
 {
@@ -15,11 +17,11 @@ public:
 	void setReactionMarker();
 	Node* findChild(char);
 	void appendChild(Node*);
-	Sifteo::Array<Node*, 10, uint32_t> getChildren();
+	Array<Node*, 10, uint32_t> getChildren();
 
 private:
 	char mContent;
 	bool mMarker;
-	Sifteo::Array<Node*, 10, uint32_t> mChildren;
+	Array<Node*, 10, uint32_t> mChildren;
 };
 

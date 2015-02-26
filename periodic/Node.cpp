@@ -22,7 +22,7 @@ void Node::setReactionMarker() { mMarker = true; }
 
 void Node::appendChild(Node* child) { mChildren.push_back(child); }
 
-Sifteo::Array<Node*, 10, uint32_t> Node::getChildren() { return mChildren; }
+Array<Node*, 10, uint32_t> Node::getChildren() { return mChildren; }
 
 Node* Node::findChild(char c)
 {
