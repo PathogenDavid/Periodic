@@ -154,31 +154,18 @@ void ElementCube::Render()
         }
     }
 
-    // Draw covalent bond (basic):
-    if (currentElement.HasBondType(BondType_Covalent))
-    {
-        for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
-        {
-            const int size = 5;
-            int x = SCREEN_WIDTH - size - 1;
-            int y = 1 + i * (size + 1);
+    // Draw covalent bond lines:
+    if (currentElement.GetBondTypeFor(BondSide_Right) == BondType_Covalent)
+    { DrawCovalentLine(LRight, stringWidth, stringHeight); }
 
-            for (int xoff = 0; xoff < size; xoff++)
-            {
-                for (int yoff = 0; yoff < size; yoff++)
-                {
-                    int color = COVALENT_COLOR_OUTTER;
+    if (currentElement.GetBondTypeFor(BondSide_Left) == BondType_Covalent)
+    { DrawCovalentLine(LLeft, stringWidth, stringHeight); }
 
-                    if (xoff > 0 && xoff < (size - 1) && yoff > 0 && yoff < (size - 1))
-                    {
-                        color = COVALENT_COLOR_INNER;
-                    }
+    if (currentElement.GetBondTypeFor(BondSide_Top) == BondType_Covalent)
+    { DrawCovalentLine(LTop, stringWidth, stringHeight); }
 
-                    v.fb32.plot(vec(x + xoff, y + yoff), color);
-                }
-            }
-        }
-    }
+    if (currentElement.GetBondTypeFor(BondSide_Bottom) == BondType_Covalent)
+    { DrawCovalentLine(LBottom, stringWidth, stringHeight); }
 
     // Draw potential reaction:
     if (currentElement.HasBondType(BondType_Potential))
@@ -193,12 +180,6 @@ void ElementCube::Render()
             v.fb32.plot(vec(SCREEN_WIDTH - 1, i), POTENTIAL_COLOR);
         }
     }
-
-    // Draw lines for covalent bonds 
-    DrawCovalentLine(LRight, stringWidth, stringHeight);
-    DrawCovalentLine(LBottom, stringWidth, stringHeight);
-    DrawCovalentLine(LLeft, stringWidth, stringHeight);
-    DrawCovalentLine(LTop, stringWidth, stringHeight);
 
     // Draw electrons:
     DrawLewisDots(stringWidth, stringHeight);
@@ -301,10 +282,12 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
         return;
     }
 
+    int numOuterElectrons = currentElement.GetNumOuterElectrons() - currentElement.GetSharedElectrons();
+
     for (int s = LFirst; s <= LLast; s++)
     {
         // Calculate the number of electrons on this side
-        int e = (currentElement.GetNumOuterElectrons() + 3 - s) / 4;
+        int e = (numOuterElectrons + 3 - s) / 4;
 
         int x = SCREEN_WIDTH / 2;
         int y = SCREEN_HEIGHT / 2;
