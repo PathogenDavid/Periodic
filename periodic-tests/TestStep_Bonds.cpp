@@ -18,7 +18,8 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
 
 	// React the two elements:ea.ReactWith(&eb);
     //TestForceFail("It is currently impossible to check for a covalent bond in this build.");
-	TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
+	//TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
+    TestForceFail("Need to update this test for new reaction system.");
 	TestEqInt("Check the first element's shared electron number after the reaction", ea.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the second element's shared electron number after the reaction", eb.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the first element's outer electron number after the reaction", ea.GetNumOuterElectrons(), (numOuterElectronA+1));
@@ -37,7 +38,8 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
     TestEqBool("Get the anion", Element::GetRawElement(anion, &a), true);
 
     // React the two elements:
-    TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
+    //TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
+    TestForceFail("Need to update this test for new reaction system.");
     TestEqInt("Check the cation's charge after the reaction", c.GetCharge(), numElectronsDonated);
     TestEqInt("Check the anion's charge after the reaction", a.GetCharge(), -numElectronsDonated);
 }
@@ -53,7 +55,8 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
     TestEqBool("Get the second element", Element::GetRawElement(b, &eb), true);
     TestEqBool("Get the third element", Element::GetRawElement(c, &ec), true);
 
-    TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb, &ec), true);
+    //TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb, &ec), true);
+    TestForceFail("Need to update this test for new reaction system.");
     // Element array used so we can keep track of which element is at what position.  
     // currently we only have 3 element bonding if
 	// there is an alkali earth metal.  Mark the position of the alkali earth metal
@@ -182,7 +185,7 @@ void TestStep_Bonds()
     _TestTripleBond("Be", "Br", "Br", "COVALENT");
     _TestTripleBond("Be", "I", "I", "COVALENT");
     _TestTripleBond("Be", "At", "At", "COVALENT");
-#if 0 
+#if 1
     _TestTripleBond("Mg", "F", "F", "IONIC");
     _TestTripleBond("Mg", "Cl", "Cl", "IONIC");
     _TestTripleBond("Mg", "Br", "Br", "IONIC");
