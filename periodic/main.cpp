@@ -16,13 +16,8 @@ static Metadata M = Metadata()
     .cubeRange(NUM_CUBES)
 ;
 
-//! Array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
-ElementCube cubes[NUM_CUBES] =
-{
-    ElementCube(0, "H"),
-    ElementCube(1, "Be"),
-    ElementCube(2, "H")
-};
+//! Pointer to the array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
+ElementCube* cubes;
 
 //! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
@@ -42,6 +37,18 @@ void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsign
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
 void main()
 {
+    // Initialize ElementCubes:
+    // Due to a bug in the Sifteo linker, we can't statically initialize these outside of main.
+    // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
+    ElementCube _cubes[NUM_CUBES] =
+    {
+        ElementCube(0, "H"),
+        ElementCube(1, "Be"),
+        ElementCube(2, "H")
+    };
+    cubes = _cubes;
+
+    //InitCubes();
     Events::cubeTouch.set(OnTouch);
     Events::neighborAdd.set(OnNeighborAdd);
     Events::neighborRemove.set(OnNeighborRemove);
