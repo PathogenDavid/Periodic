@@ -33,6 +33,9 @@ ElementSet* Reaction::Find(const char* symbol)
 
 void Reaction::Add(Element* element)
 {
+    if (elements.Contains(element))
+    { return; }
+
     elements.Add(element);
     element->SetReaction(this);
 }

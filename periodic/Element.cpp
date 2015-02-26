@@ -506,12 +506,12 @@ void Element::AddBond(BondSide side, Element* with)
     Assert(bonds[side].GetElement() == NULL);
     bonds[side] = Bond(side, with);
 
-    // Register the bond with the other element too:
-    with->AddBond(Bond::GetOppositeSide(side), this);
-
     // Add the bonded element to our reaction
     Assert(currentReaction != NULL);
     with->SetReaction(currentReaction);
+
+    // Register the bond with the other element too:
+    with->AddBond(Bond::GetOppositeSide(side), this);
 }
 
 void Element::SetReaction(Reaction* reaction)
