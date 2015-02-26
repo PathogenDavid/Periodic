@@ -529,22 +529,28 @@ void Element::SetReaction(Reaction* reaction)
 BondType Element::GetBondTypeFor(Compound* compound, BondSide side)
 {
     Assert(side >= 0 && side < BondSide_Count);
-
-    // Get the bond for the specified side:
     return bonds[side].GetTypeFor(compound);
+}
+
+int Element::GetBondDataFor(Compound* compound, BondSide side)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+    return bonds[side].GetDataFor(compound);
 }
 
 void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data, int otherData)
 {
-    // Don't apply the bond if we already did it
-    if (bonds[side].GetTypeFor(compound) == type && bonds[side].GetDataFor(compound) == data)
-    { return; }
 
     // Validate arguments
     Assert(side >= 0 && side < BondSide_Count);
     Assert(type >= 0 && type < BondType_Cound);
 
+    // Don't apply the bond if we already did it
+    if (bonds[side].GetTypeFor(compound) == type && bonds[side].GetDataFor(compound) == data)
+    { return; }
+
     // Set the type, and set the inverse type
+    compound->AddElement(this); // Add ourselves if we weren't already part of this compound.
     bonds[side].SetTypeFor(compound, type, data);
 
     bonds[side].GetElement()->SetBondTypeFor(compound, Bond::GetOppositeSide(side), type, otherData, data);
@@ -572,6 +578,12 @@ BondType Element::GetBondTypeFor(BondSide side)
     return bonds[side].GetTypeFor(currentCompound);
 }
 
+int Element::GetBondDataFor(BondSide side)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+    return bonds[side].GetDataFor(currentCompound);
+}
+
 bool Element::HasBondType(BondType type)
 {
     for (int i = 0; i < BondSide_Count; i++)
@@ -594,7 +606,7 @@ Element* Element::GetBondWith(groupState group)
     for (int i = 0; i < BondSide_Count; i++)
     {
         Element* ret = GetBondWith((BondSide)i);
-        if (ret->GetGroup() == group)
+        if (ret != NULL && ret->GetGroup() == group)
         {
             return ret;
         }
@@ -608,7 +620,7 @@ Element* Element::GetBondWith(const char* symbol)
     for (int i = 0; i < BondSide_Count; i++)
     {
         Element* ret = GetBondWith((BondSide)i);
-        if (strcmp(ret->GetSymbol(), symbol) == 0)
+        if (ret != NULL && strcmp(ret->GetSymbol(), symbol) == 0)
         {
             return ret;
         }
@@ -616,6 +628,10 @@ Element* Element::GetBondWith(const char* symbol)
 
     return NULL;
 }
+
+bool Element::GetBondWith(BondSide side, Element** element_out) { *element_out = GetBondWith(side); return !!*element_out; }
+bool Element::GetBondWith(groupState group, Element** element_out) { *element_out = GetBondWith(group); return !!*element_out; }
+bool Element::GetBondWith(const char* symbol, Element** element_out) { *element_out = GetBondWith(symbol); return !!*element_out; }
 
 bool Element::HasBondWith(groupState group)
 {
@@ -638,4 +654,45 @@ BondSide Element::SideOf(Element* otherElement)
     }
 
     return BondSide_Invalid;
+}
+
+void Element::ApplyCompound(Compound* compound)
+{
+    Assert(currentCompound == NULL);
+    Assert(compound != NULL);
+    
+    currentCompound = compound;
+
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        BondSide side = (BondSide)i;
+        BondType type = GetBondTypeFor(side);
+        if (type == BondType_None)
+        { continue; }
+        int data = GetBondDataFor(side);
+        Element* other = GetBondWith(side);
+        Assert(other != NULL);
+        int otherData = other->GetBondDataFor(Bond::GetOppositeSide(side));
+
+        if (type == BondType_Covalent)
+        {
+            int sharedFromMe = data - this->numOuterElectrons;
+            int sharedFromOther = otherData - other->numOuterElectrons;
+            
+            //this->numOuterElectrons += sharedFromOther; //TODO: Should we just remove the ones we are sharing instead? - I'm just going to remove this entirely for now.
+            this->sharedElectrons += sharedFromMe + sharedFromOther;
+        }
+        else if (type == BondType_Ionic)
+        {
+            // Figure out who shares the electrons: (Using baseElement so the method doesn't get confused when this is applied to the other element.)
+            if (this->baseElement->numOuterElectrons > other->baseElement->numOuterElectrons)
+            {
+                this->numOuterElectrons += 8 - this->baseElement->numOuterElectrons;
+            }
+            else
+            {
+                this->numOuterElectrons -= 8 - other->baseElement->numOuterElectrons;
+            }
+        }
+    }
 }

@@ -26,7 +26,7 @@ bool Compound::ContainsPotentialBonds()
 {
     for (int i = 0; i < elements.Count(); i++)
     {
-        for (int side = 0; side < BondSide_Count; i++)
+        for (int side = 0; side < BondSide_Count; side++)
         {
             if (elements[i]->GetBondTypeFor(this, (BondSide)side) == BondType_Potential)
             {
@@ -41,4 +41,12 @@ bool Compound::ContainsPotentialBonds()
 int Compound::GetIndex()
 {
     return index;
+}
+
+void Compound::Apply()
+{
+    for (int i = 0; i < elements.Count(); i++)
+    {
+        elements[i]->ApplyCompound(this);
+    }
 }

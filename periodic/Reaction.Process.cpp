@@ -19,25 +19,53 @@ void Reaction::Process()
     {
         element = elements->Get(i);
 
-        if (!dedupe->Contains(element) && (other = element->GetBondWith(HYDROGEN)))
+        if (!dedupe->Contains(element) && element->GetBondWith(HYDROGEN, &other))
         {
             dedupe->Add(other);
             element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 2);
         }
 
-        if (other = element->GetBondWith(HALOGEN))
+        if (element->GetBondWith(HALOGEN, &other))
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 8); }
 
-        if (other = element->GetBondWith(ALKALI))
+        if (element->GetBondWith(ALKALI, &other))
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 2); }
 
-        if (other = element->GetBondWith(ALKALIEARTH))
+        if (element->GetBondWith(ALKALIEARTH, &other))
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Potential); }
     }
     delete elements;
 
     //--------------------------------------------------------------------------
-    // Choose the ideal compound:
+    // Choose the ideal compound and apply it:
     //--------------------------------------------------------------------------
-    //TODO: Allow multiple compounds to form in one reaction.
+    //TODO: Allow multiple compounds to form in one reaction when they don't overlap.
+    Compound* idealCompound;
+    for (int i = 0; i < possibleCompounds.Count(); i++)
+    {
+        Compound* compound = possibleCompounds[i];
+
+        if (idealCompound == NULL)
+        {
+            idealCompound = compound;
+            continue;
+        }
+
+        if (idealCompound->ContainsPotentialBonds() && !compound->ContainsPotentialBonds())
+        {
+            idealCompound = compound;
+            continue;
+        }
+
+        if (idealCompound->GetElementCount() < compound->GetElementCount())
+        {
+            idealCompound = compound;
+            continue;
+        }
+    }
+
+    if (idealCompound != NULL)
+    {
+        idealCompound->Apply();
+    }
 }
