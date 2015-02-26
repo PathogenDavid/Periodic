@@ -1,12 +1,11 @@
-#ifndef ELEMENT_H
-#define ELEMENT_H
+#ifndef __ELEMENT_H__
+#define __ELEMENT_H__
 
 #include "Bond.h"
+#include "BondSolution.h"
 
 class Reaction;
-
-/*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
-enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
+class Compound;
 
 /*Enumeration to keep track of the group a element belongs in */
 enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL };
@@ -32,13 +31,12 @@ class Element
         int numOuterElectrons;
         //! The electronegativity for this element
 		double electroNegativity;
-        //! The type of bond that this element participates in (if any.)
-        bondState bondType;
         //! The number of electrons this element is sharing with neighboring elements.
         int sharedElectrons;
 
         Bond bonds[BondSide_Count];
         Reaction* currentReaction;
+        Compound* currentCompound;
     public:
         //! Creates a dead element, elements made with this constructor must be initialized with one of the static pseudoconstructors before use.
         Element();
@@ -61,8 +59,6 @@ class Element
         int GetNumOuterElectrons();
         //! Returns the electronegativity of this element
 		double GetElectroNegativity();
-        //! Returns the type of bond this element pariticpates in, if any
-        bondState GetBondType();
         //! Gets the number electrons this element shares with its neighbors
         int GetSharedElectrons();
 
@@ -85,12 +81,16 @@ class Element
         void ResetToBasicState();
 
         //! Reacts this element with another one
-        bool ReactWith(Element* other);
+        //bool ReactWith(Element* other);
         //! Reacts this element with two other elements
-		bool ReactWith(Element* other1, Element* other2);
+		//bool ReactWith(Element* other1, Element* other2);
 
         void AddBond(BondSide side, Element* with);
         void SetReaction(Reaction* reaction);
+        BondType GetBondTypeFor(Compound* compound, BondSide side);
+        void SetBondTypeFor(Compound* compound, BondSide side, BondType type);
+        BondType GetBondTypeFor(BondSide side);
+        bool HasBondType(BondType type);
 };
 
 #endif

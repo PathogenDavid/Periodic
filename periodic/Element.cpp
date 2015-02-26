@@ -19,8 +19,10 @@ Element::Element(const char* name, const char* symbol, groupState group, short a
     this->elementWeight = elementWeight;
     this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
-	this->bondType = NONE;
     this->sharedElectrons = 0;
+
+    PeriodicMemset(bonds, 0, sizeof(bonds));
+    this->currentReaction = NULL;
 }
 
 Element::Element(Element* baseElement)
@@ -39,9 +41,8 @@ void Element::ResetToBasicState()
     this->atomicNumber = baseElement->atomicNumber;
     this->elementWeight = baseElement->elementWeight;
     this->numOuterElectrons = baseElement->numOuterElectrons;
-	this->bondType = NONE;
-    this->sharedElectrons = 0;
     this->electroNegativity = baseElement->electroNegativity;
+    this->sharedElectrons = 0;
 
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
@@ -55,7 +56,6 @@ short Element::GetAtomicNumber() { return atomicNumber; }
 double Element::GetElementWeight() { return elementWeight; }
 int Element::GetNumOuterElectrons() { return numOuterElectrons; }
 double Element::GetElectroNegativity() { return electroNegativity; }
-bondState Element::GetBondType() { return bondType; }
 int Element::GetSharedElectrons() { return sharedElectrons; }
 
 /*Returns if the element is in its base state or not. */
@@ -73,6 +73,7 @@ int Element::GetCharge()
     return baseElement->numOuterElectrons - this->numOuterElectrons;
 }
 
+#if 0
 /*Checks to see if two elements will react.  If they do react, we need to change the bondType of the elements to show which way they react.  
 In a Ionic type reaction, we need to show which element gives an electron to the other element and update their respective counts.
 In certain cases where a bond would occur if another element (for now the same kind as one of the two in question) then we change 
@@ -421,7 +422,7 @@ bool Element::ReactWith(Element* other1, Element* other2)
 
 	return false;
 }
-
+#endif
 
 static Element rawElements[] =
 {
@@ -453,7 +454,6 @@ static Element rawElements[] =
     Element("Neon", "Ne", NOBLE, 10, 20.1797, 8, 0),
     Element("Argon", "Ar", NOBLE, 18, 39.948, 8, 0),
     Element("Krypton", "Kr", NOBLE, 36, 83.798, 8, 0),
-    
 };
 
 void Element::GetRawElement(int num, Element* elementOut)
@@ -498,6 +498,8 @@ int Element::GetRawElementCount()
 
 void Element::AddBond(BondSide side, Element* with)
 {
+    Assert(!IsRawElement());
+    
     if (bonds[side].GetElement() == with)
     { return; }
 
@@ -514,10 +516,45 @@ void Element::AddBond(BondSide side, Element* with)
 
 void Element::SetReaction(Reaction* reaction)
 {
+    Assert(!IsRawElement());
+
     if (currentReaction == reaction)
     { return; }
 
     Assert(currentReaction == NULL);
     currentReaction = reaction;
     reaction->Add(this);
+}
+
+BondType Element::GetBondTypeFor(Compound* compound, BondSide side)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+
+    // Get the bond for the specified side:
+    return bonds[side].GetTypeFor(compound);
+}
+
+void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+    Assert(type >= 0 && type < BondType_Cound);
+    bonds[side].SetTypeFor(compound, type);
+}
+
+BondType Element::GetBondTypeFor(BondSide side)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+    return bonds[side].GetTypeFor(currentCompound);
+}
+
+bool Element::HasBondType(BondType type)
+{
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        if (GetBondTypeFor((BondSide)i) == type)
+        {
+            return true;
+        }
+    }
+    return false;
 }

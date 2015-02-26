@@ -40,7 +40,10 @@ void Reaction::Add(Element* element)
 void Reaction::Reset()
 {
     elements.Clear();
-    nextCompoundIndex = 0;
+    
+    for (int i = 0; i < possibleCompounds.Count(); i++)
+    { delete possibleCompounds[i]; }
+    possibleCompounds.Clear();
 }
 
 void Reaction::Process()
@@ -50,3 +53,9 @@ void Reaction::Process()
     // Choose the ideal compound:
 }
 
+Compound* Reaction::StartNewCompound()
+{
+    Compound* ret = new Compound(possibleCompounds.Count());
+    possibleCompounds.Add(ret);
+    return ret;
+}

@@ -40,6 +40,11 @@ public:
         return items[index];
     }
 
+    T* operator[](int index)
+    {
+        return Get(index);
+    }
+
     int Count()
     {
         return numUsed;
@@ -61,8 +66,5 @@ public:
         return false;
     }
 };
-
-#include "Element.h"
-typedef Set<Element, NUM_CUBES> ElementSet;
 
 #endif

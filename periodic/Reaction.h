@@ -1,15 +1,15 @@
 #include "periodic.h"
 #include "Element.h"
 #include "Set.h"
-#include "ObjectPool.h"
+#include "Compound.h"
 
 #include <sifteo.h>
 
-class Reaction// : ObjectPool<Reaction, NUM_CUBES>
+class Reaction
 {
 private:
     ElementSet elements;
-    int nextCompoundIndex;
+    Set<Compound, MAX_COMPOUNDS> possibleCompounds;
 public:
     Reaction();
     ElementSet* Find(groupState group);
@@ -18,4 +18,6 @@ public:
     void Reset();
 
     void Process();
+private:
+    Compound* StartNewCompound();
 };

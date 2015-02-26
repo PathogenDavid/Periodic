@@ -25,6 +25,10 @@ void ElementCube::Init(int cubeId, int initialElementNum)
     }
 }
 
+ElementCube::ElementCube()
+{
+}
+
 ElementCube::ElementCube(int cubeId, int initialElementNum)
 {
     Init(cubeId, initialElementNum);
@@ -52,31 +56,6 @@ void ElementCube::ResetElement()
     isDirty = true;//TODO: Right now the cubes get marked as dirty when they shouldn't.
 }
 
-void ElementCube::ReactWith(ElementCube* other)
-{
-    LOG("Attempting to react %s with %s.\n", this->currentElement.GetName(), other->currentElement.GetName());
-
-    if (this->currentElement.ReactWith(&other->currentElement))
-    {
-        LOG("They react!\n");
-        this->isDirty = true;
-        other->isDirty = true;
-    }
-}
-
-void ElementCube::ReactWith(ElementCube* other1, ElementCube* other2)
-{
-    LOG("Attempting to react %s, %s, and %s.\n", this->currentElement.GetName(), other1->currentElement.GetName(), other2->currentElement.GetName());
-
-    if (this->currentElement.ReactWith(&other1->currentElement, &other2->currentElement))
-    {
-        LOG("They react!\n");
-        this->isDirty = true;
-        other1->isDirty = true;
-        other2->isDirty = true;
-    }
-}
-
 int ElementCube::GetCubeId()
 {
     return cubeId;
@@ -85,6 +64,11 @@ int ElementCube::GetCubeId()
 Element* ElementCube::GetElement()
 {
     return &currentElement;
+}
+
+void ElementCube::SetDirty()
+{
+    isDirty = true;
 }
 
 void ElementCube::Render()
@@ -129,7 +113,7 @@ void ElementCube::Render()
     }
 
     // Draw the +/- symbol:
-    if (currentElement.GetCharge() != 0 && currentElement.GetBondType() == IONIC)
+    if (currentElement.GetCharge() != 0 && currentElement.HasBondType(BondType_Ionic))
     {
         // Draw the line for the dash
         v.fb32.plot(vec(x + 0, y + 1), CHARGE_COLOR);
@@ -151,7 +135,7 @@ void ElementCube::Render()
     }
 
     // Draw covalent bond (basic):
-    if (currentElement.GetBondType() == COVALENT)
+    if (currentElement.HasBondType(BondType_Covalent))
     {
         for (int i = 0; i < currentElement.GetSharedElectrons() / 2; i++)
         {
@@ -177,7 +161,7 @@ void ElementCube::Render()
     }
 
     // Draw potential reaction:
-    if (currentElement.GetBondType() == POTENTIAL)
+    if (currentElement.HasBondType(BondType_Potential))
     {
         // Draw border on the cube
         //NOTE: Relies on screen being square.

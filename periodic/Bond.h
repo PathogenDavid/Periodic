@@ -1,7 +1,11 @@
 #ifndef __BOND_H__
 #define __BOND_H__
 
+#include "BondSolution.h"
+#include "Set.h"
+
 class Element;
+class Compound;
 
 enum BondSide // Should match order and values of Sifteo's Side type.
 {
@@ -13,30 +17,23 @@ enum BondSide // Should match order and values of Sifteo's Side type.
     BondSide_Invalid = -1
 };
 
-enum BondType
-{
-    BondType_None,
-    BondType_Ionic,
-    BondType_Covalent,
-    BondType_Potential,
-};
-
 class Bond
 {
 private:
     Element* with;
     BondSide side;
-    //BondType type;
+    BondSolution solutions[MAX_COMPOUNDS];
 public:
     Bond();
     Bond(BondSide side, Element* with);
 
     Element* GetElement();
     BondSide GetSide();
-    //BondType GetType();
-    //void SetType(BondType type);
 
     static BondSide GetOppositeSide(BondSide side);
+
+    BondType GetTypeFor(Compound* compound);
+    void SetTypeFor(Compound* compound, BondType type);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "Bond.h"
 #include "Element.h"
+#include "Compound.h"
 #include "periodic.h"
 
 #include <sifteo.h>
@@ -14,6 +15,7 @@ Bond::Bond(BondSide side, Element* with)
 {
     this->with = with;
     this->side = side;
+    PeriodicMemset(solutions, 0, sizeof(solutions));
 }
 
 Element* Bond::GetElement()
@@ -25,16 +27,6 @@ BondSide Bond::GetSide()
 {
     return side;
 }
-
-//BondType Bond::GetType()
-//{
-//    return type;
-//}
-//
-//void Bond::SetType(BondType type)
-//{
-//    this->type = type;
-//}
 
 BondSide Bond::GetOppositeSide(BondSide side)
 {
@@ -52,4 +44,25 @@ BondSide Bond::GetOppositeSide(BondSide side)
         AssertAlways();
         return BondSide_Invalid;
     }
+}
+
+BondType Bond::GetTypeFor(Compound* compound)
+{
+    if (compound == NULL)
+    { return BondType_None; }
+
+    BondSolution* solution = &solutions[compound->GetIndex()];
+    
+    if (solution->GetCompound() == NULL)
+    { return BondType_None; }
+
+    Assert(solution->GetCompound() == compound);
+    return solution->GetType();
+}
+
+void Bond::SetTypeFor(Compound* compound, BondType type)
+{
+    BondSolution* solution = &solutions[compound->GetIndex()];
+    Assert(solution->GetCompound() == NULL || solution->GetCompound() == compound);
+    solutions[compound->GetIndex()] = BondSolution(compound, type);
 }
