@@ -17,9 +17,9 @@
   <ItemGroup>
     <ClCompile Include="assets.gen.cpp" />
     <ClCompile Include="Bond.cpp" />
+    <ClCompile Include="BondSolution.cpp" />
     <ClCompile Include="coders_crux.gen.cpp" />
     <ClCompile Include="Element.cpp" />
-    <ClCompile Include="ElementCollection.cpp" />
     <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="number_font.cpp" />
@@ -32,9 +32,10 @@
   <ItemGroup>
     <ClInclude Include="assets.gen.h" />
     <ClInclude Include="Bond.h" />
+    <ClInclude Include="BondSolution.h" />
     <ClInclude Include="coders_crux.gen.h" />
     <ClInclude Include="Element.h" />
-    <ClInclude Include="ElementCollection.h" />
+    <ClInclude Include="Set.h" />
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="ObjectPool.h" />

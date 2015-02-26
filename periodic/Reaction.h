@@ -1,6 +1,6 @@
 #include "periodic.h"
 #include "Element.h"
-#include "ElementCollection.h"
+#include "Set.h"
 #include "ObjectPool.h"
 
 #include <sifteo.h>
@@ -8,11 +8,12 @@
 class Reaction// : ObjectPool<Reaction, NUM_CUBES>
 {
 private:
-    ElementCollection elements;
+    ElementSet elements;
+    int nextCompoundIndex;
 public:
     Reaction();
-    ElementCollection* Find(groupState group);
-    ElementCollection* Find(const char* symbol);
+    ElementSet* Find(groupState group);
+    ElementSet* Find(const char* symbol);
     void Add(Element* element);
     void Reset();
 

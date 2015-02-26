@@ -1,13 +1,13 @@
 #include "Reaction.h"
-#include "ElementCollection.h"
+#include "Element.h"
 
 Reaction::Reaction()
 {
 }
 
-ElementCollection* Reaction::Find(groupState group)
+ElementSet* Reaction::Find(groupState group)
 {
-    ElementCollection* ret = new ElementCollection();
+    ElementSet* ret = new ElementSet();
     for (int i = 0; i < elements.Count(); i++)
     {
         if (elements.Get(i)->GetGroup() == group)
@@ -18,9 +18,9 @@ ElementCollection* Reaction::Find(groupState group)
     return ret;
 }
 
-ElementCollection* Reaction::Find(const char* symbol)
+ElementSet* Reaction::Find(const char* symbol)
 {
-    ElementCollection* ret = new ElementCollection();
+    ElementSet* ret = new ElementSet();
     for (int i = 0; i < elements.Count(); i++)
     {
         if (strcmp(elements.Get(i)->GetSymbol(), symbol) == 0)
@@ -40,6 +40,7 @@ void Reaction::Add(Element* element)
 void Reaction::Reset()
 {
     elements.Clear();
+    nextCompoundIndex = 0;
 }
 
 void Reaction::Process()
