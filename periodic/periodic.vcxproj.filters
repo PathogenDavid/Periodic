@@ -16,6 +16,8 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="periodic.cpp" />
     <ClCompile Include="number_font.cpp" />
+    <ClCompile Include="Trie.cpp" />
+    <ClCompile Include="Node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -31,6 +33,8 @@
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="number_font.h" />
+    <ClInclude Include="Trie.h" />
+    <ClInclude Include="Node.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">

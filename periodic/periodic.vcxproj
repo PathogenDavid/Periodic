@@ -20,8 +20,10 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="number_font.cpp" />
     <ClCompile Include="periodic.cpp" />
+    <ClCompile Include="Trie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -31,8 +33,10 @@
     <ClInclude Include="coders_crux.gen.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementCube.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="periodic.h" />
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16888AC4-0062-4D0B-81C9-B35063AFFE40}</ProjectGuid>
