@@ -15,6 +15,8 @@
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\SeniorProject\Node.cpp" />
+    <ClCompile Include="..\..\..\..\SeniorProject\Trie.cpp" />
     <ClCompile Include="assets.gen.cpp" />
     <ClCompile Include="Bond.cpp" />
     <ClCompile Include="BondSolution.cpp" />
@@ -32,6 +34,8 @@
     <Image Include="icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\SeniorProject\Node.h" />
+    <ClInclude Include="..\..\..\..\SeniorProject\Trie.h" />
     <ClInclude Include="assets.gen.h" />
     <ClInclude Include="Bond.h" />
     <ClInclude Include="BondSolution.h" />

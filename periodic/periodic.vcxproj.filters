@@ -21,6 +21,8 @@
     <ClCompile Include="BondSolution.cpp" />
     <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
+    <ClCompile Include="..\..\..\..\SeniorProject\Trie.cpp" />
+    <ClCompile Include="..\..\..\..\SeniorProject\Node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -43,6 +45,8 @@
     <ClInclude Include="Set.h" />
     <ClInclude Include="Compound.h" />
     <ClInclude Include="ElementSet.h" />
+    <ClInclude Include="..\..\..\..\SeniorProject\Trie.h" />
+    <ClInclude Include="..\..\..\..\SeniorProject\Node.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">
