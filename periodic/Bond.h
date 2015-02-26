@@ -33,7 +33,9 @@ public:
     static BondSide GetOppositeSide(BondSide side);
 
     BondType GetTypeFor(Compound* compound);
-    void SetTypeFor(Compound* compound, BondType type);
+    void SetTypeFor(Compound* compound, BondType type, int data);
+
+    int GetDataFor(Compound* compound);
 };
 
 #endif

@@ -534,12 +534,37 @@ BondType Element::GetBondTypeFor(Compound* compound, BondSide side)
     return bonds[side].GetTypeFor(compound);
 }
 
-void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type)
+void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data, int otherData)
 {
+    // Don't apply the bond if we already did it
+    if (bonds[side].GetTypeFor(compound) == type && bonds[side].GetDataFor(compound) == data)
+    { return; }
+
+    // Validate arguments
     Assert(side >= 0 && side < BondSide_Count);
     Assert(type >= 0 && type < BondType_Cound);
-    bonds[side].SetTypeFor(compound, type);
+
+    // Set the type, and set the inverse type
+    bonds[side].SetTypeFor(compound, type, data);
+
+    bonds[side].GetElement()->SetBondTypeFor(compound, Bond::GetOppositeSide(side), type, otherData, data);
 }
+
+void Element::SetBondTypeFor(Compound* compound, Element* otherElement, BondType type, int data, int otherData)
+{
+    BondSide side = SideOf(otherElement);
+    Assert(side != BondSide_Invalid);
+    SetBondTypeFor(compound, side, type, data, otherData);
+}
+
+void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data)
+{ SetBondTypeFor(compound, side, type, data, data); }
+void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type)
+{ SetBondTypeFor(compound, side, type, 0, 0); }
+void Element::SetBondTypeFor(Compound* compound, Element* otherElement, BondType type, int data)
+{ SetBondTypeFor(compound, otherElement, type, data, data); }
+void Element::SetBondTypeFor(Compound* compound, Element* otherElement, BondType type)
+{ SetBondTypeFor(compound, otherElement, type, 0, 0); }
 
 BondType Element::GetBondTypeFor(BondSide side)
 {
@@ -552,9 +577,65 @@ bool Element::HasBondType(BondType type)
     for (int i = 0; i < BondSide_Count; i++)
     {
         if (GetBondTypeFor((BondSide)i) == type)
+        { return true; }
+    }
+
+    return false;
+}
+
+Element* Element::GetBondWith(BondSide side)
+{
+    Assert(side >= 0 && side < BondSide_Count);
+    return bonds[side].GetElement();
+}
+
+Element* Element::GetBondWith(groupState group)
+{
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        Element* ret = GetBondWith((BondSide)i);
+        if (ret->GetGroup() == group)
         {
-            return true;
+            return ret;
         }
     }
-    return false;
+
+    return NULL;
+}
+
+Element* Element::GetBondWith(const char* symbol)
+{
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        Element* ret = GetBondWith((BondSide)i);
+        if (strcmp(ret->GetSymbol(), symbol) == 0)
+        {
+            return ret;
+        }
+    }
+
+    return NULL;
+}
+
+bool Element::HasBondWith(groupState group)
+{
+    return GetBondWith(group) != NULL;
+}
+
+bool Element::HasBondWith(const char* symbol)
+{
+    return GetBondWith(symbol) != NULL;
+}
+
+BondSide Element::SideOf(Element* otherElement)
+{
+    for (int i = 0; i < BondSide_Count; i++)
+    {
+        if (GetBondWith((BondSide)i) == otherElement)
+        {
+            return (BondSide)i;
+        }
+    }
+
+    return BondSide_Invalid;
 }

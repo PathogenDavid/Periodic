@@ -17,12 +17,14 @@ class BondSolution
 {
 private:
     BondType type;
+    int data;
     Compound* compound;
 public:
     BondSolution();
-    BondSolution(Compound* compound, BondType type);
+    BondSolution(Compound* compound, BondType type, int data);
     BondType GetType();
     Compound* GetCompound();
+    int GetData();
 };
 
 #endif

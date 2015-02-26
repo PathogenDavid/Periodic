@@ -87,10 +87,26 @@ class Element
 
         void AddBond(BondSide side, Element* with);
         void SetReaction(Reaction* reaction);
+        
         BondType GetBondTypeFor(Compound* compound, BondSide side);
+        void SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data, int otherData);
+        void SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data);
         void SetBondTypeFor(Compound* compound, BondSide side, BondType type);
+        void SetBondTypeFor(Compound* compound, Element* otherElement, BondType type, int data, int otherData);
+        void SetBondTypeFor(Compound* compound, Element* otherElement, BondType type, int data);
+        void SetBondTypeFor(Compound* compound, Element* otherElement, BondType type);
+
         BondType GetBondTypeFor(BondSide side);
         bool HasBondType(BondType type);
+
+        Element* GetBondWith(BondSide side);
+        Element* GetBondWith(groupState group);
+        Element* GetBondWith(const char* symbol);
+
+        bool HasBondWith(groupState group);
+        bool HasBondWith(const char* symbol);
+
+        BondSide SideOf(Element* otherElement);
 };
 
 #endif

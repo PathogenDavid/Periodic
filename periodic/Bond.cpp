@@ -60,9 +60,23 @@ BondType Bond::GetTypeFor(Compound* compound)
     return solution->GetType();
 }
 
-void Bond::SetTypeFor(Compound* compound, BondType type)
+void Bond::SetTypeFor(Compound* compound, BondType type, int data)
 {
     BondSolution* solution = &solutions[compound->GetIndex()];
     Assert(solution->GetCompound() == NULL || solution->GetCompound() == compound);
-    solutions[compound->GetIndex()] = BondSolution(compound, type);
+    solutions[compound->GetIndex()] = BondSolution(compound, type, data);
+}
+
+int Bond::GetDataFor(Compound* compound)
+{
+    if (compound == NULL)
+    { return 0; }
+
+    BondSolution* solution = &solutions[compound->GetIndex()];
+
+    if (solution->GetCompound() == NULL)
+    { return 0; }
+
+    Assert(solution->GetCompound() == compound);
+    return solution->GetData();
 }

@@ -34,10 +34,34 @@ public:
         numUsed++;
     }
 
+    int IndexOf(T* item)
+    {
+        for (int i = 0; i < numUsed; i++)
+        {
+            if (items[i] == item)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     T* Get(int index)
     {
-        Assert(index < numUsed);
+        Assert(index >= 0 && index < numUsed);
         return items[index];
+    }
+
+    void SetNull(int index)
+    {
+        Assert(index >= 0 && index < numUsed);
+        items[index] = NULL;
+    }
+
+    void SetNull(T* item)
+    {
+        SetNull(IndexOf(item));
     }
 
     T* operator[](int index)

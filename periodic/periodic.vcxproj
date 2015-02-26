@@ -26,6 +26,7 @@
     <ClCompile Include="number_font.cpp" />
     <ClCompile Include="periodic.cpp" />
     <ClCompile Include="Reaction.cpp" />
+    <ClCompile Include="Reaction.Process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />

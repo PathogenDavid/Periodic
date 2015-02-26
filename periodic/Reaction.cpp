@@ -49,13 +49,6 @@ void Reaction::Reset()
     possibleCompounds.Clear();
 }
 
-void Reaction::Process()
-{
-    // Determine all possible compounds:
-
-    // Choose the ideal compound:
-}
-
 Compound* Reaction::StartNewCompound()
 {
     Compound* ret = new Compound(possibleCompounds.Count());

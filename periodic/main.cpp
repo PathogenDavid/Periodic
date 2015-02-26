@@ -117,7 +117,10 @@ void ProcessNeighborhood()
         reaction.Add(cubes[i].GetElement());
         AddNeighbors(i, hasBeenUsed);
 
-        //TODO: Process the reaction
+        reaction.Process();
+
+        //TODO: Right now resetting the reaction destroys state being used by the elements involved in the reaction.
+        return;
     }
 }
 

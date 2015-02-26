@@ -20,6 +20,7 @@
     <ClCompile Include="Bond.cpp" />
     <ClCompile Include="BondSolution.cpp" />
     <ClCompile Include="Compound.cpp" />
+    <ClCompile Include="Reaction.Process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
