@@ -6,7 +6,7 @@ void Reaction::Process()
     Element* element;
     Element* other;
     ElementSet* elements;
-    ElementSet* dedupe;// Used to de-deupe two interactions with the same query
+    ElementSet* dedupe = new ElementSet();// Used to de-deupe two interactions with the same query
 
     //--------------------------------------------------------------------------
     // Determine all possible compounds:
@@ -14,7 +14,7 @@ void Reaction::Process()
 
     // Hydrogen - Hydrogen/Halogen/Alkali/AlkaliEarth
     elements = Find(HYDROGEN);
-    dedupe = new ElementSet();
+    dedupe->Clear();
     for (int i = 0; i < elements->Count(); i++)
     {
         element = elements->Get(i);
@@ -33,6 +33,37 @@ void Reaction::Process()
 
         if (element->GetBondWith(ALKALIEARTH, &other))
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Potential); }
+    }
+    delete elements;
+
+    // Halogen - Halogen/Alakali/AlakaliEarth
+    elements = Find(HALOGEN);
+    dedupe->Clear();
+    for (int i = 0; i < elements->Count(); i++)
+    {
+        element = elements->Get(i);
+
+        if (!dedupe->Contains(element) && element->GetBondWith(HALOGEN, &other))
+        {
+            dedupe->Add(other);
+            element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 8, 8);
+        }
+
+        if (element->GetBondWith(ALKALI, &other))
+        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic); }
+
+        if (element->GetBondWith(ALKALIEARTH, &other))
+        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Potential); }
+    }
+    delete elements;
+
+    // Li - I
+    elements = Find("Li");
+    for (int i = 0; i < elements->Count(); i++)
+    {
+        element = elements->Get(i);
+        if (element->GetBondWith("I"))
+        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic); }
     }
     delete elements;
 
