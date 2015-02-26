@@ -9,6 +9,8 @@
 
 #define CountOfArray(a) ( sizeof(a) / sizeof(*a) )
 
+#define PeriodicMemset(destination, value, count) Sifteo::memset8((uint8_t*)destination, (uint8_t)value, count)
+
 //------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------
@@ -19,6 +21,9 @@
 
 #define LETTER_SPACING 1
 #define LETTER_DESCENDER_HEIGHT 2
+
+#define NUM_CUBES 3
+#define MAX_REACTION_SIZE 3
 
 //------------------------------------------------------------------------
 // Types

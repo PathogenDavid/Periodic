@@ -54,6 +54,9 @@ class ElementCube
 
         //! Returns the cube ID associated with this ElementCube.
         int GetCubeId();
+
+        //! Returns the Element associated with this ElementCube.
+        Element* GetElement();
     
     private:
         //! Internal supporting function for drawing a bitmap font character at the specifed location

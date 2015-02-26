@@ -82,6 +82,11 @@ int ElementCube::GetCubeId()
     return cubeId;
 }
 
+Element* ElementCube::GetElement()
+{
+    return &currentElement;
+}
+
 void ElementCube::Render()
 {
     if (!isDirty)

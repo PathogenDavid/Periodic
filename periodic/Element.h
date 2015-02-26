@@ -1,6 +1,10 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include "Bond.h"
+
+class Reaction;
+
 /*Enumeration to keep track of the state of element at the current bonding process.  Potential is in there to show if a bond may have the potential to bond. */
 enum bondState { NONE, IONIC, COVALENT, POTENTIAL };
 
@@ -32,6 +36,9 @@ class Element
         bondState bondType;
         //! The number of electrons this element is sharing with neighboring elements.
         int sharedElectrons;
+
+        Bond bonds[BondSide_Count];
+        Reaction* currentReaction;
     public:
         //! Creates a dead element, elements made with this constructor must be initialized with one of the static pseudoconstructors before use.
         Element();
@@ -81,6 +88,9 @@ class Element
         bool ReactWith(Element* other);
         //! Reacts this element with two other elements
 		bool ReactWith(Element* other1, Element* other2);
+
+        void AddBond(BondSide side, Element* with);
+        void SetReaction(Reaction* reaction);
 };
 
 #endif

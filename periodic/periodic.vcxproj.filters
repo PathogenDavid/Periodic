@@ -16,6 +16,9 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="periodic.cpp" />
     <ClCompile Include="number_font.cpp" />
+    <ClCompile Include="ElementCollection.cpp" />
+    <ClCompile Include="Reaction.cpp" />
+    <ClCompile Include="Bond.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -32,6 +35,9 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Reaction.h" />
+    <ClInclude Include="ElementCollection.h" />
+    <ClInclude Include="Bond.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">

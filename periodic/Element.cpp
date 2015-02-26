@@ -1,12 +1,12 @@
 #include "periodic.h"
 #include "Element.h"
+#include "Reaction.h"
 #include <sifteo.h>
 
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
 {
 }
-
 
 /*Constructor for element type.  We don't pass in the bond type because it will always initially be none.  */
 Element::Element(const char* name, const char* symbol, groupState group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity)
@@ -42,6 +42,9 @@ void Element::ResetToBasicState()
 	this->bondType = NONE;
     this->sharedElectrons = 0;
     this->electroNegativity = baseElement->electroNegativity;
+
+    PeriodicMemset(bonds, 0, sizeof(bonds));
+    this->currentReaction = NULL;
 }
 
 //Getters
@@ -491,4 +494,30 @@ int Element::GetRawElementNum(const char* name)
 int Element::GetRawElementCount()
 {
     return CountOfArray(rawElements);
+}
+
+void Element::AddBond(BondSide side, Element* with)
+{
+    if (bonds[side].GetElement() == with)
+    { return; }
+
+    Assert(bonds[side].GetElement() == NULL);
+    bonds[side] = Bond(side, with);
+
+    // Register the bond with the other element too:
+    with->AddBond(Bond::GetOppositeSide(side), this);
+
+    // Add the bonded element to our reaction
+    Assert(currentReaction != NULL);
+    with->SetReaction(currentReaction);
+}
+
+void Element::SetReaction(Reaction* reaction)
+{
+    if (currentReaction == reaction)
+    { return; }
+
+    Assert(currentReaction == NULL);
+    currentReaction = reaction;
+    reaction->Add(this);
 }
