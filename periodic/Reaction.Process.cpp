@@ -1,7 +1,7 @@
 #include "Reaction.h"
 #include "Element.h"
 
-void Reaction::Process()
+bool Reaction::Process()
 {
     Element* element;
     Element* other;
@@ -67,6 +67,8 @@ void Reaction::Process()
     }
     delete elements;
 
+    delete dedupe;
+
     //--------------------------------------------------------------------------
     // Choose the ideal compound and apply it:
     //--------------------------------------------------------------------------
@@ -98,5 +100,7 @@ void Reaction::Process()
     if (idealCompound != NULL)
     {
         idealCompound->Apply();
+        return true;
     }
+    return false;
 }

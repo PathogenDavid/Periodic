@@ -17,7 +17,7 @@ public:
     void Add(Element* element);
     void Reset();
 
-    void Process();
+    bool Process();
 private:
     Compound* StartNewCompound();
 };

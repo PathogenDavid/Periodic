@@ -99,7 +99,7 @@ void ProcessNeighborhood()
     for (int i = 0; i < NUM_CUBES; i++)
     { cubes[i].ResetElement(); }
 
-    Reaction reaction;
+    static Reaction reaction; //TODO: Reaction is static so that it is reset the next time we process the neighborhood. (This should be fixed with the TODO below.)
     bool hasBeenUsed[NUM_CUBES];
     PeriodicMemset(hasBeenUsed, 0, sizeof(hasBeenUsed));
 
@@ -117,10 +117,12 @@ void ProcessNeighborhood()
         reaction.Add(cubes[i].GetElement());
         AddNeighbors(i, hasBeenUsed);
 
-        reaction.Process();
-
-        //TODO: Right now resetting the reaction destroys state being used by the elements involved in the reaction.
-        return;
+        if (reaction.Process())
+        {
+            //TODO: Right now resetting the reaction destroys state being used by the elements involved in the reaction,
+            // so we need to add reference counting to instances of Compound or something.
+            return;
+        }
     }
 }
 
