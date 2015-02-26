@@ -29,7 +29,9 @@ void main()
     RUN_TEST(TestStep_ElementBasic);
     TestEnd();
     RUN_TEST(TestStep_Bonds);
+    TestStart();
     RUN_TEST(TestStep_ObjectPool);
+    TestEnd();
 
     TestResultPrint();
     if (TestIsFailing())
