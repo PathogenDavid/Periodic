@@ -15,8 +15,6 @@
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\SeniorProject\Node.cpp" />
-    <ClCompile Include="..\..\..\..\SeniorProject\Trie.cpp" />
     <ClCompile Include="assets.gen.cpp" />
     <ClCompile Include="Bond.cpp" />
     <ClCompile Include="BondSolution.cpp" />
@@ -25,17 +23,17 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="number_font.cpp" />
     <ClCompile Include="periodic.cpp" />
     <ClCompile Include="Reaction.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
+    <ClCompile Include="Trie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\SeniorProject\Node.h" />
-    <ClInclude Include="..\..\..\..\SeniorProject\Trie.h" />
     <ClInclude Include="assets.gen.h" />
     <ClInclude Include="Bond.h" />
     <ClInclude Include="BondSolution.h" />
@@ -43,12 +41,14 @@
     <ClInclude Include="Compound.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementSet.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Set.h" />
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="periodic.h" />
     <ClInclude Include="Reaction.h" />
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16888AC4-0062-4D0B-81C9-B35063AFFE40}</ProjectGuid>
