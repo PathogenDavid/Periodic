@@ -1,6 +1,7 @@
 #include "periodic.h"
 #include "Element.h"
 #include <sifteo.h>
+#include "Trie.h"
 
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
@@ -80,6 +81,7 @@ Christopher Culbertson, Associate Professor at Kansas State University
 Michael Ayala, Chemistry Major at UC Davis */
 bool Element::ReactWith(Element* other)
 {
+
     //TODO: This method needs to become more complicated to where it stores state about what elements it is interacting with.
     //LOG("My electrons: %d, Other electrons: %d\n", this->numOuterElectrons, other->numOuterElectrons);
 

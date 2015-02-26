@@ -7,6 +7,12 @@ Node::Node()
 	mMarker = false;
 }
 
+Node::Node(int i)
+{
+    mContent = ' ';
+    mMarker = false;
+}
+
 
 Node::~Node()
 {
@@ -18,7 +24,7 @@ void Node::setContent(char c) { mContent = c; }
 
 bool Node::getReactionMarker() { return mMarker; }
 
-void Node::setReactionMarker() { mMarker = true; }
+void Node::setReactionMarker(bool marker) { mMarker = marker; }
 
 void Node::appendChild(Node* child) { mChildren.push_back(child); }
 

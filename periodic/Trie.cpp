@@ -3,7 +3,12 @@
 
 Trie::Trie()
 {
-	root = new Node();
+	
+}
+
+Trie::Trie(Node* n)
+{
+    this->root = n;
 }
 
 
@@ -30,7 +35,10 @@ void Trie::addBond(String<100> elementBond)
 		}
 		else
 		{
-			Node* temp = new Node();
+			Node* temp;
+temp->setContent(' ');
+temp->setReactionMarker(false);
+
 			temp->setContent(elementBond[i]);
 			current->appendChild(temp);
 			current = temp;

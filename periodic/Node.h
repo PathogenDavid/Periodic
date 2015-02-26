@@ -9,12 +9,13 @@ class Node
 {
 public:
 	Node();
+    Node(int);
 	~Node();
 
 	char getContent();
 	void setContent(char);
 	bool getReactionMarker();
-	void setReactionMarker();
+	void setReactionMarker(bool);
 	Node* findChild(char);
 	void appendChild(Node*);
 	Array<Node*, 10, uint32_t> getChildren();
