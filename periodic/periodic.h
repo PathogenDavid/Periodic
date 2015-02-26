@@ -22,7 +22,7 @@
 #define LETTER_SPACING 1
 #define LETTER_DESCENDER_HEIGHT 2
 
-#define NUM_CUBES 3
+#define NUM_CUBES 3 // 12 max
 #define MAX_REACTION_SIZE 3
 
 #define MAX_COMPOUNDS 5

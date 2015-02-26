@@ -62,7 +62,7 @@ bool Reaction::Process()
     for (int i = 0; i < elements->Count(); i++)
     {
         element = elements->Get(i);
-        if (element->GetBondWith("I"))
+        if (element->GetBondWith("I", &other))
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic); }
     }
     delete elements;

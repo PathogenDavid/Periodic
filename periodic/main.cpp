@@ -43,8 +43,17 @@ void main()
     ElementCube _cubes[NUM_CUBES] =
     {
         ElementCube(0, "H"),
-        ElementCube(1, "Be"),
-        ElementCube(2, "H")
+        ElementCube(1, "H"),
+        ElementCube(2, "F"),
+        //ElementCube(3, "F"),
+        //ElementCube(4, "Li"),
+        //ElementCube(5, "I"),
+        //ElementCube(6, "Li"),
+        //ElementCube(7, "Be"),
+        //ElementCube(8, "H"),
+        //ElementCube(9, "H"),
+        //ElementCube(10, "H"),
+        //ElementCube(11, "H")
     };
     cubes = _cubes;
 

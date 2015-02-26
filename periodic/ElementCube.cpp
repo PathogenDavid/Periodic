@@ -248,6 +248,12 @@ enum LewisSides
 
 void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 {
+    //TODO: This is a bit of a hack. We need to properly set the outer electron count to 0 when the orbital is filled.
+    if (currentElement.GetCharge() != 0 && currentElement.GetNumOuterElectrons() == 8)
+    {
+        return;
+    }
+
     for (int s = LFirst; s <= LLast; s++)
     {
         // Calculate the number of electrons on this side
@@ -268,9 +274,11 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
                 y += LETTER_DESCENDER_HEIGHT / 2;
                 break;
             case LTop:
+                x++; // Looks more natural one pixel to the right
                 y -= stringHeight / 2 + 2;
                 break;
             case LBottom:
+                x++; // Looks more natural one pixel to the right
                 y += stringHeight / 2 + 2;
                 break;
         }
