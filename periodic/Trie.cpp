@@ -3,6 +3,7 @@
 
 Trie::Trie()
 {
+<<<<<<< HEAD
 	
 }
 
@@ -10,6 +11,11 @@ Trie::Trie(Node* n)
 {
     this->root = n;
 }
+=======
+	root = new Node();
+}
+
+>>>>>>> e8569f07b15b8cea73157a3a617b89e07f6e80d4
 
 
 Trie::~Trie()
@@ -35,9 +41,13 @@ void Trie::addBond(String<100> elementBond)
 		}
 		else
 		{
+<<<<<<< HEAD
 			Node* temp;
 temp->setContent(' ');
 temp->setReactionMarker(false);
+=======
+			Node* temp = new Node();
+>>>>>>> e8569f07b15b8cea73157a3a617b89e07f6e80d4
 
 			temp->setContent(elementBond[i]);
 			current->appendChild(temp);

@@ -16,16 +16,13 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="periodic.cpp" />
     <ClCompile Include="number_font.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="Trie.cpp" />
-    <ClCompile Include="Node.cpp" />
-=======
     <ClCompile Include="Reaction.cpp" />
     <ClCompile Include="Bond.cpp" />
     <ClCompile Include="BondSolution.cpp" />
     <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
->>>>>>> 4e21b6c18ffba717a0e26a100a32eae02520f96d
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Trie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -41,10 +38,6 @@
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="number_font.h" />
-<<<<<<< HEAD
-    <ClInclude Include="Trie.h" />
-    <ClInclude Include="Node.h" />
-=======
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Reaction.h" />
     <ClInclude Include="Bond.h" />
@@ -52,7 +45,8 @@
     <ClInclude Include="Set.h" />
     <ClInclude Include="Compound.h" />
     <ClInclude Include="ElementSet.h" />
->>>>>>> 4e21b6c18ffba717a0e26a100a32eae02520f96d
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">

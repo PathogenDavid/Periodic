@@ -41,9 +41,9 @@
     <ClInclude Include="Compound.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementSet.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Set.h" />
     <ClInclude Include="ElementCube.h" />
-    <ClInclude Include="Node.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="periodic.h" />
