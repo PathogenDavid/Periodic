@@ -3,36 +3,28 @@
 
 Trie::Trie()
 {
-<<<<<<< HEAD
 	
 }
 
-Trie::Trie(Node* n)
-{
-    this->root = n;
-}
-=======
-	root = new Node();
-}
 
->>>>>>> e8569f07b15b8cea73157a3a617b89e07f6e80d4
 
 
 Trie::~Trie()
 {
 }
 
-void Trie::addBond(String<100> elementBond)
+void Trie::addBond(const char* elementBond)
 {
 	Node* current = root;
+	int length = strlen(elementBond);
 
-	if (elementBond.empty())
+	if (length == 0)
 	{
 		current->setReactionMarker();
 		return;
 	}
 
-	for (int i = 0; i < elementBond.size(); i++)
+	for (int i = 0; i < length; i++)
 	{
 		Node* child = current->findChild(elementBond[i]);
 		if (child != NULL)
@@ -41,30 +33,28 @@ void Trie::addBond(String<100> elementBond)
 		}
 		else
 		{
-<<<<<<< HEAD
 			Node* temp;
-temp->setContent(' ');
-temp->setReactionMarker(false);
-=======
+			temp->setContent(' ');
+			temp->setReactionMarker(false);
 			Node* temp = new Node();
->>>>>>> e8569f07b15b8cea73157a3a617b89e07f6e80d4
 
 			temp->setContent(elementBond[i]);
 			current->appendChild(temp);
 			current = temp;
 		}
-		if (i == elementBond.size() - 1)
+		if (i == length - 1)
 			current->setReactionMarker();
 	}
 }
 
 
-bool Trie::searchBond(String<100> elementBond)
+bool Trie::searchBond(const char* elementBond)
 {
+	int length = strlen(elementBond);
 	Node* current = root;
 	while (current != NULL)
 	{
-		for (int i = 0; i < elementBond.size(); i++)
+		for (int i = 0; i < length; i++)
 		{
 			Node* temp = current->findChild(elementBond[i]);
 			if (temp == NULL)
