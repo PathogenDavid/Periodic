@@ -1,7 +1,7 @@
 #include "Node.h"
 #include "periodic.h";
 
-class Trie
+class Trie : public ObjectPool<Trie, 1>
 {
 
 public:
