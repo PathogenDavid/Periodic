@@ -1,7 +1,7 @@
 #include <sifteo/array.h>
 #include "periodic.h";
 
-class Node
+class Node : public ObjectPool<Node, 100>
 {
 public:
 	Node();
