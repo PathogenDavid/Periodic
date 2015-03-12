@@ -55,8 +55,7 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
 }
 
 //! Supporting function for TestTripleBond
-//! a is the central element.
-//TODO: It seems like it'd make more sense to make b the central element.
+//! b is the central element.
 void __TestTripleBond(const char* a, const char* b, const char* c, BondType expectedBondType, const char* message)
 {
     // Load the elements
@@ -70,9 +69,9 @@ void __TestTripleBond(const char* a, const char* b, const char* c, BondType expe
 
     // Create a reaction and process it
     Reaction reaction;
-    reaction.Add(&ea);
-    ea.AddBond(BondSide_Left, &eb);
-    ea.AddBond(BondSide_Right, &ec);
+    reaction.Add(&eb);
+    eb.AddBond(BondSide_Left, &ea);
+    eb.AddBond(BondSide_Right, &ec);
     TestEqBool("Check that a reaction occurs", reaction.Process(), true);
 
     // Verify the result
@@ -140,7 +139,7 @@ void __TestTripleBond(const char* a, const char* b, const char* c, BondType expe
 
 //! Tests that 3 elements bond as expected.
 //! This is a supporting macro that ensures all bonds are covered.
-#define TestTripleBond(a, b, c, expectedBondType) _TestTripleBond(a, b, c, expectedBondType); _TestTripleBond(a, c, b, expectedBondType)
+#define TestTripleBond(a, b, c, expectedBondType) _TestTripleBond(a, b, c, expectedBondType); _TestTripleBond(c, b, a, expectedBondType)
 
 void TestStep_Bonds()
 {
@@ -193,37 +192,37 @@ void TestStep_Bonds()
 
     TestStart(); 
     TestMessage("Test 3 elements bonds");
-    TestTripleBond("Be", "H", "H", BondType_Covalent);
-    TestTripleBond("Mg", "H", "H", BondType_Covalent);
-    TestTripleBond("Ca", "H", "H", BondType_Ionic);
-    TestTripleBond("Sr", "H", "H", BondType_Ionic);
-    TestTripleBond("Ba", "H", "H", BondType_Ionic);
-    TestTripleBond("Be", "F", "F", BondType_Covalent);
-    TestTripleBond("Be", "Cl", "Cl", BondType_Covalent);
-    TestTripleBond("Be", "Br", "Br", BondType_Covalent);
-    TestTripleBond("Be", "I", "I", BondType_Covalent);
-    TestTripleBond("Be", "At", "At", BondType_Covalent);
+    TestTripleBond("H" , "Be", "H" , BondType_Covalent);
+    TestTripleBond("H" , "Mg", "H" , BondType_Covalent);
+    TestTripleBond("H" , "Ca", "H" , BondType_Ionic);
+    TestTripleBond("H" , "Sr", "H" , BondType_Ionic);
+    TestTripleBond("H" , "Ba", "H" , BondType_Ionic);
+    TestTripleBond("F" , "Be", "F" , BondType_Covalent);
+    TestTripleBond("Cl", "Be", "Cl", BondType_Covalent);
+    TestTripleBond("Br", "Be", "Br", BondType_Covalent);
+    TestTripleBond("I" , "Be", "I" , BondType_Covalent);
+    TestTripleBond("At", "Be", "At", BondType_Covalent);
     TestEnd();
 #if 0
-    TestTripleBond("Mg", "F", "F", BondType_Ionic);
-    TestTripleBond("Mg", "Cl", "Cl", BondType_Ionic);
-    TestTripleBond("Mg", "Br", "Br", BondType_Ionic);
-    TestTripleBond("Mg", "I", "I", BondType_Ionic);
-    TestTripleBond("Mg", "At", "At", BondType_Ionic);
-    TestTripleBond("Ca", "F", "F", BondType_Ionic);
-    TestTripleBond("Ca", "Cl", "Cl", BondType_Ionic);
-    TestTripleBond("Ca", "Br", "Br", BondType_Ionic);
-    TestTripleBond("Ca", "I", "I", BondType_Ionic);
-    TestTripleBond("Ca", "At", "At", BondType_Ionic);
-    TestTripleBond("Sr", "F", "F", BondType_Ionic);
-    TestTripleBond("Sr", "Cl", "Cl", BondType_Ionic);
-    TestTripleBond("Sr", "Br", "Br", BondType_Ionic);
-    TestTripleBond("Sr", "I", "I", BondType_Ionic);
-    TestTripleBond("Sr", "At", "At", BondType_Ionic);
-    TestTripleBond("Ba", "F", "F", BondType_Ionic);
-    TestTripleBond("Ba", "Cl", "Cl", BondType_Ionic);
-    TestTripleBond("Ba", "Br", "Br", BondType_Ionic);
-    TestTripleBond("Ba", "I", "I", BondType_Ionic);
-    TestTripleBond("Ba", "At", "At", BondType_Ionic);
+    TestTripleBond("F" , "Mg", "F" , BondType_Ionic);
+    TestTripleBond("Cl", "Mg", "Cl", BondType_Ionic);
+    TestTripleBond("Br", "Mg", "Br", BondType_Ionic);
+    TestTripleBond("I" , "Mg", "I" , BondType_Ionic);
+    TestTripleBond("At", "Mg", "At", BondType_Ionic);
+    TestTripleBond("F" , "Ca", "F" , BondType_Ionic);
+    TestTripleBond("Cl", "Ca", "Cl", BondType_Ionic);
+    TestTripleBond("Br", "Ca", "Br", BondType_Ionic);
+    TestTripleBond("I" , "Ca", "I" , BondType_Ionic);
+    TestTripleBond("At", "Ca", "At", BondType_Ionic);
+    TestTripleBond("F" , "Sr", "F" , BondType_Ionic);
+    TestTripleBond("Cl", "Sr", "Cl", BondType_Ionic);
+    TestTripleBond("Br", "Sr", "Br", BondType_Ionic);
+    TestTripleBond("I" , "Sr", "I" , BondType_Ionic);
+    TestTripleBond("At", "Sr", "At", BondType_Ionic);
+    TestTripleBond("F" , "Ba", "F" , BondType_Ionic);
+    TestTripleBond("Cl", "Ba", "Cl", BondType_Ionic);
+    TestTripleBond("Br", "Ba", "Br", BondType_Ionic);
+    TestTripleBond("I" , "Ba", "I" , BondType_Ionic);
+    TestTripleBond("At", "Ba", "At", BondType_Ionic);
 #endif  
 }
