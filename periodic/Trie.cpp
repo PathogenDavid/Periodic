@@ -3,7 +3,6 @@
 
 Trie::Trie()
 {
-	root = new Node();
 }
 
 
@@ -12,8 +11,9 @@ Trie::~Trie()
 {
 }
 
-void Trie::addBond(String<100> elementBond)
+void Trie::addBond(char* elementBond)
 {
+	/*
 	Node* current = root;
 
 	if (elementBond.empty())
@@ -31,20 +31,21 @@ void Trie::addBond(String<100> elementBond)
 		}
 		else
 		{
-			Node* temp = new Node();
+			//Node* temp = new Node();
 
-			temp->setContent(elementBond[i]);
-			current->appendChild(temp);
-			current = temp;
+			//temp->setContent(elementBond[i]);
+			//current->appendChild(temp);
+			//current = temp;
 		}
 		if (i == elementBond.size() - 1)
 			current->setReactionMarker();
-	}
+	}*/
 }
 
 
-bool Trie::searchBond(String<100> elementBond)
+bool Trie::searchBond(char* elementBond)
 {
+	/*
 	Node* current = root;
 	while (current != NULL)
 	{
@@ -60,5 +61,6 @@ bool Trie::searchBond(String<100> elementBond)
 			return true;
 		else return false;
 	}
+	*/
 	return false;
 }

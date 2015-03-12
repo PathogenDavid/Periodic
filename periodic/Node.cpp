@@ -27,6 +27,7 @@ Array<Node*, 10, uint32_t> Node::getChildren() { return mChildren; }
 
 Node* Node::findChild(char c)
 {
+	/*
 	for (int i = 0; i < mChildren.count; i++)
 	{
 		Node* temp = mChildren[i];
@@ -35,5 +36,6 @@ Node* Node::findChild(char c)
 			return temp;
 		}
 	}
+	*/
 	return NULL;
 }

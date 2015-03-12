@@ -1,4 +1,3 @@
-#include <sifteo\string.h>
 #include "Node.h"
 
 using namespace Sifteo;
@@ -9,8 +8,8 @@ class Trie
 public:
 	Trie();
 	~Trie();
-	void addBond(String<100>);
-	bool searchBond(String<100>);
+	void addBond(char*);
+	bool searchBond(char*);
 
 private:
 	Node* root;
