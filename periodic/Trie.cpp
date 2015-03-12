@@ -1,6 +1,5 @@
 #include "Trie.h"
 
-
 Trie::Trie()
 {	
 	root = new Node();
@@ -61,4 +60,10 @@ bool Trie::searchBond(const char* elementBond)
 		else return false;
 	}
 	return false;
+}
+
+
+Trie* Trie::getTrie()
+{
+	return this;
 }

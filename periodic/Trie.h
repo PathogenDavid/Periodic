@@ -10,6 +10,7 @@ public:
 	~Trie();
 	void addBond(const char*, int);
 	bool searchBond(const char*);
+	Trie* getTrie();
 
 private:
 	Node* root;

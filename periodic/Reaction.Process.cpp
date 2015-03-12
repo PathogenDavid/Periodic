@@ -1,5 +1,6 @@
 #include "Reaction.h"
 #include "Element.h"
+#include "Trie.h"
 
 /*
 Processes a reaction and determines the outcome, if any.
