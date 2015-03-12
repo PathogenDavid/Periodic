@@ -13,6 +13,9 @@ OBJS += ../periodic/Element.o
 OBJS += ../periodic/periodic.o
 OBJS += ../periodic/Bond.o
 OBJS += ../periodic/BondSolution.o
+OBJS += ../periodic/Reaction.o
+OBJS += ../periodic/Reaction.Process.o
+OBJS += ../periodic/Compound.o
 
 # Test steps
 OBJS += TestStep_ElementBasic.o

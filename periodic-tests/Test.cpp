@@ -12,12 +12,12 @@ static int numVerifications;
 static int numVerificationsFailing;
 static int numVerificationsRecord[TEST_STEP_COUNT][2];
 static int passTestStep[TEST_STEP_COUNT]; // Since this is static, it will be all 0 by default.
-static char testSteps[TEST_STEP_COUNT][40] =
+static char testSteps[TEST_STEP_COUNT][40] = // TODO: Make it so all this doesn't have to be static.
 {
     "TestStep_Strcmp:                 ",
     "TestStep_ElementBasic:           ",
     "TestStep_2ElementsCovalentBonds: ",
-    "TestStep_2ElementsInoictBonds:   ",
+    "TestStep_2ElementsInoicBonds:    ",
     "TestStep_3ElementsBonds:         ",
     "TestStep_ObjectPool:             "
 };

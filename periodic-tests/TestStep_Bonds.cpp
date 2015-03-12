@@ -2,11 +2,13 @@
 #include "Test.h"
 #include "periodic.h"
 #include "Element.h"
-
+#include "Reaction.h"
+#include "BondSolution.h"
 
 //! Supporting function for TestCovalentBond
 void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, const char* message)
 {
+    // Load the elements
     Element ea;
     Element eb;
 	int numOuterElectronA;
@@ -17,10 +19,13 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
 	numOuterElectronA = ea.GetNumOuterElectrons();
 	numOuterElectronB = eb.GetNumOuterElectrons();
 
-	// React the two elements:ea.ReactWith(&eb);
-    //TestForceFail("It is currently impossible to check for a covalent bond in this build.");
-	//TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb), true);
-    TestForceFail("Need to update this test for new reaction system.");
+    // Create a reaction and process it
+    Reaction reaction;
+    reaction.Add(&ea);
+    ea.AddBond(BondSide_Right, &eb);
+    TestEqBool("Check that a reaction occurs", reaction.Process(), true);
+
+    // Verify the result
 	TestEqInt("Check the first element's shared electron number after the reaction", ea.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the second element's shared electron number after the reaction", eb.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the first element's outer electron number after the reaction", ea.GetNumOuterElectrons(), (numOuterElectronA+1));
@@ -30,6 +35,7 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
 //! Supporting function for TestIonicBond
 void __TestIonicBond(const char* cation, const char* anion, int numElectronsDonated, const char* message)
 {
+    // Load the elements
     // Note: Cation is the positively charged ion.
     Element c;
     Element a;
@@ -37,16 +43,23 @@ void __TestIonicBond(const char* cation, const char* anion, int numElectronsDona
     TestEqBool("Get the cation", Element::GetRawElement(cation, &c), true);
     TestEqBool("Get the anion", Element::GetRawElement(anion, &a), true);
 
-    // React the two elements:
-    //TestEqBool("Check that a reaction occurs", c.ReactWith(&a), true);
-    TestForceFail("Need to update this test for new reaction system.");
+    // Create a reaction and process it
+    Reaction reaction;
+    reaction.Add(&c);
+    c.AddBond(BondSide_Right, &a);
+    TestEqBool("Check that a reaction occurs", reaction.Process(), true);
+
+    // Verify the result
     TestEqInt("Check the cation's charge after the reaction", c.GetCharge(), numElectronsDonated);
     TestEqInt("Check the anion's charge after the reaction", a.GetCharge(), -numElectronsDonated);
 }
 
-//!Supporting function for TestTripleBond
-void _TestTripleBond(const char* a, const char* b, const char* c, const char* expectedBond, const char* message)
+//! Supporting function for TestTripleBond
+//! a is the central element.
+//TODO: It seems like it'd make more sense to make b the central element.
+void __TestTripleBond(const char* a, const char* b, const char* c, BondType expectedBondType, const char* message)
 {
+    // Load the elements
     Element ea;
     Element eb;
     Element ec;
@@ -55,8 +68,14 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
     TestEqBool("Get the second element", Element::GetRawElement(b, &eb), true);
     TestEqBool("Get the third element", Element::GetRawElement(c, &ec), true);
 
-    //TestEqBool("Check that a reaction occurs", ea.ReactWith(&eb, &ec), true);
-    TestForceFail("Need to update this test for new reaction system.");
+    // Create a reaction and process it
+    Reaction reaction;
+    reaction.Add(&ea);
+    ea.AddBond(BondSide_Left, &eb);
+    ea.AddBond(BondSide_Right, &ec);
+    TestEqBool("Check that a reaction occurs", reaction.Process(), true);
+
+    // Verify the result
     // Element array used so we can keep track of which element is at what position.  
     // currently we only have 3 element bonding if
 	// there is an alkali earth metal.  Mark the position of the alkali earth metal
@@ -75,7 +94,7 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
         alkaliEarthPosition = 2;
     }
     //test Ionic Bond 
-    if (strcmp(expectedBond, "IONIC") == 0)
+    if (expectedBondType == BondType_Ionic)
     {
         //Todo: test bond type. 
         for (int i = 0; i < 3; i++)
@@ -87,7 +106,7 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
         }
     }
     //test Covalent Bond
-    else if (strcmp(expectedBond, "COVALENT") == 0)
+    else if (expectedBondType == BondType_Covalent)
     {
         //Todo: test bond type. 
         for (int i = 0; i < 3; i++)
@@ -98,6 +117,10 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
                 TestEqInt("Check the element's shared electron number after the reaction", elementArray[i].GetSharedElectrons(), 2);
         }
     }
+    else
+    {
+        TestForceFail("Test called TestTripleBond with an unexpected expectedBondType!");
+    }
 }
 
 //! Supporting macro for TestCovalentBond
@@ -105,7 +128,7 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
 //! Supporting macro for TestIonicBond
 #define _TestIonicBond(cation, anion, numElectronsDonated) __TestIonicBond(cation, anion, numElectronsDonated, "React " cation " and " anion " with expected charge of " #numElectronsDonated)
 //! Supporting macro for TestTripleBond
-#define _TestTripleBond(a, b, c, expectedBond) _TestTripleBond(a, b, c, expectedBond, "React " a " and " b " and " c " with expected bond of " expectedBond)
+#define _TestTripleBond(a, b, c, expectedBond) __TestTripleBond(a, b, c, expectedBond, "React " a " and " b " and " c " with expected bond of " #expectedBond)
 
 //! Tests that two elements covalently bond as expected.
 //! This is a supporting macro that ensures bonds are commutative.
@@ -115,10 +138,9 @@ void _TestTripleBond(const char* a, const char* b, const char* c, const char* ex
 //! This is a supporting macro that ensures opposite bonds are mirrored.
 #define TestIonicBond(cation, anion, numElectronsDonated) _TestIonicBond(cation, anion, numElectronsDonated); _TestIonicBond(anion, cation, -numElectronsDonated)
 
-//Todo:
 //! Tests that 3 elements bond as expected.
 //! This is a supporting macro that ensures all bonds are covered.
-
+#define TestTripleBond(a, b, c, expectedBondType) _TestTripleBond(a, b, c, expectedBondType); _TestTripleBond(a, c, b, expectedBondType)
 
 void TestStep_Bonds()
 {
@@ -171,37 +193,37 @@ void TestStep_Bonds()
 
     TestStart(); 
     TestMessage("Test 3 elements bonds");
-    _TestTripleBond("Be", "H", "H", "COVALENT");
-    _TestTripleBond("Mg", "H", "H", "COVALENT");
-    _TestTripleBond("Ca", "H", "H", "IONIC");
-    _TestTripleBond("Sr", "H", "H", "IONIC");
-    _TestTripleBond("Ba", "H", "H", "IONIC");
-    _TestTripleBond("Be", "F", "F", "COVALENT");
-    _TestTripleBond("Be", "Cl", "Cl", "COVALENT");
-    _TestTripleBond("Be", "Br", "Br", "COVALENT");
-    _TestTripleBond("Be", "I", "I", "COVALENT");
-    _TestTripleBond("Be", "At", "At", "COVALENT");
+    TestTripleBond("Be", "H", "H", BondType_Covalent);
+    TestTripleBond("Mg", "H", "H", BondType_Covalent);
+    TestTripleBond("Ca", "H", "H", BondType_Ionic);
+    TestTripleBond("Sr", "H", "H", BondType_Ionic);
+    TestTripleBond("Ba", "H", "H", BondType_Ionic);
+    TestTripleBond("Be", "F", "F", BondType_Covalent);
+    TestTripleBond("Be", "Cl", "Cl", BondType_Covalent);
+    TestTripleBond("Be", "Br", "Br", BondType_Covalent);
+    TestTripleBond("Be", "I", "I", BondType_Covalent);
+    TestTripleBond("Be", "At", "At", BondType_Covalent);
     TestEnd();
 #if 0
-    _TestTripleBond("Mg", "F", "F", "IONIC");
-    _TestTripleBond("Mg", "Cl", "Cl", "IONIC");
-    _TestTripleBond("Mg", "Br", "Br", "IONIC");
-    _TestTripleBond("Mg", "I", "I", "IONIC");
-    _TestTripleBond("Mg", "At", "At", "IONIC");
-    _TestTripleBond("Ca", "F", "F", "IONIC");
-    _TestTripleBond("Ca", "Cl", "Cl", "IONIC");
-    _TestTripleBond("Ca", "Br", "Br", "IONIC");
-    _TestTripleBond("Ca", "I", "I", "IONIC");
-    _TestTripleBond("Ca", "At", "At", "IONIC");
-    _TestTripleBond("Sr", "F", "F", "IONIC");
-    _TestTripleBond("Sr", "Cl", "Cl", "IONIC");
-    _TestTripleBond("Sr", "Br", "Br", "IONIC");
-    _TestTripleBond("Sr", "I", "I", "IONIC");
-    _TestTripleBond("Sr", "At", "At", "IONIC");
-    _TestTripleBond("Ba", "F", "F", "IONIC");
-    _TestTripleBond("Ba", "Cl", "Cl", "IONIC");
-    _TestTripleBond("Ba", "Br", "Br", "IONIC");
-    _TestTripleBond("Ba", "I", "I", "IONIC");
-    _TestTripleBond("Ba", "At", "At", "IONIC");
+    TestTripleBond("Mg", "F", "F", BondType_Ionic);
+    TestTripleBond("Mg", "Cl", "Cl", BondType_Ionic);
+    TestTripleBond("Mg", "Br", "Br", BondType_Ionic);
+    TestTripleBond("Mg", "I", "I", BondType_Ionic);
+    TestTripleBond("Mg", "At", "At", BondType_Ionic);
+    TestTripleBond("Ca", "F", "F", BondType_Ionic);
+    TestTripleBond("Ca", "Cl", "Cl", BondType_Ionic);
+    TestTripleBond("Ca", "Br", "Br", BondType_Ionic);
+    TestTripleBond("Ca", "I", "I", BondType_Ionic);
+    TestTripleBond("Ca", "At", "At", BondType_Ionic);
+    TestTripleBond("Sr", "F", "F", BondType_Ionic);
+    TestTripleBond("Sr", "Cl", "Cl", BondType_Ionic);
+    TestTripleBond("Sr", "Br", "Br", BondType_Ionic);
+    TestTripleBond("Sr", "I", "I", BondType_Ionic);
+    TestTripleBond("Sr", "At", "At", BondType_Ionic);
+    TestTripleBond("Ba", "F", "F", BondType_Ionic);
+    TestTripleBond("Ba", "Cl", "Cl", BondType_Ionic);
+    TestTripleBond("Ba", "Br", "Br", BondType_Ionic);
+    TestTripleBond("Ba", "I", "I", BondType_Ionic);
+    TestTripleBond("Ba", "At", "At", BondType_Ionic);
 #endif  
 }
