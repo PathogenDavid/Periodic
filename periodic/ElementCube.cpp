@@ -169,9 +169,13 @@ void ElementCube::Render()
         for (int i = 0; i < SCREEN_WIDTH; i++)
         {
             v.fb32.plot(vec(i, 0), POTENTIAL_COLOR);
+            v.fb32.plot(vec(i, 1), POTENTIAL_COLOR);
             v.fb32.plot(vec(i, SCREEN_HEIGHT - 1), POTENTIAL_COLOR);
+            v.fb32.plot(vec(i, SCREEN_HEIGHT - 2), POTENTIAL_COLOR);
             v.fb32.plot(vec(0, i), POTENTIAL_COLOR);
+            v.fb32.plot(vec(1, i), POTENTIAL_COLOR);
             v.fb32.plot(vec(SCREEN_WIDTH - 1, i), POTENTIAL_COLOR);
+            v.fb32.plot(vec(SCREEN_WIDTH - 2, i), POTENTIAL_COLOR);
         }
     }
 
