@@ -210,7 +210,7 @@ void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, i
 
     // Validate arguments
     Assert(side >= 0 && side < BondSide_Count);
-    Assert(type >= 0 && type < BondType_Cound);
+    Assert(type >= 0 && type < BondType_Count);
 
     // Don't apply the bond if we already did it
     if (bonds[side].GetTypeFor(compound) == type && bonds[side].GetDataFor(compound) == data)

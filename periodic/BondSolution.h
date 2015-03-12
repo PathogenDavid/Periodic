@@ -9,7 +9,7 @@ enum BondType
     BondType_Ionic,
     BondType_Covalent,
     BondType_Potential,
-    BondType_Cound,
+    BondType_Count,
     BondType_Invalid
 };
 

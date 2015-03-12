@@ -21,3 +21,6 @@ obj/
 
 # Runtime Artifacts
 siftulator-*-*.png
+
+# Misc
+*.~ml

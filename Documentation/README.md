@@ -1,0 +1,1 @@
+This directory contains source files used for the [GitHub Wiki](https://github.com/PathogenDavid/Periodic/wiki).
