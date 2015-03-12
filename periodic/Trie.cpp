@@ -2,11 +2,9 @@
 
 
 Trie::Trie()
-{
-	
+{	
+	root = new Node();
 }
-
-
 
 
 Trie::~Trie()
@@ -33,11 +31,7 @@ void Trie::addBond(const char* elementBond)
 		}
 		else
 		{
-			Node* temp;
-			temp->setContent(' ');
-			temp->setReactionMarker(false);
 			Node* temp = new Node();
-
 			temp->setContent(elementBond[i]);
 			current->appendChild(temp);
 			current = temp;

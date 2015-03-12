@@ -7,12 +7,6 @@ Node::Node()
 	mMarker = false;
 }
 
-Node::Node(int i)
-{
-    mContent = ' ';
-    mMarker = false;
-}
-
 
 Node::~Node()
 {
@@ -28,11 +22,11 @@ void Node::setReactionMarker() { mMarker = true; }
 
 void Node::appendChild(Node* child) { mChildren.push_back(child); }
 
-Array<Node*, 10, uint32_t> Node::getChildren() { return mChildren; }
+Sifteo::Array<Node*, 10, uint32_t> Node::getChildren() { return mChildren; }
 
 Node* Node::findChild(char c)
 {
-	for (int i = 0; i < mChildren.count; i++)
+	for (int i = 0; i < mChildren.count(); i++)
 	{
 		Node* temp = mChildren[i];
 		if (temp->getContent() == c)

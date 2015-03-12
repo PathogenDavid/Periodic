@@ -1,5 +1,6 @@
 #include <sifteo/array.h>
-#include "periodic.h";
+#include "periodic.h"
+#include "ObjectPool.h"
 
 class Node : public ObjectPool<Node, 100>
 {
@@ -14,11 +15,11 @@ public:
 	void setReactionMarker();
 	Node* findChild(char);
 	void appendChild(Node*);
-	Array<Node*, 10, uint32_t> getChildren();
+	Sifteo::Array<Node*, 10, uint32_t> getChildren();
 
 private:
 	char mContent;
 	bool mMarker;
-	Array<Node*, 10, uint32_t> mChildren;
+	Sifteo::Array<Node*, 10, uint32_t> mChildren;
 };
 

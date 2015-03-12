@@ -1,5 +1,6 @@
 #include "Node.h"
-#include "periodic.h";
+#include "periodic.h"
+#include "ObjectPool.h"
 
 class Trie : public ObjectPool<Trie, 1>
 {
