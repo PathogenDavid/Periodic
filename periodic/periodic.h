@@ -23,8 +23,8 @@
 #define LETTER_DESCENDER_HEIGHT 2
 
 #define NUM_CUBES 3 // 12 max
-#define MAX_REACTION_SIZE 3
 
+#define MAX_REACTIONS ((NUM_CUBES + 1) / 2 + 1)  // Half of the number of cubes, rounded up, plus an extra for processing cubes with no neighbors
 #define MAX_COMPOUNDS 5
 
 //------------------------------------------------------------------------

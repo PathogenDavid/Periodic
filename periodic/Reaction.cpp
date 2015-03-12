@@ -5,6 +5,12 @@ Reaction::Reaction()
 {
 }
 
+Reaction::~Reaction()
+{
+    for (int i = 0; i < possibleCompounds.Count(); i++)
+    { delete possibleCompounds[i]; }
+}
+
 ElementSet* Reaction::Find(groupState group)
 {
     ElementSet* ret = new ElementSet();
@@ -38,15 +44,6 @@ void Reaction::Add(Element* element)
 
     elements.Add(element);
     element->SetReaction(this);
-}
-
-void Reaction::Reset()
-{
-    elements.Clear();
-    
-    for (int i = 0; i < possibleCompounds.Count(); i++)
-    { delete possibleCompounds[i]; }
-    possibleCompounds.Clear();
 }
 
 Compound* Reaction::StartNewCompound()

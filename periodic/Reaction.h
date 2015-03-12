@@ -2,20 +2,21 @@
 #include "Element.h"
 #include "Set.h"
 #include "Compound.h"
+#include "ObjectPool.h"
 
 #include <sifteo.h>
 
-class Reaction
+class Reaction : public ObjectPool<Reaction, MAX_REACTIONS>
 {
 private:
     ElementSet elements;
     Set<Compound, MAX_COMPOUNDS> possibleCompounds;
 public:
     Reaction();
+    ~Reaction();
     ElementSet* Find(groupState group);
     ElementSet* Find(const char* symbol);
     void Add(Element* element);
-    void Reset();
 
     bool Process();
 private:

@@ -160,6 +160,17 @@ bool Reaction::Process()
         }
     }
 
+    // Dispose of all compounds other than the ideal one to save memory
+    for (int i = 0; i < possibleCompounds.Count(); i++)
+    {
+        if (possibleCompounds[i] != idealCompound)
+        {
+            delete possibleCompounds[i];
+            possibleCompounds.SetNull(i);
+        }
+    }
+
+    // Apply the ideal compound and return
     if (idealCompound != NULL)
     {
         idealCompound->Apply();

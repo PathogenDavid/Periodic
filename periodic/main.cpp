@@ -5,6 +5,7 @@
 #include "Reaction.h"
 #include "periodic.h" 
 #include "Trie.h"
+#include "Set.h"
 
 #include <sifteo.h>
 
@@ -41,6 +42,8 @@ void initTrie(Trie* t);
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
 void main()
 {
+    LOG("Enterting main...\n");
+
     // Initialize ElementCubes:
     // Due to a bug in the Sifteo linker, we can't statically initialize these outside of main.
     // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
@@ -142,13 +145,18 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
     }
 }
 
+Set<Reaction, MAX_REACTIONS> reactions;
 void ProcessNeighborhood()
 {
     // Reset all of the cubes:
     for (int i = 0; i < NUM_CUBES; i++)
     { cubes[i].ResetElement(); }
 
-    static Reaction reaction; //TODO: Reaction is static so that it is reset the next time we process the neighborhood. (This should be fixed with the TODO below.)
+    // Destroy old reactions
+    for (int i = 0; i < reactions.Count(); i++)
+    { delete reactions[i]; }
+    reactions.Clear();
+
     bool hasBeenUsed[NUM_CUBES];
     PeriodicMemset(hasBeenUsed, 0, sizeof(hasBeenUsed));
 
@@ -156,23 +164,27 @@ void ProcessNeighborhood()
     {
         LOG("ProcessNeighborhood, iter = %d\n", i);
         if (hasBeenUsed[i])
+        { continue; }
+
+        // Abort if ther reaction list's space (and therefore the Reaction ObjectPool) is depleted:
+        if (reactions.Count() >= reactions.Capacity())
         {
-            continue;
+            LOG("WARNING: Some cubes are going unprocessed because we've depleted the Reaction ObjectPool!\n");
+            break;
         }
 
         Neighborhood nh(i);
-        reaction.Reset();
+        Reaction* reaction = new Reaction();
 
         // Find the entire reaction:
-        reaction.Add(cubes[i].GetElement());
+        reaction->Add(cubes[i].GetElement());
         AddNeighbors(i, hasBeenUsed);
 
-        if (reaction.Process())
-        {
-            //TODO: Right now resetting the reaction destroys state being used by the elements involved in the reaction,
-            // so we need to add reference counting to instances of Compound or something.
-            return;
-        }
+        // Process the reaction, and save it to our list of active reactions if it resulted in any compounds:
+        if (reaction->Process())
+        { reactions.Add(reaction); }
+        else
+        { delete reaction; }
     }
 }
 

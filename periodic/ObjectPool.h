@@ -43,6 +43,9 @@ public:
 
     static void operator delete(void* p)
     {
+        if (p == NULL)
+        { return; }
+
         ((PoolT*)p)->inUse = false;
     }
 };
