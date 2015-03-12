@@ -11,7 +11,7 @@ Trie::~Trie()
 {
 }
 
-void Trie::addBond(const char* elementBond)
+void Trie::addBond(const char* elementBond, int bondType)
 {
 	Node* current = root;
 	int length = strlen(elementBond);
@@ -32,7 +32,7 @@ void Trie::addBond(const char* elementBond)
 		else
 		{
 			Node* temp = new Node();
-			temp->setContent(elementBond[i]);
+			temp->setContent(elementBond[i], bondType);
 			current->appendChild(temp);
 			current = temp;
 		}

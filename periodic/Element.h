@@ -11,6 +11,10 @@ class Compound;
 /*Enumeration to keep track of the group a element belongs in */
 enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL };
 
+/**/
+
+enum bondState { IONIC, COVALENT, POTENTIAL };
+
 //! Element represents a chemical element
 class Element
 {

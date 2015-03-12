@@ -2,24 +2,25 @@
 #include "periodic.h"
 #include "ObjectPool.h"
 
-class Node : public ObjectPool<Node, 100>
+class Node : public ObjectPool<Node, 200>
 {
 public:
 	Node();
 	~Node();
 
 	char getContent();
-	void setContent(char);
+	void setContent(char, int);
 	bool getReactionMarker();
 	void setReactionMarker(bool);
 	void setReactionMarker();
 	Node* findChild(char);
 	void appendChild(Node*);
-	Sifteo::Array<Node*, 10, uint32_t> getChildren();
+	Sifteo::Array<Node*, 20, uint32_t> getChildren();
 
 private:
 	char mContent;
 	bool mMarker;
-	Sifteo::Array<Node*, 10, uint32_t> mChildren;
+	int mReactionType;
+	Sifteo::Array<Node*, 20, uint32_t> mChildren;
 };
 
