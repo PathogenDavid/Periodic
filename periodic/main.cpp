@@ -298,4 +298,13 @@ void initTrie(Trie* t)
 	t->addBond("BaClCl", COVALENT);
 	t->addBond("BaBrBr", COVALENT);
 	t->addBond("BaII", COVALENT);
+	t->addBond("SiOO", COVALENT);
+	t->addBond("SO", COVALENT);
+	t->addBond("SOO", COVALENT);
+	t->addBond("SOOO", COVALENT);
+	t->addBond("SSO", COVALENT);
+	t->addBond("SSOO", COVALENT);
+	t->addBond("HClO", COVALENT);
+	t->addBond("HBrO", COVALENT);
+
 }

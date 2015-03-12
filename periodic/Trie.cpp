@@ -10,7 +10,6 @@ Trie::Trie()
 Trie::~Trie()
 {
 }
-
 void Trie::addBond(const char* elementBond, int bondType)
 {
 	Node* current = root;
@@ -40,6 +39,7 @@ void Trie::addBond(const char* elementBond, int bondType)
 			current->setReactionMarker();
 	}
 }
+
 
 
 bool Trie::searchBond(const char* elementBond)

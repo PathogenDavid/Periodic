@@ -9,7 +9,7 @@ class Reaction;
 class Compound;
 
 /*Enumeration to keep track of the group a element belongs in */
-enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL };
+enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL, METALOID };
 
 /**/
 

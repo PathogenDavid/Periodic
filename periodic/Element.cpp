@@ -114,7 +114,10 @@ static Element rawElements[] =
 	Element("Nitrogen", "N", NONMETAL, 7, 14.007, 5, 3.04),
 	Element("Oxygen", "O", NONMETAL, 8, 15.999, 6, 3.44),
 	Element("Phosphorus", "P", NONMETAL, 15, 30.9737761998, 5, 2.19),
-	Element("Sulfer", "S", NONMETAL, 16, 32.06, 6, 2.58)
+	Element("Sulfer", "S", NONMETAL, 16, 32.06, 6, 2.58),
+
+	//Metaloids
+	Element("Silicon", "Si", METALOID, 14, 28.085, 4, 1.90)
 
 };
 
