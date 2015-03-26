@@ -38,7 +38,7 @@ bool Reaction::Process()
         { element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 8); }
 
         if (element->GetBondWith(ALKALI, &other))
-        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 2); }
+        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic);}  
     }
     delete elements;
 
@@ -60,7 +60,7 @@ bool Reaction::Process()
     }
     delete elements;
 
-    // Li - I
+    // Li - I  
     elements = Find("Li");
     for (int i = 0; i < elements->Count(); i++)
     {
@@ -85,9 +85,19 @@ bool Reaction::Process()
         if (others->Count() >= 2)
         {
             Compound* compound = StartNewCompound();
+            //If the alkali earth metal is Beryllium, the bond will be covalent
+            //If they are the other alkali earth metals, they will make an ionic bond
             //TODO: 2 and 9 are hard-coded as hacks to get to 4, 2, 2, need to make this more generic probably.
-            element->SetBondTypeFor(compound, others->Get(0), BondType_Covalent, 2, 9);
-            element->SetBondTypeFor(compound, others->Get(1), BondType_Covalent, 2, 9);
+            if (strcmp(element->GetSymbol(), "Be") == 0)
+            {
+                element->SetBondTypeFor(compound, others->Get(0), BondType_Covalent, 2, 9);
+                element->SetBondTypeFor(compound, others->Get(1), BondType_Covalent, 2, 9);
+            }
+            else
+            {
+                element->SetBondTypeFor(compound, others->Get(0), BondType_Ionic);
+                element->SetBondTypeFor(compound, others->Get(1), BondType_Ionic);
+            }
         }
         else if (others->Count() > 0)
         {
