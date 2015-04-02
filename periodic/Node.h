@@ -1,4 +1,3 @@
-#include <sifteo/array.h>
 #include "periodic.h"
 #include "ObjectPool.h"
 
@@ -15,12 +14,12 @@ public:
 	void setReactionMarker();
 	Node* findChild(char);
 	void appendChild(Node*);
-	Sifteo::Array<Node*, 20, uint32_t> getChildren();
 
 private:
 	char mContent;
 	bool mMarker;
-	int mReactionType;
-	Sifteo::Array<Node*, 20, uint32_t> mChildren;
+    int mReactionType;
+    Node* mSibling;
+    Node* mFirstChild;
 };
 

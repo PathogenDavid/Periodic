@@ -5,8 +5,9 @@ Node::Node()
 {
 	mContent = ' ';
 	mMarker = false;
+    mFirstChild = NULL;
+    mSibling = NULL;
 }
-
 
 Node::~Node()
 {
@@ -20,19 +21,30 @@ bool Node::getReactionMarker() { return mMarker; }
 
 void Node::setReactionMarker() { mMarker = true; }
 
-void Node::appendChild(Node* child) { mChildren.push_back(child); }
+void Node::appendChild(Node* child)
+{
+    // Search for an appropriate location for the child pointer
+    Node** childDest = &mFirstChild;
 
-Sifteo::Array<Node*, 20, uint32_t> Node::getChildren() { return mChildren; }
+    while (*childDest != NULL)
+    { childDest = &(*childDest)->mSibling; }
+
+    // Store the child pointer
+    *childDest = child;
+}
 
 Node* Node::findChild(char c)
 {
-	for (int i = 0; i < mChildren.count(); i++)
-	{
-		Node* temp = mChildren[i];
-		if (temp->getContent() == c)
-		{
-			return temp;
-		}
-	}
+    Node* child = mFirstChild;
+    while (child != NULL)
+    {
+        if (child->getContent() == c)
+        {
+            return child;
+        }
+
+        child = child->mSibling;
+    }
+    
 	return NULL;
 }
