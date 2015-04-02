@@ -5,11 +5,7 @@ Trie::Trie()
 	root = new Node();
 }
 
-
-Trie::~Trie()
-{
-}
-void Trie::addBond(const char* elementBond, int bondType)
+void Trie::addBond(const char* elementBond, bondState bondType)
 {
 	Node* current = root;
 	int length = strlen(elementBond);
@@ -34,36 +30,37 @@ void Trie::addBond(const char* elementBond, int bondType)
 			current->appendChild(temp);
 			current = temp;
 		}
+
 		if (i == length - 1)
+        {
+            Assert(current->getReactionType() == bondType); // Ensure the user doesn't add two identical reactions with different bond types.
 			current->setReactionMarker();
+        }
 	}
 }
 
-
-
-bool Trie::searchBond(const char* elementBond)
+bondState Trie::searchBond(const char* elementBond)
 {
 	int length = strlen(elementBond);
 	Node* current = root;
-	while (current != NULL)
+
+    if (current == NULL)
+    { return NONE; }
+
+	for (int i = 0; i < length; i++)
 	{
-		for (int i = 0; i < length; i++)
-		{
-			Node* temp = current->findChild(elementBond[i]);
-			if (temp == NULL)
-				return false;
-			current = temp;
-		}
+		current = current->findChild(elementBond[i]);
 
-		if (current->getReactionMarker())
-			return true;
-		else return false;
+        // We didn't complete the reaction, so we bail out.
+        //TODO: Should we return POTENTIAL here instead?
+        if (current == NULL)
+        { return NONE; }
 	}
-	return false;
-}
 
-
-Trie* Trie::getTrie()
-{
-	return this;
+    // If this node marks a complete reaction, we return the type of reaction it should be.
+	if (current->getReactionMarker())
+    { return current->getReactionType(); }
+	
+    //TODO: Do we want to return POTENTIAL in this case instead?
+    return NONE;
 }

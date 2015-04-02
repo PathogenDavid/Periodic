@@ -1,5 +1,6 @@
 #include "periodic.h"
 #include "ObjectPool.h"
+#include "Element.h"
 
 class Node : public ObjectPool<Node, 200>
 {
@@ -8,7 +9,8 @@ public:
 	~Node();
 
 	char getContent();
-	void setContent(char, int);
+    bondState getReactionType();
+    void setContent(char, bondState);
 	bool getReactionMarker();
 	void setReactionMarker(bool);
 	void setReactionMarker();
@@ -18,7 +20,7 @@ public:
 private:
 	char mContent;
 	bool mMarker;
-    int mReactionType;
+    bondState mReactionType;
     Node* mSibling;
     Node* mFirstChild;
 };

@@ -6,6 +6,8 @@
 
 #include <sifteo.h>
 
+class Trie;
+
 class Reaction : public ObjectPool<Reaction, MAX_REACTIONS>
 {
 private:
@@ -21,4 +23,8 @@ public:
     bool Process();
 private:
     Compound* StartNewCompound();
+
+    static bool trieIsInitialized;
+    static Trie trie;
+    static void InitializeTrie();
 };

@@ -1,19 +1,14 @@
 #include "Node.h"
-#include "periodic.h"
-#include "ObjectPool.h"
+#include "Element.h"
 
-class Trie : public ObjectPool<Trie, 1>
+class Trie
 {
-
 public:
 	Trie();
-	~Trie();
-	void addBond(const char*, int);
-	bool searchBond(const char*);
-	Trie* getTrie();
+    void addBond(const char*, bondState);
+	bondState searchBond(const char*);
 
 private:
 	Node* root;
-
 };
 

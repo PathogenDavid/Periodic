@@ -4,6 +4,7 @@
 Node::Node()
 {
 	mContent = ' ';
+    mReactionType = NONE;
 	mMarker = false;
     mFirstChild = NULL;
     mSibling = NULL;
@@ -15,7 +16,9 @@ Node::~Node()
 
 char Node::getContent() { return mContent; }
 
-void Node::setContent(char c, int i) { mContent = c; mReactionType = i; }
+bondState Node::getReactionType() { return mReactionType; }
+
+void Node::setContent(char c, bondState i) { mContent = c; mReactionType = i; }
 
 bool Node::getReactionMarker() { return mMarker; }
 

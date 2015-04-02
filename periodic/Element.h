@@ -13,7 +13,7 @@ enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL, METALO
 
 /**/
 
-enum bondState { IONIC, COVALENT, POTENTIAL };
+enum bondState { IONIC, COVALENT, POTENTIAL, NONE };
 
 //! Element represents a chemical element
 class Element
