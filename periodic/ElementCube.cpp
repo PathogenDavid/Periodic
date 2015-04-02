@@ -282,9 +282,7 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
     {
         return;
     }
-
     int numOuterElectrons = currentElement.GetNumOuterElectrons() - currentElement.GetSharedElectrons();
-
     for (int s = LFirst; s <= LLast; s++)
     {
         // Calculate the number of electrons on this side

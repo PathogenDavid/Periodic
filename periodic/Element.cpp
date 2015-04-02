@@ -374,27 +374,16 @@ void Element::ApplyCompound(Compound* compound)
             // Figure out who shares the electrons: (Using baseElement so the  doesn't get confused when this is applied to the other element.)
 			int electronsDonated;
 
-			LOG("this->baseElement->numOuterElectrons = %d\n", this->baseElement->numOuterElectrons);
-			LOG("other->baseElement->numOuterElectrons = %d\n", other->baseElement->numOuterElectrons);
 			if (this->baseElement->numOuterElectrons > other->baseElement->numOuterElectrons)
             {
-				electronsDonated = 8 - this->numOuterElectrons;
-				LOG("electronsDonated = %d\n", electronsDonated);
 				this->numOuterElectrons += electronsDonated;
 				other->numOuterElectrons -= electronsDonated;
-				LOG("other->numOuterElectrons = %d\n", other->numOuterElectrons);
-				LOG("this->numOuterElectrons = %d\n", this->numOuterElectrons);
-				//this->numOuterElectrons += 8 - this->baseElement->numOuterElectrons;
             }
             else
             {
 				electronsDonated = 8 - other->numOuterElectrons;
-				LOG("electronsDonated = %d\n", electronsDonated);
 				other->numOuterElectrons += electronsDonated;
 				this->numOuterElectrons -= electronsDonated;
-				LOG("other->numOuterElectrons = %d\n", other->numOuterElectrons);
-				LOG("this->numOuterElectrons = %d\n", this->numOuterElectrons);
-                //this->numOuterElectrons -= 8 - other->baseElement->numOuterElectrons;
             }
         }
     }
