@@ -90,6 +90,12 @@ void ElementCube::SetDirty()
     isDirty = true;
 }
 
+void ElementCube::DrawDot(int x, int y, unsigned int color)
+{
+    //v.fb32.plot(vec(y, SCREEN_HEIGHT - x - 1), color);
+   v.fb32.plot(vec(x, y), color);
+}
+
 void ElementCube::Render()
 {
     if (!isDirty)
@@ -135,15 +141,15 @@ void ElementCube::Render()
     if (currentElement.GetCharge() != 0 && currentElement.HasBondType(BondType_Ionic))
     {
         // Draw the line for the dash
-        v.fb32.plot(vec(x + 0, y + 1), CHARGE_COLOR);
-        v.fb32.plot(vec(x + 1, y + 1), CHARGE_COLOR);
-        v.fb32.plot(vec(x + 2, y + 1), CHARGE_COLOR);
+        DrawDot(x + 0, y + 1, CHARGE_COLOR);
+        DrawDot(x + 1, y + 1, CHARGE_COLOR);
+        DrawDot(x + 2, y + 1, CHARGE_COLOR);
 
         // Draw the nubs for the plus for positive charge
         if (currentElement.GetCharge() > 0)
         {
-            v.fb32.plot(vec(x + 1, y + 0), CHARGE_COLOR);
-            v.fb32.plot(vec(x + 1, y + 2), CHARGE_COLOR);
+            DrawDot(x + 1, y + 0, CHARGE_COLOR);
+            DrawDot(x + 1, y + 2, CHARGE_COLOR);
         }
 
         // Draw the number
@@ -168,14 +174,14 @@ void ElementCube::Render()
         //NOTE: Relies on screen being square.
         for (int i = 0; i < SCREEN_WIDTH; i++)
         {
-            v.fb32.plot(vec(i, 0), POTENTIAL_COLOR);
-            v.fb32.plot(vec(i, 1), POTENTIAL_COLOR);
-            v.fb32.plot(vec(i, SCREEN_HEIGHT - 1), POTENTIAL_COLOR);
-            v.fb32.plot(vec(i, SCREEN_HEIGHT - 2), POTENTIAL_COLOR);
-            v.fb32.plot(vec(0, i), POTENTIAL_COLOR);
-            v.fb32.plot(vec(1, i), POTENTIAL_COLOR);
-            v.fb32.plot(vec(SCREEN_WIDTH - 1, i), POTENTIAL_COLOR);
-            v.fb32.plot(vec(SCREEN_WIDTH - 2, i), POTENTIAL_COLOR);
+            DrawDot(i, 0, POTENTIAL_COLOR);
+            DrawDot(i, 1, POTENTIAL_COLOR);
+            DrawDot(i, SCREEN_HEIGHT - 1, POTENTIAL_COLOR);
+            DrawDot(i, SCREEN_HEIGHT - 2, POTENTIAL_COLOR);
+            DrawDot(0, i, POTENTIAL_COLOR);
+            DrawDot(1, i, POTENTIAL_COLOR);
+            DrawDot(SCREEN_WIDTH - 1, i, POTENTIAL_COLOR);
+            DrawDot(SCREEN_WIDTH - 2, i, POTENTIAL_COLOR);
         }
     }
 
@@ -208,7 +214,7 @@ void ElementCube::DrawCharAt(int x, int y, char c)
     {
         for (int j = 0; j < CODERS_CRUX_GLYPH_WIDTH; j++)
         {
-            v.fb32.plot(vec(x + j, y + i), coders_crux[j + i * CODERS_CRUX_GLYPH_WIDTH + c * CODERS_CRUX_GLYPH_SIZE]);
+            DrawDot(x + j, y + i, coders_crux[j + i * CODERS_CRUX_GLYPH_WIDTH + c * CODERS_CRUX_GLYPH_SIZE]);
         }
     }
 }
@@ -226,7 +232,7 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
         {
             if (number_font[j + i * NUMBER_FONT_GLYPH_WIDTH + num * NUMBER_FONT_GLYPH_SIZE])
             {
-                v.fb32.plot(vec(x + j, y + i), color);
+                DrawDot(x + j, y + i, color);
             }
         }
     }
@@ -243,7 +249,7 @@ void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHei
         y = SCREEN_HEIGHT / 2;
         for (int i = 6; (x + i) < SCREEN_WIDTH; i++)
         {
-            v.fb32.plot(vec(x + i, y), CHARGE_COLOR);
+            DrawDot(x + i, y, CHARGE_COLOR);
         }
         break;
     case  BondSide_Bottom:
@@ -251,7 +257,7 @@ void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHei
         y = SCREEN_HEIGHT / 2 + stringHeight / 2;
         for (int i = 4; (y + i) < SCREEN_HEIGHT; i++)
         {
-            v.fb32.plot(vec(x, y + i), CHARGE_COLOR);
+            DrawDot(x, y + i, CHARGE_COLOR);
         }
         break;
     case  BondSide_Left:
@@ -259,7 +265,7 @@ void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHei
         y = SCREEN_HEIGHT / 2;
         for (int i = 6; (x - i) >= 0; i++)
         {
-            v.fb32.plot(vec(x - i, y), CHARGE_COLOR);
+            DrawDot(x - i, y, CHARGE_COLOR);
         }
         break;
     case  BondSide_Top:
@@ -267,7 +273,7 @@ void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHei
         y = SCREEN_HEIGHT / 2 - stringHeight / 2;
         for (int i = 4; (y - i) >= 0; i++)
         {
-            v.fb32.plot(vec(x, y - i), CHARGE_COLOR);
+            DrawDot(x, y - i, CHARGE_COLOR);
         }
         break;
     default:
@@ -328,7 +334,7 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
         // Draw the electrons:
         for ( ; e > 0; e--)
         {
-            v.fb32.plot(vec(x, y), ELECTRON_COLOR);
+            DrawDot(x, y, ELECTRON_COLOR);
 
             switch (s)
             {

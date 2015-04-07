@@ -65,6 +65,9 @@ class ElementCube
         void DrawLewisDots(int stringWidth, int stringHeight);
         //! Internal supporting function for drawing the line rendering for covalent bonds on specified sides of the cubes
         void DrawCovalentLine(BondSide sides, int stringWidth, int stringHeight);
+
+        //! Draws a dot on the screen
+        void DrawDot(int x, int y, unsigned int color);
 };
 
 #endif

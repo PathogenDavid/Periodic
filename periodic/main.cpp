@@ -161,7 +161,7 @@ void ProcessNeighborhood()
         if (hasBeenUsed[i])
         { continue; }
 
-        // Abort if ther reaction list's space (and therefore the Reaction ObjectPool) is depleted:
+        // Abort if the reaction list's space (and therefore the Reaction ObjectPool) is depleted:
         if (reactions.Count() >= reactions.Capacity())
         {
             LOG("WARNING: Some cubes are going unprocessed because we've depleted the Reaction ObjectPool!\n");
