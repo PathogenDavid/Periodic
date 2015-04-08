@@ -219,10 +219,18 @@ void OnTouch(void* sender, unsigned cubeId)
 
 void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+	static unsigned int call = 0;
+	unsigned int my_call = call++;
+	LOG("\n\tEnter OnNeighborAdd #%d\n", my_call);
     ProcessNeighborhood();
+	LOG("\n\tLeave OnNeightborAdd#%d\n", my_call);
 }
 
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+	static unsigned int remove_call = 0;
+	unsigned int my_call = remove_call++;
+	LOG("\n\tEnter OnNeighborRemove #%d\n", my_call);
     ProcessNeighborhood();
+	LOG("\n\tLeave OnNeighborRemove #%d\n", my_call);
 }
