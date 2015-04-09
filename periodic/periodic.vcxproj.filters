@@ -23,6 +23,7 @@
     <ClCompile Include="Reaction.Process.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Trie.cpp" />
+    <ClCompile Include="LinkedList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -47,6 +48,7 @@
     <ClInclude Include="ElementSet.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Trie.h" />
+    <ClInclude Include="LinkedList.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">

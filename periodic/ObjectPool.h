@@ -36,7 +36,7 @@ public:
         }
 
         // If we get this far, we've exhausted the object pool
-        LOG("FATAL: Object pool with %d elements exhausted!", PoolSizeT);
+        LOG("FATAL: Object pool with %d elements exhausted!\n", PoolSizeT);
         AssertAlways();
         return NULL;
     }

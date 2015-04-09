@@ -22,6 +22,7 @@
     <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementCube.cpp" />
+    <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="number_font.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Compound.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementSet.h" />
+    <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Set.h" />
     <ClInclude Include="ElementCube.h" />

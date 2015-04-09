@@ -2,7 +2,7 @@ APP = periodic
 
 include $(SDK_DIR)/Makefile.defs
 
-OBJS = $(ASSETS).gen.o main.o coders_crux.gen.o number_font.o Element.o ElementCube.o periodic.o Reaction.o Reaction.Process.o Bond.o BondSolution.o Compound.o Node.o Trie.o
+OBJS = $(ASSETS).gen.o main.o coders_crux.gen.o number_font.o Element.o ElementCube.o periodic.o Reaction.o Reaction.Process.o Bond.o BondSolution.o Compound.o Node.o Trie.o LinkedList.o
 ASSETDEPS += *.png $(ASSETS).lua
 CDEPS += coders_crux.gen.cpp
 
