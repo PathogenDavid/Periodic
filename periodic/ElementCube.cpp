@@ -164,7 +164,7 @@ void ElementCube::Render()
     {
         BondSide side = (BondSide)i;
         if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
-        { DrawCovalentLine(side, stringWidth, stringHeight); }
+        { DrawCovalentLines(side, 1, stringWidth, stringHeight); }
     }
 
     // Draw potential reaction:
@@ -204,12 +204,10 @@ void ElementCube::DrawCharAt(int x, int y, char c)
     }
     else
     {
-        Assert(false);
-    }//Invalid character
+        AssertAlways(); // Invalid character
+    }
 
-    //This function seems broken, or I am misunderstanding its purpose.
-    //v.fb32.bitmap(vec(x, y), vec(CODERS_CRUX_GLYPH_WIDTH, CODERS_CRUX_GLYPH_HEIGHT), &coders_crux[c * CODERS_CRUX_GLYPH_SIZE], CODERS_CRUX_GLYPH_WIDTH);
-
+    // Draw the glyph:
     for (int i = 0; i < CODERS_CRUX_GLYPH_HEIGHT; i++)
     {
         for (int j = 0; j < CODERS_CRUX_GLYPH_WIDTH; j++)
@@ -238,46 +236,47 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
     }
 }
 
-void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHeight)
+void ElementCube::DrawCovalentLines(BondSide side, int count, int stringWidth, int stringHeight)
 {
-    int x = 0;
-    int y = 0;
-    switch (side)
+    const int seperation = 2;
+    int offset = -count / 2 * seperation;
+    for (int i = 0; i < count; i++)
     {
-    case BondSide_Right:
-        x = SCREEN_WIDTH / 2 + stringWidth / 2;
-        y = SCREEN_HEIGHT / 2;
-        for (int i = 6; (x + i) < SCREEN_WIDTH; i++)
+        DrawCovalentLine(side, stringWidth, stringHeight, offset);
+        offset += seperation;
+    }
+}
+
+void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHeight, int offset)
+{
+    const int whitspace = 2;
+    Assert(side >= 0 && side < BondSide_Count);
+    int x = SCREEN_WIDTH / 2;
+    int y = SCREEN_HEIGHT / 2;
+    int direction = 1;
+
+    if (side == BondSide_Top || side == BondSide_Left)
+    { direction = -1; }
+
+    if (side == BondSide_Right || side == BondSide_Left)
+    {
+        x += direction * (stringWidth / 2 + whitspace);
+        y += offset;
+
+        for (; x >= 0 && x < SCREEN_WIDTH; x += direction)
         {
-            DrawDot(x + i, y, CHARGE_COLOR);
+            DrawDot(x, y, CHARGE_COLOR);
         }
-        break;
-    case  BondSide_Bottom:
-        x = SCREEN_WIDTH / 2;
-        y = SCREEN_HEIGHT / 2 + stringHeight / 2;
-        for (int i = 4; (y + i) < SCREEN_HEIGHT; i++)
+    }
+    else if (side == BondSide_Top || side == BondSide_Bottom)
+    {
+        x += offset;
+        y += direction * (stringHeight / 2 + whitspace);
+
+        for (; y >= 0 && y < SCREEN_HEIGHT; y += direction)
         {
-            DrawDot(x, y + i, CHARGE_COLOR);
+            DrawDot(x, y, CHARGE_COLOR);
         }
-        break;
-    case  BondSide_Left:
-        x = SCREEN_WIDTH / 2 - stringWidth / 2;
-        y = SCREEN_HEIGHT / 2;
-        for (int i = 6; (x - i) >= 0; i++)
-        {
-            DrawDot(x - i, y, CHARGE_COLOR);
-        }
-        break;
-    case  BondSide_Top:
-        x = SCREEN_WIDTH / 2;
-        y = SCREEN_HEIGHT / 2 - stringHeight / 2;
-        for (int i = 4; (y - i) >= 0; i++)
-        {
-            DrawDot(x, y - i, CHARGE_COLOR);
-        }
-        break;
-    default:
-        AssertAlways();
     }
 }
 
