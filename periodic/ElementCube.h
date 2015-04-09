@@ -33,7 +33,7 @@ class ElementCube
         Element currentElement;
 
 		// Keeps track of neighbors
-		ElementCube* neighbors;
+		ElementCube* neighbors[NUM_SIDES];
 
         //! Initializes this ElementCube with the specified cube ID and initial element index
         void Init(int cubeId, int initialElementNum);
@@ -59,14 +59,14 @@ class ElementCube
         
         void SetDirty();// TODO: Make it so we can subscribe to an event when the element is updated?
 
-		// Adds to the neighborhood
+		//! Adds to the neighborhood
 		void AddNeighbor(ElementCube* other, BondSide side, BondSide otherSide);
 
-		// Removes from the neighborhood
+		//! Removes from the neighborhood
 		void RemoveNeighbor(ElementCube* other, BondSide side, BondSide otherSide);
 
-		// Gets the neighbors of the element cube
-		ElementCube* GetNeighbors(BondSide side);
+		//! Gets the neighbors of the element cube
+		ElementCube* GetNeighbor(BondSide side);
     private:
         //! Internal supporting function for drawing a bitmap font character at the specified location
         void DrawCharAt(int x, int y, char c);

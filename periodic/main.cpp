@@ -128,25 +128,22 @@ void AddNeighbors(ElementCube* forCube, bool* hasBeenUsed)
     //Neighborhood nh(forCube);
     for (int i = 0; i < NUM_SIDES; i++)
     {
-        // If there is no neighbor on this side, skip
-        //if (!nh.hasNeighborAt((Side)i))
-        //{ continue; }
-
         // Get the cube at that side
-        //int neighborCube = nh.cubeAt((Side)i);
-		ElementCube* neighbor = forCube->GetNeighbors((BondSide)i);
+		ElementCube* neighbor = forCube->GetNeighbor((BondSide)i);
+
+        // If there is no neighbor on this side, skip
+        if (neighbor == NULL)
+        { continue; }
 
         // Don't doubly process cubes
-        //if (hasBeenUsed[neighborCube])
-        //{ continue; }
+        if (hasBeenUsed[neighbor->GetCubeId()])
+        { continue; }
 
         // Add the new neighbor as a bond, mark it as used, and process its neighbors too
-        //ElementCube* neighbor = &cubes[neighborCube];
-        //cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+        forCube->GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
 		
-        hasBeenUsed[neighborCube] = true;
-        //AddNeighbors(neighborCube, hasBeenUsed);
-		AddNeighbors(forCube, hasBeenUsed);
+        hasBeenUsed[neighbor->GetCubeId()] = true;
+        AddNeighbors(neighbor, hasBeenUsed);
     }
 }
 
@@ -178,12 +175,11 @@ void ProcessNeighborhood()
             break;
         }
 
-        Neighborhood nh(i);
         Reaction* reaction = new Reaction();
 
         // Find the entire reaction:
         reaction->Add(cubes[i].GetElement());
-        AddNeighbors(i, hasBeenUsed);
+        AddNeighbors(&cubes[i], hasBeenUsed);
 
         // Process the reaction, and save it to our list of active reactions if it resulted in any compounds:
         if (reaction->Process())

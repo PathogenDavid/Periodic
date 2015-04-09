@@ -193,7 +193,16 @@ void ElementCube::Render()
 
 void ElementCube::AddNeighbor(ElementCube* other, BondSide side, BondSide otherSide)
 {
+    Assert(side >= 0 && side < BondSide_Count);
+    Assert(otherSide >= 0 && otherSide < BondSide_Count);
 
+    if (neighbors[side] == other)
+    { return; }
+
+    Assert(neighbors[side] == NULL);
+
+    neighbors[side] = other;
+    other->AddNeighbor(this, otherSide, side);
 }
 
 void ElementCube::RemoveNeighbor(ElementCube* other, BondSide side, BondSide otherSide)
@@ -201,9 +210,10 @@ void ElementCube::RemoveNeighbor(ElementCube* other, BondSide side, BondSide oth
 
 }
 
-ElementCube* ElementCube::GetNeighbors(BondSide side)
+ElementCube* ElementCube::GetNeighbor(BondSide side)
 {
-
+    Assert(side >= 0 && side < BondSide_Count);
+    return neighbors[side];
 }
 
 void ElementCube::DrawCharAt(int x, int y, char c)
