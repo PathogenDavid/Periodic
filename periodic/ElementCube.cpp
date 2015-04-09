@@ -4,7 +4,8 @@
 #include "Element.h"
 #include "periodic.h"
 
-#define DEBUG_ROTATION_LOGIC
+// Uncomment to draw info for debugging rotation logic:
+//#define DEBUG_ROTATION_LOGIC
 
 /*
 Order of adding electrons according to WolframAlpha:
@@ -133,16 +134,16 @@ void ElementCube::DrawDot(int x, int y, unsigned int color)
         v.fb32.plot(vec(x, y), color);  //no rotation
         break;
     case CubeRotatation90:
-        v.fb32.plot(vec(SCREEN_WIDTH - y, x), color);  //clockwise 90
+        v.fb32.plot(vec(SCREEN_WIDTH - y - 1, x), color);  //clockwise 90
         break;
     case CubeRotatation180:
-        v.fb32.plot(vec(SCREEN_WIDTH - x, SCREEN_HEIGHT - y), color);  // clockwise 180
+        v.fb32.plot(vec(SCREEN_WIDTH - x - 1, SCREEN_HEIGHT - y - 1), color);  // clockwise 180
         break;
     case CubeRotatation270:
-        v.fb32.plot(vec(y, SCREEN_HEIGHT - x), color);   //clockwise 270
+        v.fb32.plot(vec(y, SCREEN_HEIGHT - x - 1), color);   //clockwise 270
         break;
     default:
-        Assert(false); // This should never happen
+        AssertAlways(); // This should never happen
     }
 }
 
