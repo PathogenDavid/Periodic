@@ -22,7 +22,7 @@ class Bond
 private:
     Element* with;
     BondSide side;
-    BondSolution solutions[MAX_COMPOUNDS];
+    BondSolution solutions[MAX_COMPOUNDS]; // TODO: Should we use a LinkedList here to save memory in the Element class?
 public:
     Bond();
     Bond(BondSide side, Element* with);

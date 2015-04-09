@@ -154,9 +154,23 @@ Michael Ayala, Chemistry Major at UC Davis
 bool Reaction::Process()
 {
     ElementSymbolNode node1("H");
-    ElementSymbolNode node2("F");
+    ElementSymbolNode node2("H");
     node1.AddChild(&node2);
     node2.SetBondInfo(BondType_Covalent);
+
+    //TODO: Currently, it is theoretically possible for sufficiently complex compounds to find invalid reactions in some case.
+    /*
+    We should add some processing to make sure we don't re-use elements in the same reaction.
+
+    For instance, say the user is trying to make phsophorous acid (H3PO3) the proper cube arrangement would be something like
+      OH
+    HOP
+      OH
+    However, it is possible that this could happen:
+      OH
+    HOPO
+    Where the right-top hydrogen is shared between the two oxygens, which is not physically possible.
+    */
 
     Compound* newCompound = StartNewCompound();
     for (int i = 0; i < elements.Count(); i++)
