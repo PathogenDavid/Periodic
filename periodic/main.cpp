@@ -110,7 +110,11 @@ void main()
         {
             cubes[i].Render();
         }
-
+		if (neighborhoodHasChanged)
+		{
+			ProcessNeighborhood();
+			neighborhoodHasChanged = false;
+		}
         System::paint();
         timeStep.next();
     }
@@ -119,27 +123,30 @@ void main()
 ////////////////////////////////////////////////////////////////////////////////
 // Reaction Building and Processing
 ////////////////////////////////////////////////////////////////////////////////
-void AddNeighbors(int forCube, bool* hasBeenUsed)
+void AddNeighbors(ElementCube* forCube, bool* hasBeenUsed)
 {
-    Neighborhood nh(forCube);
+    //Neighborhood nh(forCube);
     for (int i = 0; i < NUM_SIDES; i++)
     {
         // If there is no neighbor on this side, skip
-        if (!nh.hasNeighborAt((Side)i))
-        { continue; }
+        //if (!nh.hasNeighborAt((Side)i))
+        //{ continue; }
 
         // Get the cube at that side
-        int neighborCube = nh.cubeAt((Side)i);
+        //int neighborCube = nh.cubeAt((Side)i);
+		ElementCube* neighbor = forCube->GetNeighbors((BondSide)i);
 
         // Don't doubly process cubes
-        if (hasBeenUsed[neighborCube])
-        { continue; }
+        //if (hasBeenUsed[neighborCube])
+        //{ continue; }
 
         // Add the new neighbor as a bond, mark it as used, and process its neighbors too
-        ElementCube* neighbor = &cubes[neighborCube];
-        cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+        //ElementCube* neighbor = &cubes[neighborCube];
+        //cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+		
         hasBeenUsed[neighborCube] = true;
-        AddNeighbors(neighborCube, hasBeenUsed);
+        //AddNeighbors(neighborCube, hasBeenUsed);
+		AddNeighbors(forCube, hasBeenUsed);
     }
 }
 
@@ -222,18 +229,26 @@ void OnTouch(void* sender, unsigned cubeId)
 
 void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+	/*
 	static unsigned int call = 0;
 	unsigned int my_call = call++;
 	LOG("\n\tEnter OnNeighborAdd #%d\n", my_call);
     ProcessNeighborhood();
 	LOG("\n\tLeave OnNeightborAdd#%d\n", my_call);
+	*/
+	cubes[firstId].AddNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
+	neighborhoodHasChanged = true;
 }
 
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+	/*
 	static unsigned int remove_call = 0;
 	unsigned int my_call = remove_call++;
 	LOG("\n\tEnter OnNeighborRemove #%d\n", my_call);
     ProcessNeighborhood();
 	LOG("\n\tLeave OnNeighborRemove #%d\n", my_call);
+	*/
+	cubes[firstId].RemoveNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
+	neighborhoodHasChanged = true;
 }
