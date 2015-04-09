@@ -120,23 +120,6 @@ void ElementCube::RotateTo(CubeRotation rotation)
 
 void ElementCube::DrawDot(int x, int y, unsigned int color)
 {
-    /*
-    rotationTimes should be calculated and saved in cube through AddNeighbor process:
-    We assume that cubes are not rotated when processing reaction,
-    so sides should always bond as the following pairs: 
-        0 and 2,
-        1 and 3,
-        2 and 0,
-        3 and 1,
-    which means (side1-side2)%4 ==2.
-    We can get the reacting side of the root cube as sideA,
-    and the side of where the other cube is actually touching it as sideB,
-    then,
-    rotationTimes= (sindA-sideB)%4 -2;
-    for example, when rotationTimes==1, 
-    it means the cube has been couter clockwisely rotated 90 degrees,
-    so the cube needs to be rotated clockwisely 90 degrees 
-    */
     switch (rotation)
     {
     case CubeRotatation0:
@@ -146,10 +129,10 @@ void ElementCube::DrawDot(int x, int y, unsigned int color)
         v.fb32.plot(vec(SCREEN_WIDTH - y, x), color);  //clockwise 90
         break;
     case CubeRotatation180:
-        v.fb32.plot(vec(SCREEN_WIDTH - x, SCREEN_HEIGHT - y), color);  // rotate 180
+        v.fb32.plot(vec(SCREEN_WIDTH - x, SCREEN_HEIGHT - y), color);  // clockwise 180
         break;
     case CubeRotatation270:
-        v.fb32.plot(vec(y, SCREEN_HEIGHT - x), color);   //counter clockwise 90
+        v.fb32.plot(vec(y, SCREEN_HEIGHT - x), color);   //clockwise 270
         break;
     default:
         Assert(false); // This should never happen

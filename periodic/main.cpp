@@ -132,6 +132,33 @@ Side GetOppositeSideFor(int relativeTo, int otherCube)
     return NO_SIDE;
 }
 
+void determindRotation(int relativeTo, int opposite, int otherCube)
+{
+    int relativeRotation = 0;
+    if (relativeTo > opposite)
+        relativeRotation = (relativeTo - opposite) % (int)CubeRotatationCount - 2;
+    else
+        relativeRotation = (opposite - relativeTo) % (int)CubeRotatationCount - 2;
+    ElementCube* neighbor = &cubes[otherCube];
+    switch (relativeRotation)
+    {
+    case 0:
+        neighbor->RotateByClockwise(CubeRotatation0);
+        break;
+    case 1:
+        neighbor->RotateByClockwise(CubeRotatation90);
+        break;
+    case -2:
+        neighbor->RotateByClockwise(CubeRotatation180);
+        break;
+    case -1:
+        neighbor->RotateByClockwise(CubeRotatation270);
+        break;
+    default:
+        Assert(false);   // This should never happen
+    }
+
+}
 void AddNeighbors(int forCube, bool* hasBeenUsed)
 {
     Neighborhood nh(forCube);
@@ -155,8 +182,11 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
         // Figure out the rotation needed for the cube:
         neighbor->RotateTo(&cubes[forCube]); // Cube should always start with parent's rotation amount.
         //TODO: Use GetOppositeSideFor(forCube, neighborCube) to determine how much to rotate. This should be a relative rotation, using RotateBy so that it takes the first rotation into consideration.
+        Side touchingSide =GetOppositeSideFor(forCube, neighborCube);
+        determindRotation(i, (int)touchingSide, neighborCube);
 
         hasBeenUsed[neighborCube] = true;
+        hasBeenUsed[forCube] = true;   //added this so that the rotation of root cube wouldn't change when AddNeighbors(neighborCube, hasBeenUsed);
         AddNeighbors(neighborCube, hasBeenUsed);
     }
 }
