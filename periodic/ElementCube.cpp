@@ -249,7 +249,7 @@ void ElementCube::DrawCovalentLines(BondSide side, int count, int stringWidth, i
 
 void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHeight, int offset)
 {
-    const int whitspace = 2;
+    const int whitspace = 4;
     Assert(side >= 0 && side < BondSide_Count);
     int x = SCREEN_WIDTH / 2;
     int y = SCREEN_HEIGHT / 2;

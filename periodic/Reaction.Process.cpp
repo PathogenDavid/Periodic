@@ -2,6 +2,148 @@
 #include "Element.h"
 #include "Trie.h"
 
+class ReactionNode
+{
+protected:
+    ReactionNode* firstChild = NULL;
+    ReactionNode* sibling = NULL;
+    BondType type = BondType_None;
+    int leftData = 0;
+    int rightData = 0;
+public:
+    class Iterator
+    {
+    private:
+        ReactionNode** marker;
+    public:
+        Iterator(ReactionNode** start)
+        {
+            this->marker = start;
+        }
+
+        void Next()
+        {
+            if (marker != NULL)
+            { marker = &(*marker)->sibling; }
+        }
+
+        ReactionNode* Get() const
+        {
+            return *marker;
+        }
+
+        Iterator& operator++()
+        {
+            Next();
+            return *this;
+        }
+
+        Iterator& operator++(int)
+        {
+            return ++(*this);
+        }
+
+        ReactionNode* operator*() const
+        {
+            return Get();
+        }
+
+        bool HasNext()
+        {
+            return *marker != NULL && (*marker)->sibling != NULL;
+        }
+
+        ReactionNode** GetMarker()
+        {
+            return marker;
+        }
+
+        void GoToEnd()
+        {
+            while (HasNext())
+            { Next(); }
+        }
+    };
+
+    void AddSibling(ReactionNode* node)
+    {
+        Iterator it(&sibling);
+        it.GoToEnd();
+        *(it.GetMarker()) = node;
+    }
+
+    void AddChild(ReactionNode* node)
+    {
+        Iterator it(&firstChild);
+        it.GoToEnd();
+        *(it.GetMarker()) = node;
+    }
+
+    bool ProcessChildren(Compound* compound, Element* inputForChildren)
+    {
+        for (Iterator it(&firstChild); *it; it++)
+        {
+            if (!(*it)->Process(compound, inputForChildren))
+            {
+                return false; // All children must return true to succeed.
+            }
+        }
+
+        return true; // If we got this far, all children met their criteria.
+    }
+
+    void SetBondInfo(BondType type, int leftData, int rightData)
+    {
+        this->type = type;
+        this->leftData = leftData;
+        this->rightData = rightData;
+    }
+
+    void SetBondInfo(BondType type, int data)
+    { SetBondInfo(type, data, data); }
+
+    void SetBondInfo(BondType type)
+    { SetBondInfo(type, 0, 0); }
+
+    void ApplyBond(Compound* compound, Element* left, Element* right)
+    {
+        if (this->type == BondType_None)
+        { return; }
+
+        left->SetBondTypeFor(compound, right,type, leftData, rightData);
+    }
+
+    bool GenericProcess(Compound* compound, Element* input, Element* output)
+    {
+        if (output == NULL)
+        { return false; }
+
+        if (!ProcessChildren(compound, output))
+        { return false; }
+
+        ApplyBond(compound, input, output);
+        return true;
+    }
+
+    virtual bool Process(Compound* compound, Element* input) = 0;
+};
+
+class ElementSymbolNode : public ReactionNode
+{
+private:
+    const char* symbol;
+public:
+    ElementSymbolNode(const char* symbol)
+    {
+        this->symbol = symbol;
+    }
+
+    virtual bool Process(Compound* compound, Element* input)
+    {
+        return GenericProcess(compound, input, input->GetBondWith(symbol));
+    }
+};
+
 /*
 Processes a reaction and determines the outcome, if any.
 
@@ -11,6 +153,27 @@ Michael Ayala, Chemistry Major at UC Davis
 */
 bool Reaction::Process()
 {
+    ElementSymbolNode node1("H");
+    ElementSymbolNode node2("F");
+    node1.AddChild(&node2);
+    node2.SetBondInfo(BondType_Covalent);
+
+    Compound* newCompound = StartNewCompound();
+    for (int i = 0; i < elements.Count(); i++)
+    {
+        if (node1.Process(newCompound, elements[i]))
+        {
+            LOG("%d: TRUE\n", i);
+            newCompound = StartNewCompound();
+        }
+        else
+        {
+            LOG("%d: FALSE\n", i);
+        }
+    }
+    //TODO: Need removing compounds
+
+    #if 0
     Element* element;
     Element* other;
     ElementSet* elements;
@@ -141,6 +304,7 @@ bool Reaction::Process()
 
     //Cleanup
     delete dedupe;
+    #endif
 
     //--------------------------------------------------------------------------
     // Choose the ideal compound and apply it:
