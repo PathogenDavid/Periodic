@@ -75,6 +75,8 @@ class ElementCube
         void RotateTo(ElementCube* otherCube);
         //! Sets the rotation of this cube to a specific value
         void RotateTo(CubeRotation rotation);
+        //! Gets the rotation of this cube
+        CubeRotation GetRotation();
     private:
         //! Internal supporting function for drawing a bitmap font character at the specified location
         void DrawCharAt(int x, int y, char c);

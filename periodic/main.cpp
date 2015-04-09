@@ -132,33 +132,75 @@ Side GetOppositeSideFor(int relativeTo, int otherCube)
     return NO_SIDE;
 }
 
+const char* GetNameForSide(int side)
+{
+    switch ((BondSide)side)
+    {
+    case BondSide_Left: return "Left";
+    case BondSide_Right: return "Right";
+    case BondSide_Top: return "Top";
+    case BondSide_Bottom: return "Bottom";
+    default: return "INVALID";
+    }
+}
+
 void determindRotation(int relativeTo, int opposite, int otherCube)
 {
+    LOG("determineRotation(%s(%d), %s(%d), %d)\n", GetNameForSide(relativeTo), relativeTo, GetNameForSide(opposite), opposite, otherCube);
+    #if 0
     int relativeRotation = 0;
     if (relativeTo > opposite)
-        relativeRotation = (relativeTo - opposite) % (int)CubeRotatationCount - 2;
+    {
+        LOG("Branch 1: relativeRotation = ");
+        relativeRotation = (relativeTo - opposite);
+        LOG("%d", relativeRotation);
+        relativeRotation %= (int)CubeRotatationCount;
+        relativeRotation -= 2;
+        LOG(" %% %d - 2", (int)CubeRotatationCount);
+    }
     else
+    {
+        LOG("Branch 2: ");
         relativeRotation = (opposite - relativeTo) % (int)CubeRotatationCount - 2;
+    }
+
     ElementCube* neighbor = &cubes[otherCube];
     switch (relativeRotation)
     {
     case 0:
+        LOG(" = 0 -> 0");
         neighbor->RotateByClockwise(CubeRotatation0);
         break;
     case 1:
+        LOG(" = 1 -> 1");
         neighbor->RotateByClockwise(CubeRotatation90);
         break;
     case -2:
+        LOG(" = -2 -> 2");
         neighbor->RotateByClockwise(CubeRotatation180);
         break;
     case -1:
+        LOG(" = -1 -> 3");
         neighbor->RotateByClockwise(CubeRotatation270);
         break;
     default:
         Assert(false);   // This should never happen
     }
 
+    LOG("\n");
+
+    LOG("?? %d\n", abs(opposite - relativeTo - 2) % (int)CubeRotatationCount);
+    #endif
+    int rotationAmount = opposite + relativeTo + 2;
+    if (opposite == LEFT || opposite == RIGHT)
+    { rotationAmount += 2; }
+    rotationAmount %= (int)CubeRotatationCount;
+
+    CubeRotation rot = (CubeRotation)rotationAmount;
+    LOG("rot: %d\n", rotationAmount);
+    cubes[otherCube].RotateByClockwise(rot);
 }
+
 void AddNeighbors(int forCube, bool* hasBeenUsed)
 {
     Neighborhood nh(forCube);
@@ -175,18 +217,20 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
         if (hasBeenUsed[neighborCube])
         { continue; }
 
+        // "Rotate" the side we detected to the orientation of the cube
+        int i2 = (i + cubes[forCube].GetRotation()) % NUM_SIDES;
+
         // Add the new neighbor as a bond, mark it as used, and process its neighbors too
         ElementCube* neighbor = &cubes[neighborCube];
-        cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+        cubes[forCube].GetElement()->AddBond((BondSide)i2, neighbor->GetElement()); // (This will also add this element to the reaction.)
 
         // Figure out the rotation needed for the cube:
         neighbor->RotateTo(&cubes[forCube]); // Cube should always start with parent's rotation amount.
         //TODO: Use GetOppositeSideFor(forCube, neighborCube) to determine how much to rotate. This should be a relative rotation, using RotateBy so that it takes the first rotation into consideration.
-        Side touchingSide =GetOppositeSideFor(forCube, neighborCube);
+        Side touchingSide = GetOppositeSideFor(forCube, neighborCube);
         determindRotation(i, (int)touchingSide, neighborCube);
 
         hasBeenUsed[neighborCube] = true;
-        hasBeenUsed[forCube] = true;   //added this so that the rotation of root cube wouldn't change when AddNeighbors(neighborCube, hasBeenUsed);
         AddNeighbors(neighborCube, hasBeenUsed);
     }
 }
@@ -208,7 +252,6 @@ void ProcessNeighborhood()
 
     for (int i = 0; i < NUM_CUBES; i++)
     {
-        LOG("ProcessNeighborhood, iter = %d\n", i);
         if (hasBeenUsed[i])
         { continue; }
 
@@ -224,6 +267,7 @@ void ProcessNeighborhood()
 
         // Find the entire reaction:
         reaction->Add(cubes[i].GetElement());
+        hasBeenUsed[i] = true;
         AddNeighbors(i, hasBeenUsed);
 
         // Process the reaction, and save it to our list of active reactions if it resulted in any compounds:

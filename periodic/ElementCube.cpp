@@ -4,6 +4,8 @@
 #include "Element.h"
 #include "periodic.h"
 
+#define DEBUG_ROTATION_LOGIC
+
 /*
 Order of adding electrons according to WolframAlpha:
 1. Right
@@ -118,6 +120,11 @@ void ElementCube::RotateTo(CubeRotation rotation)
     SetDirty();
 }
 
+CubeRotation ElementCube::GetRotation()
+{
+    return (CubeRotation)rotation;
+}
+
 void ElementCube::DrawDot(int x, int y, unsigned int color)
 {
     switch (rotation)
@@ -230,6 +237,24 @@ void ElementCube::Render()
 
     // Draw electrons:
     DrawLewisDots(stringWidth, stringHeight);
+
+    // Draw stuff for assisting debugging rotation logic
+    #ifdef DEBUG_ROTATION_LOGIC
+    for (int i = 2; i < SCREEN_WIDTH; i++)
+    {
+        v.fb32.plot(vec(i, 0), 15);
+        v.fb32.plot(vec(i, 1), 15);
+    }
+
+    v.fb32.plot(vec(0, 1), 0);
+    v.fb32.plot(vec(1, 1), 0);
+    v.fb32.plot(vec(1, 0), 0);
+    // Red    = 0   degrees
+    // Lime   = 90  degrees
+    // Cyan   = 180 degrees
+    // Purple = 270 degrees
+    v.fb32.plot(vec(0, 0), 8 + rotation * 2);
+    #endif
 
     isDirty = false;
 }
