@@ -116,6 +116,22 @@ void main()
 ////////////////////////////////////////////////////////////////////////////////
 // Reaction Building and Processing
 ////////////////////////////////////////////////////////////////////////////////
+Side GetOppositeSideFor(int relativeTo, int otherCube)
+{
+    Neighborhood nh(otherCube);
+    for (int i = 0; i < NUM_SIDES; i++)
+    {
+        // Check if this side has the cube we are relative to:
+        if (nh.cubeAt((Side)i) == relativeTo)
+        {
+            return (Side)i;
+        }
+    }
+
+    Assert(false); // If we made it this far, the two cubes given aren't actually touching!
+    return NO_SIDE;
+}
+
 void AddNeighbors(int forCube, bool* hasBeenUsed)
 {
     Neighborhood nh(forCube);
@@ -135,6 +151,11 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
         // Add the new neighbor as a bond, mark it as used, and process its neighbors too
         ElementCube* neighbor = &cubes[neighborCube];
         cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+
+        // Figure out the rotation needed for the cube:
+        neighbor->RotateTo(&cubes[forCube]); // Cube should always start with parent's rotation amount.
+        //TODO: Use GetOppositeSideFor(forCube, neighborCube) to determine how much to rotate. This should be a relative rotation, using RotateBy so that it takes the first rotation into consideration.
+
         hasBeenUsed[neighborCube] = true;
         AddNeighbors(neighborCube, hasBeenUsed);
     }
@@ -145,7 +166,7 @@ void ProcessNeighborhood()
 {
     // Reset all of the cubes:
     for (int i = 0; i < NUM_CUBES; i++)
-    { cubes[i].ResetElement(); }
+    { cubes[i].Reset(); }
 
     // Destroy old reactions
     for (int i = 0; i < reactions.Count(); i++)

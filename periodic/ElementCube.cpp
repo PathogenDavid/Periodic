@@ -30,6 +30,7 @@ void ElementCube::Init(int cubeId, int initialElementNum)
 
     currentElementNum = initialElementNum;
     Element::GetRawElement(currentElementNum, &currentElement);
+    rotation = CubeRotatation0;
     isDirty = true;
 
     // Initialize video:
@@ -69,9 +70,10 @@ void ElementCube::GoToNextElement()
     isDirty = true;
 }
 
-void ElementCube::ResetElement()
+void ElementCube::Reset()
 {
     currentElement.ResetToBasicState();
+    rotation = CubeRotatation0;
     isDirty = true;//TODO: Right now the cubes get marked as dirty when they shouldn't.
 }
 
@@ -88,6 +90,32 @@ Element* ElementCube::GetElement()
 void ElementCube::SetDirty()
 {
     isDirty = true;
+}
+
+void ElementCube::RotateByClockwise(CubeRotation rotation)
+{
+    this->rotation += rotation;
+    this->rotation %= CubeRotatationCount;
+    SetDirty();
+}
+
+void ElementCube::RotateByCounterClockwise(CubeRotation rotation)
+{
+    this->rotation -= rotation;
+    this->rotation %= CubeRotatationCount;
+    SetDirty();
+}
+
+void ElementCube::RotateTo(ElementCube* otherCube)
+{
+    this->rotation = otherCube->rotation;
+    SetDirty();
+}
+
+void ElementCube::RotateTo(CubeRotation rotation)
+{
+    this->rotation = rotation;
+    SetDirty();
 }
 
 void ElementCube::DrawDot(int x, int y, unsigned int color)
@@ -109,25 +137,22 @@ void ElementCube::DrawDot(int x, int y, unsigned int color)
     it means the cube has been couter clockwisely rotated 90 degrees,
     so the cube needs to be rotated clockwisely 90 degrees 
     */
-    int rotationTimes = 0;
-    switch (rotationTimes)
+    switch (rotation)
     {
-    case 0:
+    case CubeRotatation0:
         v.fb32.plot(vec(x, y), color);  //no rotation
         break;
-    case 1:
+    case CubeRotatation90:
         v.fb32.plot(vec(SCREEN_WIDTH - y, x), color);  //clockwise 90
         break;
-    case -1:
-        v.fb32.plot(vec(y, SCREEN_HEIGHT - x), color);   //counter clockwise 90
-        break;
-    case 2:
-    case -2:
+    case CubeRotatation180:
         v.fb32.plot(vec(SCREEN_WIDTH - x, SCREEN_HEIGHT - y), color);  // rotate 180
         break;
-    default:
-        v.fb32.plot(vec(x, y), color);  //no rotation
+    case CubeRotatation270:
+        v.fb32.plot(vec(y, SCREEN_HEIGHT - x), color);   //counter clockwise 90
         break;
+    default:
+        Assert(false); // This should never happen
     }
 }
 

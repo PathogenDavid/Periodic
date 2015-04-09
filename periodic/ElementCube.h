@@ -13,6 +13,15 @@ using namespace Sifteo;
 #define COVALENT_COLOR_INNER 9 // Yellow
 #define POTENTIAL_COLOR 9 // Yellow
 
+enum CubeRotation
+{
+    CubeRotatation0,
+    CubeRotatation90,
+    CubeRotatation180,
+    CubeRotatation270,
+    CubeRotatationCount
+};
+
 //! ElementCube is responsible for linking an Element to a Sifteo Cube.
 //! Its primary role is rendering the element to the screen.
 //! Note: Cube events are handled in main.cpp, not here.
@@ -31,6 +40,8 @@ class ElementCube
         int currentElementNum;
         //! The underlying Element info used for this ElementCube.
         Element currentElement;
+        //! The amount this cube's screens hould be rotated.
+        unsigned char rotation;
 
         //! Initializes this ElementCube with the specified cube ID and initial element index
         void Init(int cubeId, int initialElementNum);
@@ -44,7 +55,7 @@ class ElementCube
         //! Changes the current element to the next element in the element database
         void GoToNextElement();
         //! Resets this current element to its natural, basic state
-        void ResetElement();
+        void Reset();
         //! Renders this ElementCube
         void Render();
 
@@ -55,6 +66,15 @@ class ElementCube
         Element* GetElement();
         
         void SetDirty();// TODO: Make it so we can subscribe to an event when the element is updated?
+
+        //! Rotates the cube by the specified number of degrees, clockwise
+        void RotateByClockwise(CubeRotation rotation);
+        //! Rotates the cube by the specified number of degrees, counterclockwise
+        void RotateByCounterClockwise(CubeRotation rotation);
+        //! Sets the rotation of this cube to the value of another cube's rotation
+        void RotateTo(ElementCube* otherCube);
+        //! Sets the rotation of this cube to a specific value
+        void RotateTo(CubeRotation rotation);
     private:
         //! Internal supporting function for drawing a bitmap font character at the specified location
         void DrawCharAt(int x, int y, char c);
