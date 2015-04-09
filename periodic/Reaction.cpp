@@ -54,6 +54,12 @@ Compound* Reaction::StartNewCompound()
     return ret;
 }
 
+void Reaction::CancelCompound(Compound* compound)
+{
+    possibleCompounds.Remove(compound);
+    delete compound;
+}
+
 // Trie Initialization
 bool Reaction::trieIsInitialized;
 Trie Reaction::trie;

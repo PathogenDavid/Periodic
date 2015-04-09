@@ -25,7 +25,7 @@
 #define NUM_CUBES 3 // 12 max
 
 #define MAX_REACTIONS ((NUM_CUBES + 1) / 2 + 1)  // Half of the number of cubes, rounded up, plus an extra for processing cubes with no neighbors
-#define MAX_COMPOUNDS 5
+#define MAX_COMPOUNDS (MAX_REACTIONS * 5)
 
 //------------------------------------------------------------------------
 // Types

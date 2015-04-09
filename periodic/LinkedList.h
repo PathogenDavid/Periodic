@@ -101,6 +101,11 @@ public:
         return node->value;
     }
 
+    T operator[](int index)
+    {
+        return Get(index);
+    }
+
     unsigned int Count()
     {
         return count;

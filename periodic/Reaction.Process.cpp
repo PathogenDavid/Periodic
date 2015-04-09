@@ -171,7 +171,9 @@ bool Reaction::Process()
             LOG("%d: FALSE\n", i);
         }
     }
-    //TODO: Need removing compounds
+    CancelCompound(newCompound);
+
+    LOG("%d!!!\n", possibleCompounds.Count());
 
     #if 0
     Element* element;
@@ -340,7 +342,7 @@ bool Reaction::Process()
         if (possibleCompounds[i] != idealCompound)
         {
             delete possibleCompounds[i];
-            possibleCompounds.SetNull(i);
+            possibleCompounds.RemoveAt(i);
         }
     }
 

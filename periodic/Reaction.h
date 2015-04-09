@@ -3,6 +3,7 @@
 #include "Set.h"
 #include "Compound.h"
 #include "ObjectPool.h"
+#include "LinkedList.h"
 
 #include <sifteo.h>
 
@@ -12,7 +13,7 @@ class Reaction : public ObjectPool<Reaction, MAX_REACTIONS>
 {
 private:
     ElementSet elements;
-    Set<Compound, MAX_COMPOUNDS> possibleCompounds;
+    LinkedList<Compound*, MAX_COMPOUNDS> possibleCompounds;
 public:
     Reaction();
     ~Reaction();
@@ -23,6 +24,7 @@ public:
     bool Process();
 private:
     Compound* StartNewCompound();
+    void CancelCompound(Compound* compound);
 
     static bool trieIsInitialized;
     static Trie trie;
