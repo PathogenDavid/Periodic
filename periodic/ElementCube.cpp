@@ -191,6 +191,21 @@ void ElementCube::Render()
     isDirty = false;
 }
 
+void ElementCube::AddNeighbor(ElementCube* other, BondSide side, BondSide otherSide)
+{
+
+}
+
+void ElementCube::RemoveNeighbor(ElementCube* other, BondSide side, BondSide otherSide)
+{
+
+}
+
+ElementCube* ElementCube::GetNeighbors(BondSide side)
+{
+
+}
+
 void ElementCube::DrawCharAt(int x, int y, char c)
 {
     // Convert char to glyph id:

@@ -21,6 +21,9 @@ static Metadata M = Metadata()
 //! Pointer to the array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
 ElementCube* cubes;
 
+//global bool to keep track of the neighborhood has changed
+bool neighborhoodHasChanged;
+
 //! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
 
