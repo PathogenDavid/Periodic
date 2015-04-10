@@ -68,6 +68,17 @@ public:
             while (HasNext())
             { Next(); }
         }
+
+        uint32 Count()
+        {
+            uint32 ret = 0;
+            while (HasNext())
+            {
+                Next();
+                ret++;
+            }
+            return ret;
+        }
     };
 
     void AddSibling(ReactionNode* node)
@@ -104,7 +115,7 @@ public:
         if (this->type == BondType_None)
         { return; }
 
-        LOG("ApplyBond(Compound:0x%X, Element:0x%X, Element:0x%X)\n", compound, left, right);
+        //LOG("ApplyBond(Compound:0x%X, Element:0x%X, Element:0x%X)\n", compound, left, right);
         Assert(left != right); // This means a bond was applied to a passthrough node.
 
         left->SetMaskBit(MAX_REACTION_DEPTH);
@@ -131,11 +142,9 @@ public:
         Assert(depth >= 0 && depth < MAX_REACTION_DEPTH);
         bool success = false;
         Element* output = NULL;
-        int num = 0;
 
         while (true)
         {
-            LOG("ATTEMPT %d\n", num++);
             // This will return a different element each time it is called, and NULL when no element is available
             // Therefore, we can loop until we find an element with child elements that satisfy this branch of the reaction.
             output = GetOutput(compound, input, depth);
@@ -168,6 +177,11 @@ public:
         LOG("WARN: Called unimplemented ReactionNode:GetOutput with Element:0x%X[%s] as input @ depth %d!\n", input, input->GetSymbol(), depth);
         return NULL;
     }
+
+    Iterator GetChildIterator()
+    {
+        return Iterator(&firstChild);
+    }
 };
 
 class RootElementSymbolNode : public ReactionNode
@@ -187,7 +201,7 @@ public:
         { return NULL; }
 
         Element* ret = strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
-        LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
+        //LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
         return ret;
     }
 };
@@ -206,10 +220,14 @@ public:
     virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
         Element* ret = input->GetBondWith(symbol);
-        LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
+        //LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
         return ret;
     }
 };
+
+void InitializeCompoundDatabase();
+
+ReactionNode CompoundDatabaseRoot;
 
 /*
 Processes a reaction and determines the outcome, if any.
@@ -220,64 +238,41 @@ Michael Ayala, Chemistry Major at UC Davis
 */
 bool Reaction::Process()
 {
+    // Initialize the compound database
+    static bool compoundDatabaseIsInitialized = false;
+    if (!compoundDatabaseIsInitialized)
+    {
+        InitializeCompoundDatabase();
+        compoundDatabaseIsInitialized = true;
+    }
+
     currentReaction = this;
-    LOG("--------------------------------------------------------------\n");
-    //ElementSymbolNode node1("H");
-    //ElementSymbolNode node2("H");
-    //node1.AddChild(&node2);
-    //node2.SetBondInfo(BondType_Covalent);
-    RootElementSymbolNode node1("Cl");
-    ElementSymbolNode node1_1("O");
-    ElementSymbolNode node1_1_1("H");
-    ElementSymbolNode node1_2("O");
-    ElementSymbolNode node1_3("O");
-    ElementSymbolNode node1_4("O");
+    LOG("Reaction:0x%X processing %d elements...\n", this, elements.Count());
+    LOG("[");
+    for (int i = 0; i < elements.Count(); i++)
+    {
+        LOG("%s%s", i == 0 ? " " : ", ", elements[i]->GetSymbol());
+    }
+    LOG(" ]\n");
 
-    node1.AddChild(&node1_1);
-    node1.AddChild(&node1_2);
-    node1.AddChild(&node1_3);
-    node1.AddChild(&node1_4);
-
-    node1_1.AddChild(&node1_1_1);
-
-    node1_1.SetBondInfo(BondType_Covalent, 1);
-    node1_2.SetBondInfo(BondType_Covalent, 2);
-    node1_3.SetBondInfo(BondType_Covalent, 2);
-    node1_4.SetBondInfo(BondType_Covalent, 2);
-
-    node1_1_1.SetBondInfo(BondType_Covalent, 1);
-
-    //TODO: Currently, it is theoretically possible for sufficiently complex compounds to find invalid reactions in some case.
-    /*
-    We should add some processing to make sure we don't re-use elements in the same reaction.
-
-    For instance, say the user is trying to make phsophorous acid (H3PO3) the proper cube arrangement would be something like
-      OH
-    HOP
-      OH
-    However, it is possible that this could happen:
-      OH
-    HOPO
-    Where the right-top hydrogen is shared between the two oxygens, which is not physically possible.
-    */
-
+    //TODO: Right now a failed compound can leave element bonds in a weird partially bonded state, which will probably FUBAR the next compound to be processed.
     Compound* newCompound = StartNewCompound();
     for (int i = 0; i < elements.Count(); i++)
     {
-        LOG("Processing element %d:%s\n", i, elements[i]->GetSymbol());
-        if (node1.Process(newCompound, elements[i], 0))
+        LOG("Processing element %d:%s as root to compound...\n", i, elements[i]->GetSymbol());
+        
+        for (ReactionNode::Iterator it = CompoundDatabaseRoot.GetChildIterator(); *it; it++)
         {
-            LOG("%d: TRUE\n", i);
-            newCompound = StartNewCompound();
-        }
-        else
-        {
-            LOG("%d: FALSE\n", i);
+            if ((*it)->Process(newCompound, elements[i], 0))
+            {
+                // Make a new compound for the next potential compound
+                newCompound = StartNewCompound();
+            }
         }
     }
     CancelCompound(newCompound);
 
-    LOG("%d!!!\n", possibleCompounds.Count());
+    LOG("Reaction processing completed with %d candidate compounds.\n", possibleCompounds.Count());
 
     #if 0
     Element* element;
@@ -458,4 +453,48 @@ bool Reaction::Process()
         return true;
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+// Nodes for potential compounds
+//------------------------------------------------------------------------------
+//TOOD: Either make this nicer or generate it with a tool. (I'm leaning towards the latter.)
+namespace PerchloricAcid
+{
+    RootElementSymbolNode node1("Cl");
+    ElementSymbolNode node1_1("O");
+    ElementSymbolNode node1_1_1("H");
+    ElementSymbolNode node1_2("O");
+    ElementSymbolNode node1_3("O");
+    ElementSymbolNode node1_4("O");
+
+    void Initialize()
+    {
+        node1.AddChild(&node1_1);
+        node1.AddChild(&node1_2);
+        node1.AddChild(&node1_3);
+        node1.AddChild(&node1_4);
+
+        node1_1.AddChild(&node1_1_1);
+
+        node1_1.SetBondInfo(BondType_Covalent, 1);
+        node1_2.SetBondInfo(BondType_Covalent, 2);
+        node1_3.SetBondInfo(BondType_Covalent, 2);
+        node1_4.SetBondInfo(BondType_Covalent, 2);
+
+        node1_1_1.SetBondInfo(BondType_Covalent, 1);
+
+        CompoundDatabaseRoot.AddChild(&node1);
+    }
+}
+
+void InitializeCompoundDatabase()
+{
+    //ElementSymbolNode node1("H");
+    //ElementSymbolNode node2("H");
+    //node1.AddChild(&node2);
+    //node2.SetBondInfo(BondType_Covalent);
+    LOG("Initializing compound database...\n");
+    PerchloricAcid::Initialize();
+    LOG("Done initializing compound database with %d compounds.\n", CompoundDatabaseRoot.GetChildIterator().Count());
 }
