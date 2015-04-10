@@ -115,6 +115,32 @@ void main()
 ////////////////////////////////////////////////////////////////////////////////
 // Reaction Building and Processing
 ////////////////////////////////////////////////////////////////////////////////
+Side GetOppositeSideFor(int relativeTo, int otherCube)
+{
+    Neighborhood nh(otherCube);
+    for (int i = 0; i < NUM_SIDES; i++)
+    {
+        // Check if this side has the cube we are relative to:
+        if (nh.cubeAt((Side)i) == relativeTo)
+        {
+            return (Side)i;
+        }
+    }
+
+    Assert(false); // If we made it this far, the two cubes given aren't actually touching!
+    return NO_SIDE;
+}
+
+void SetCubeRotation(ElementCube* neighbor, int firstCubeSide, int secondCubeSide)
+{
+    int rotationAmount = secondCubeSide + firstCubeSide + 2;
+    if (secondCubeSide == LEFT || secondCubeSide == RIGHT)
+    { rotationAmount += 2; }
+    rotationAmount %= (int)CubeRotatationCount;
+
+    neighbor->RotateByClockwise((CubeRotation)rotationAmount);
+}
+
 void AddNeighbors(int forCube, bool* hasBeenUsed)
 {
     Neighborhood nh(forCube);
@@ -126,14 +152,22 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
 
         // Get the cube at that side
         int neighborCube = nh.cubeAt((Side)i);
+        ElementCube* neighbor = &cubes[neighborCube];
 
         // Don't doubly process cubes
         if (hasBeenUsed[neighborCube])
         { continue; }
 
+        // "Rotate" the side we detected to the orientation of the cube so we set the side of the bond correctly.
+        int bondSide = (i + cubes[forCube].GetRotation()) % NUM_SIDES;
+
         // Add the new neighbor as a bond, mark it as used, and process its neighbors too
-        ElementCube* neighbor = &cubes[neighborCube];
-        cubes[forCube].GetElement()->AddBond((BondSide)i, neighbor->GetElement()); // (This will also add this element to the reaction.)
+        cubes[forCube].GetElement()->AddBond((BondSide)bondSide, neighbor->GetElement()); // (This will also add this element to the reaction.)
+
+        // Figure out the rotation needed for the cube:
+        neighbor->RotateTo(&cubes[forCube]); // Cube should always start with parent's rotation amount.
+        SetCubeRotation(neighbor, i, (int)GetOppositeSideFor(forCube, neighborCube));
+
         hasBeenUsed[neighborCube] = true;
         AddNeighbors(neighborCube, hasBeenUsed);
     }
@@ -144,7 +178,7 @@ void ProcessNeighborhood()
 {
     // Reset all of the cubes:
     for (int i = 0; i < NUM_CUBES; i++)
-    { cubes[i].ResetElement(); }
+    { cubes[i].Reset(); }
 
     // Destroy old reactions
     for (int i = 0; i < reactions.Count(); i++)
@@ -171,6 +205,7 @@ void ProcessNeighborhood()
 
         // Find the entire reaction:
         reaction->Add(cubes[i].GetElement());
+        hasBeenUsed[i] = true;
         AddNeighbors(i, hasBeenUsed);
 
         // Process the reaction, and save it to our list of active reactions if it resulted in any compounds:

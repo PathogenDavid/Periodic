@@ -4,6 +4,9 @@
 #include "Element.h"
 #include "periodic.h"
 
+// Uncomment to draw info for debugging rotation logic:
+//#define DEBUG_ROTATION_LOGIC
+
 /*
 Order of adding electrons according to WolframAlpha:
 1. Right
@@ -30,6 +33,7 @@ void ElementCube::Init(int cubeId, int initialElementNum)
 
     currentElementNum = initialElementNum;
     Element::GetRawElement(currentElementNum, &currentElement);
+    rotation = CubeRotatation0;
     isDirty = true;
 
     // Initialize video:
@@ -69,9 +73,10 @@ void ElementCube::GoToNextElement()
     isDirty = true;
 }
 
-void ElementCube::ResetElement()
+void ElementCube::Reset()
 {
     currentElement.ResetToBasicState();
+    rotation = CubeRotatation0;
     isDirty = true;//TODO: Right now the cubes get marked as dirty when they shouldn't.
 }
 
@@ -90,10 +95,56 @@ void ElementCube::SetDirty()
     isDirty = true;
 }
 
+void ElementCube::RotateByClockwise(CubeRotation rotation)
+{
+    this->rotation += rotation;
+    this->rotation %= CubeRotatationCount;
+    SetDirty();
+}
+
+void ElementCube::RotateByCounterClockwise(CubeRotation rotation)
+{
+    this->rotation -= rotation;
+    this->rotation %= CubeRotatationCount;
+    SetDirty();
+}
+
+void ElementCube::RotateTo(ElementCube* otherCube)
+{
+    this->rotation = otherCube->rotation;
+    SetDirty();
+}
+
+void ElementCube::RotateTo(CubeRotation rotation)
+{
+    this->rotation = rotation;
+    SetDirty();
+}
+
+CubeRotation ElementCube::GetRotation()
+{
+    return (CubeRotation)rotation;
+}
+
 void ElementCube::DrawDot(int x, int y, unsigned int color)
 {
-    //v.fb32.plot(vec(y, SCREEN_HEIGHT - x - 1), color);
-   v.fb32.plot(vec(x, y), color);
+    switch (rotation)
+    {
+    case CubeRotatation0:
+        v.fb32.plot(vec(x, y), color);  //no rotation
+        break;
+    case CubeRotatation90:
+        v.fb32.plot(vec(SCREEN_WIDTH - y - 1, x), color);  //clockwise 90
+        break;
+    case CubeRotatation180:
+        v.fb32.plot(vec(SCREEN_WIDTH - x - 1, SCREEN_HEIGHT - y - 1), color);  // clockwise 180
+        break;
+    case CubeRotatation270:
+        v.fb32.plot(vec(y, SCREEN_HEIGHT - x - 1), color);   //clockwise 270
+        break;
+    default:
+        AssertAlways(); // This should never happen
+    }
 }
 
 void ElementCube::Render()
@@ -187,6 +238,24 @@ void ElementCube::Render()
 
     // Draw electrons:
     DrawLewisDots(stringWidth, stringHeight);
+
+    // Draw stuff for assisting debugging rotation logic
+    #ifdef DEBUG_ROTATION_LOGIC
+    for (int i = 2; i < SCREEN_WIDTH; i++)
+    {
+        v.fb32.plot(vec(i, 0), 15);
+        v.fb32.plot(vec(i, 1), 15);
+    }
+
+    v.fb32.plot(vec(0, 1), 0);
+    v.fb32.plot(vec(1, 1), 0);
+    v.fb32.plot(vec(1, 0), 0);
+    // Red    = 0   degrees
+    // Lime   = 90  degrees
+    // Cyan   = 180 degrees
+    // Purple = 270 degrees
+    v.fb32.plot(vec(0, 0), 8 + rotation * 2);
+    #endif
 
     isDirty = false;
 }
