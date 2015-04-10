@@ -21,8 +21,6 @@
     <ClCompile Include="BondSolution.cpp" />
     <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
-    <ClCompile Include="Node.cpp" />
-    <ClCompile Include="Trie.cpp" />
     <ClCompile Include="LinkedList.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -46,8 +44,6 @@
     <ClInclude Include="Set.h" />
     <ClInclude Include="Compound.h" />
     <ClInclude Include="ElementSet.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="Trie.h" />
     <ClInclude Include="LinkedList.h" />
   </ItemGroup>
   <ItemGroup>

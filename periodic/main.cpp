@@ -4,7 +4,6 @@
 #include "ElementCube.h"
 #include "Reaction.h"
 #include "periodic.h" 
-#include "Trie.h"
 #include "Set.h"
 
 #include <sifteo.h>

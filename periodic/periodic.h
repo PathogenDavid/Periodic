@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------
 #define Assert(x) ASSERT(x)
 #define AssertAlways() Assert(false)
+#define CompilerAssert(x) struct compilerAssertType ## __COUNTER__ { int : !!(x); }
 
 #define CountOfArray(a) ( sizeof(a) / sizeof(*a) )
 
@@ -31,6 +32,9 @@
 // Types
 //------------------------------------------------------------------------
 typedef unsigned long size_t; // Sifteo doesn't declare size_t for some reason.
+
+typedef unsigned int uint32;
+CompilerAssert(sizeof(uint32) == 4);
 
 //------------------------------------------------------------------------
 // Generic Utility Functions

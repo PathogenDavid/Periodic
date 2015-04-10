@@ -2,7 +2,6 @@
 #include "Element.h"
 #include "Reaction.h"
 #include <sifteo.h>
-#include "Trie.h"
 
 // Default constructor will not create a valid element, it must be initialized before use using GetRawElement
 Element::Element()
@@ -24,6 +23,8 @@ Element::Element(const char* name, const char* symbol, groupState group, short a
 
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
+    this->currentCompound = NULL;
+    ClearMask();
 }
 
 Element::Element(Element* baseElement)
@@ -48,6 +49,7 @@ void Element::ResetToBasicState()
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
     this->currentCompound = NULL;
+    ClearMask();
 }
 
 //Getters
@@ -251,7 +253,7 @@ int Element::GetBondDataFor(BondSide side)
     return bonds[side].GetDataFor(currentCompound);
 }
 
-bool Element::HasBondType(BondType type)
+bool Element::HasBondType(BondType type, unsigned int maskFilter)
 {
     for (int i = 0; i < BondSide_Count; i++)
     {
@@ -268,12 +270,12 @@ Element* Element::GetBondWith(BondSide side)
     return bonds[side].GetElement();
 }
 
-Element* Element::GetBondWith(groupState group)
+Element* Element::GetBondWith(groupState group, unsigned int maskFilter)
 {
     for (int i = 0; i < BondSide_Count; i++)
     {
         Element* ret = GetBondWith((BondSide)i);
-        if (ret != NULL && ret->GetGroup() == group)
+        if (ret != NULL && ret->GetGroup() == group && !ret->MatchesMask(maskFilter))
         {
             return ret;
         }
@@ -282,12 +284,12 @@ Element* Element::GetBondWith(groupState group)
     return NULL;
 }
 
-Element* Element::GetBondWith(const char* symbol)
+Element* Element::GetBondWith(const char* symbol, unsigned int maskFilter)
 {
     for (int i = 0; i < BondSide_Count; i++)
     {
         Element* ret = GetBondWith((BondSide)i);
-        if (ret != NULL && strcmp(ret->GetSymbol(), symbol) == 0)
+        if (ret != NULL && strcmp(ret->GetSymbol(), symbol) == 0 && !ret->MatchesMask(maskFilter))
         {
             return ret;
         }
@@ -296,13 +298,13 @@ Element* Element::GetBondWith(const char* symbol)
     return NULL;
 }
 
-ElementSet* Element::GetBondsWith(groupState group)
+ElementSet* Element::GetBondsWith(groupState group, unsigned int maskFilter)
 {
     ElementSet* ret = new ElementSet();
     for (int i = 0; i < BondSide_Count; i++)
     {
         Element* other = GetBondWith((BondSide)i);
-        if (other != NULL && other->GetGroup() == group)
+        if (other != NULL && other->GetGroup() == group && !other->MatchesMask(maskFilter))
         {
             ret->Add(other);
         }
@@ -312,17 +314,17 @@ ElementSet* Element::GetBondsWith(groupState group)
 }
 
 bool Element::GetBondWith(BondSide side, Element** element_out) { *element_out = GetBondWith(side); return !!*element_out; }
-bool Element::GetBondWith(groupState group, Element** element_out) { *element_out = GetBondWith(group); return !!*element_out; }
-bool Element::GetBondWith(const char* symbol, Element** element_out) { *element_out = GetBondWith(symbol); return !!*element_out; }
+bool Element::GetBondWith(groupState group, Element** element_out, unsigned int maskFilter) { *element_out = GetBondWith(group, maskFilter); return !!*element_out; }
+bool Element::GetBondWith(const char* symbol, Element** element_out, unsigned int maskFilter) { *element_out = GetBondWith(symbol, maskFilter); return !!*element_out; }
 
-bool Element::HasBondWith(groupState group)
+bool Element::HasBondWith(groupState group, unsigned int maskFilter)
 {
-    return GetBondWith(group) != NULL;
+    return GetBondWith(group, maskFilter) != NULL;
 }
 
-bool Element::HasBondWith(const char* symbol)
+bool Element::HasBondWith(const char* symbol, unsigned int maskFilter)
 {
-    return GetBondWith(symbol) != NULL;
+    return GetBondWith(symbol, maskFilter) != NULL;
 }
 
 BondSide Element::SideOf(Element* otherElement)
@@ -336,6 +338,36 @@ BondSide Element::SideOf(Element* otherElement)
     }
 
     return BondSide_Invalid;
+}
+
+void Element::SetMaskBit(int bit)
+{
+    Assert(bit >= 0 && bit < (sizeof(mask) * 8));
+    this->mask |= (1 << bit);
+}
+
+void Element::ClearMaskBit(int bit)
+{
+    Assert(bit >= 0 && bit < (sizeof(mask) * 8));
+    this->mask &= ~(1 << bit);
+}
+
+void Element::SetMaskBit(int bit, bool value)
+{
+    if (value)
+    { SetMaskBit(bit); }
+    else
+    { ClearMaskBit(bit); }
+}
+
+void Element::ClearMask()
+{
+    this->mask = 0;
+}
+
+bool Element::MatchesMask(unsigned int maskFilter)
+{
+    return !!(this->mask & maskFilter);
 }
 
 void Element::ApplyCompound(Compound* compound)

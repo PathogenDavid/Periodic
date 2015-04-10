@@ -1,6 +1,5 @@
 #include "Reaction.h"
 #include "Element.h"
-#include "Trie.h"
 
 class ReactionNode
 {

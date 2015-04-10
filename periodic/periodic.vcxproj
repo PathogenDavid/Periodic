@@ -24,10 +24,8 @@
     <ClCompile Include="ElementCube.cpp" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="number_font.cpp" />
     <ClCompile Include="periodic.cpp" />
-    <ClCompile Include="Trie.cpp" />
     <ClCompile Include="Reaction.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
   </ItemGroup>
@@ -43,13 +41,11 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementSet.h" />
     <ClInclude Include="LinkedList.h" />
-    <ClInclude Include="Node.h" />
     <ClInclude Include="Set.h" />
     <ClInclude Include="ElementCube.h" />
     <ClInclude Include="number_font.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="periodic.h" />
-    <ClInclude Include="Trie.h" />
     <ClInclude Include="Reaction.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -15,6 +15,8 @@ enum groupState {ALKALI, ALKALIEARTH, HALOGEN, NOBLE, HYDROGEN, NONMETAL, METALO
 
 enum bondState { IONIC, COVALENT, POTENTIAL, NONE };
 
+#define ALL_ELEMENTS_MASK 0xFFFFFFFF
+
 //! Element represents a chemical element
 class Element
 {
@@ -38,6 +40,9 @@ class Element
 		double electroNegativity;
         //! The number of electrons this element is sharing with neighboring elements.
         int sharedElectrons;
+
+        //! Bitmask of categories associated with this Element
+        uint32 mask;
 
         Bond bonds[BondSide_Count];
         Reaction* currentReaction;
@@ -105,22 +110,28 @@ class Element
         BondType GetBondTypeFor(BondSide side);
         int GetBondDataFor(BondSide side);
 
-        bool HasBondType(BondType type);
+        bool HasBondType(BondType type, uint32 maskFilter = ALL_ELEMENTS_MASK);
 
         Element* GetBondWith(BondSide side);
-        Element* GetBondWith(groupState group);
-        Element* GetBondWith(const char* symbol);
+        Element* GetBondWith(groupState group, uint32 maskFilter = ALL_ELEMENTS_MASK);
+        Element* GetBondWith(const char* symbol, uint32 maskFilter = ALL_ELEMENTS_MASK);
 
-        ElementSet* GetBondsWith(groupState group);
+        ElementSet* GetBondsWith(groupState group, uint32 maskFilter = ALL_ELEMENTS_MASK);
 
         bool GetBondWith(BondSide side, Element** element_out);
-        bool GetBondWith(groupState group, Element** element_out);
-        bool GetBondWith(const char* symbol, Element** element_out);
+        bool GetBondWith(groupState group, Element** element_out, uint32 maskFilter = ALL_ELEMENTS_MASK);
+        bool GetBondWith(const char* symbol, Element** element_out, uint32 maskFilter = ALL_ELEMENTS_MASK);
 
-        bool HasBondWith(groupState group);
-        bool HasBondWith(const char* symbol);
+        bool HasBondWith(groupState group, uint32 maskFilter = ALL_ELEMENTS_MASK);
+        bool HasBondWith(const char* symbol, uint32 maskFilter = ALL_ELEMENTS_MASK);
 
         BondSide SideOf(Element* otherElement);
+
+        void SetMaskBit(int bit);
+        void ClearMaskBit(int bit);
+        void SetMaskBit(int bit, bool value);
+        void ClearMask();
+        bool MatchesMask(unsigned int maskFilter);
 
         void ApplyCompound(Compound* compound);
 };

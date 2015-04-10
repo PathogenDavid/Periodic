@@ -25,8 +25,7 @@ public:
 private:
     Compound* StartNewCompound();
     void CancelCompound(Compound* compound);
-
-    static bool trieIsInitialized;
-    static Trie trie;
-    static void InitializeTrie();
+    
+    void ClearElementMasks();
+    void ClearElementMasks(int bit);
 };
