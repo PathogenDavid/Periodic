@@ -41,7 +41,7 @@ const char* defaultCubeSymbols[] =
     "F",
     "Li",
     "I",
-    "Li",
+    "Ca",
     "Be",
     "Ca",
     "H",
@@ -129,7 +129,7 @@ void AddNeighbors(int forCube, bool* hasBeenUsed)
     for (int i = 0; i < NUM_SIDES; i++)
     {
         // If there is no neighbor on this side, skip
-        if (!nh.hasNeighborAt((Side)i))
+        if (!nh.hasCubeAt((Side)i))
         { continue; }
 
         // Get the cube at that side

@@ -10,7 +10,7 @@ private:
     class LinkedListNode : public ObjectPool<LinkedListNode, GlobalCapacityT>
     {
     public:
-        LinkedListNode* next;
+        LinkedListNode* next = NULL;
         T value;
 
         LinkedListNode()

@@ -123,7 +123,7 @@ public:
         left->SetBondTypeFor(compound, right, type, leftData, rightData);
     }
 
-    bool ProcessChildren(Compound* compound, Element* inputForChildren, int depth)
+    virtual bool ProcessChildren(Compound* compound, Element* inputForChildren, int depth)
     {
         for (Iterator it(&firstChild); *it; it++)
         {
@@ -139,18 +139,22 @@ public:
     // Don't override this for most implementations of this class
     virtual bool Process(Compound* compound, Element* input, int depth)
     {
+        //LOG("%s:0x%X.Process(Compound:0x%X, Element:0x%X[%s], %d)\n", GetDescription(), this, compound, input, input->GetSymbol(), depth);
         Assert(depth >= 0 && depth < MAX_REACTION_DEPTH);
         bool success = false;
         Element* output = NULL;
+        Element* lastOutput = NULL;
 
         while (true)
         {
             // This will return a different element each time it is called, and NULL when no element is available
             // Therefore, we can loop until we find an element with child elements that satisfy this branch of the reaction.
+            lastOutput = output;
             output = GetOutput(compound, input, depth);
 
             // If output == NULL, we ran out of possibilities and failed.
-            if (output == NULL)
+            // If output == lastOutput, then either the node has a flawed implementation, or (more likely) it is a dummy pass-through node. Either way we want to not loop forever.
+            if (output == NULL || output == lastOutput)
             { break; }
 
             // Mark this element as being used for this depth of the compound processing
@@ -182,28 +186,27 @@ public:
     {
         return Iterator(&firstChild);
     }
+
+    virtual const char* GetDescription() { return "ReactionNode"; }
 };
 
-class RootElementSymbolNode : public ReactionNode
+class ElementSymbolFilterNode : public ReactionNode
 {
 private:
     const char* symbol;
 public:
-    RootElementSymbolNode(const char* symbol)
+    ElementSymbolFilterNode(const char* symbol)
     {
         this->symbol = symbol;
-        LOG("RootElementSymbolNode:0x%X %s\n", this, symbol);
+        LOG("ElementSymbolFilterNode:0x%X %s\n", this, symbol);
     }
 
     virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
-        if (input->MatchesMask(ALL_ELEMENTS_MASK))
-        { return NULL; }
-
-        Element* ret = strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
-        //LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
-        return ret;
+        return strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
     }
+
+    virtual const char* GetDescription() { return "ElementSymbolFilterNode"; }
 };
 
 class ElementSymbolNode : public ReactionNode
@@ -219,10 +222,88 @@ public:
 
     virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
-        Element* ret = input->GetBondWith(symbol);
-        //LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
-        return ret;
+        return input->GetBondWith(symbol);
     }
+
+    virtual const char* GetDescription() { return "ElementSymbolNode"; }
+};
+
+class ElementGroupFilterNode : public ReactionNode
+{
+private:
+    groupState group;
+public:
+    ElementGroupFilterNode(groupState group)
+    {
+        this->group = group;
+        LOG("ElementGroupFilterNode:0x%X %d\n", this, group);
+    }
+
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
+    {
+        return input->GetGroup() == group ? input : NULL;
+    }
+
+    virtual const char* GetDescription() { return "ElementGroupFilterNode"; }
+};
+
+class ElementGroupNode : public ReactionNode
+{
+private:
+    groupState group;
+public:
+    ElementGroupNode(groupState group)
+    {
+        this->group = group;
+        LOG("ElementGroupNode:0x%X %d\n", this, group);
+    }
+
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
+    {
+        return input->GetBondWith(group);
+    }
+
+    virtual const char* GetDescription() { return "ElementGroupNode"; }
+};
+
+// A logical node that only needs one branch of children to succeed
+//NOTE: This should not be used to implement alternative, inclusive reactions as it will not even try the other children once one succeeds.
+class EitherOrNode : public ReactionNode
+{
+public:
+    virtual bool ProcessChildren(Compound* compound, Element* inputForChildren, int depth)
+    {
+        for (Iterator it(&firstChild); *it; it++)
+        {
+            if ((*it)->Process(compound, inputForChildren, depth))
+            {
+                return true; // Return true when the first child succeeds.
+            }
+        }
+
+        return false; // If we got this far, then no children succeedeed.
+    }
+
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
+    {
+        // This node is a pure pass-through node
+        return input;
+    }
+
+    virtual const char* GetDescription() { return "EitherOrNode"; }
+};
+
+//! This node doesn't do anything other than pass the element through, used for coalescing common elements after an EitherOrNode.
+class NoOpNode : public ReactionNode
+{
+public:
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
+    {
+        // This node is a pure pass-through node
+        return input;
+    }
+
+    virtual const char* GetDescription() { return "NoOpNode"; }
 };
 
 void InitializeCompoundDatabase();
@@ -246,16 +327,23 @@ bool Reaction::Process()
         compoundDatabaseIsInitialized = true;
     }
 
-    currentReaction = this;
+    // Fail immediately if there's only one element in this reaction
+    if (elements.Count() == 1)
+    { return false; }
+
+    // Debug printing
     LOG("Reaction:0x%X processing %d elements...\n", this, elements.Count());
-    LOG("[");
+    LOG("[ ");
     for (int i = 0; i < elements.Count(); i++)
     {
-        LOG("%s%s", i == 0 ? " " : ", ", elements[i]->GetSymbol());
+        if (i > 0)
+        { LOG(", "); }
+        LOG("%s", elements[i]->GetSymbol());
     }
     LOG(" ]\n");
 
     //TODO: Right now a failed compound can leave element bonds in a weird partially bonded state, which will probably FUBAR the next compound to be processed.
+    currentReaction = this;
     Compound* newCompound = StartNewCompound();
     for (int i = 0; i < elements.Count(); i++)
     {
@@ -273,139 +361,6 @@ bool Reaction::Process()
     CancelCompound(newCompound);
 
     LOG("Reaction processing completed with %d candidate compounds.\n", possibleCompounds.Count());
-
-    #if 0
-    Element* element;
-    Element* other;
-    ElementSet* elements;
-    ElementSet* dedupe = new ElementSet();// Used to de-deupe two interactions with the same query
-    ElementSet* others;
-
-    //--------------------------------------------------------------------------
-    // Determine all possible compounds: (2-element reactions)
-    //--------------------------------------------------------------------------
-
-    // Hydrogen - Hydrogen/Halogen/Alkali/AlkaliEarth
-    elements = Find(HYDROGEN);
-    dedupe->Clear();
-    for (int i = 0; i < elements->Count(); i++)
-    {
-        element = elements->Get(i);
-
-        if (!dedupe->Contains(element) && element->GetBondWith(HYDROGEN, &other))
-        {
-            dedupe->Add(other);
-            element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 2);
-        }
-
-        if (element->GetBondWith(HALOGEN, &other))
-        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 2, 8); }
-
-        if (element->GetBondWith(ALKALI, &other))
-        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic);}  
-    }
-    delete elements;
-
-    // Halogen - Halogen/Alakali/AlakaliEarth
-    elements = Find(HALOGEN);
-    dedupe->Clear();
-    for (int i = 0; i < elements->Count(); i++)
-    {
-        element = elements->Get(i);
-
-        if (!dedupe->Contains(element) && element->GetBondWith(HALOGEN, &other))
-        {
-            dedupe->Add(other);
-            element->SetBondTypeFor(StartNewCompound(), other, BondType_Covalent, 8, 8);
-        }
-
-        if (element->GetBondWith(ALKALI, &other))
-        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic); }
-    }
-    delete elements;
-
-    // Li - I  
-    elements = Find("Li");
-    for (int i = 0; i < elements->Count(); i++)
-    {
-        element = elements->Get(i);
-        if (element->GetBondWith("I", &other))
-        { element->SetBondTypeFor(StartNewCompound(), other, BondType_Ionic); }
-    }
-    delete elements;
-
-    //--------------------------------------------------------------------------
-    // Determine all possible compounds: (3-element reactions)
-    //--------------------------------------------------------------------------
-
-    // AlkaliEarth - 2xHalogen/2xHydrogen
-    elements = Find(ALKALIEARTH);
-    for (int i = 0; i < elements->Count(); i++)
-    {
-        element = elements->Get(i);
-
-        // Two halogens
-        others = element->GetBondsWith(HALOGEN);
-        if (others->Count() >= 2)
-        {
-            Compound* compound = StartNewCompound();
-            //If the alkali earth metal is Beryllium, the bond will be covalent
-            //If they are the other alkali earth metals, they will make an ionic bond
-            //TODO: 2 and 9 are hard-coded as hacks to get to 4, 2, 2, need to make this more generic probably.
-            if (strcmp(element->GetSymbol(), "Be") == 0)
-            {
-                element->SetBondTypeFor(compound, others->Get(0), BondType_Covalent, 2, 9);
-                element->SetBondTypeFor(compound, others->Get(1), BondType_Covalent, 2, 9);
-            }
-            else
-            {
-                element->SetBondTypeFor(compound, others->Get(0), BondType_Ionic);
-                element->SetBondTypeFor(compound, others->Get(1), BondType_Ionic);
-            }
-        }
-        else if (others->Count() > 0)
-        {
-            // Potential reaction
-            Compound* compound = StartNewCompound();
-            for (int j = 0; j < others->Count(); j++)
-            { element->SetBondTypeFor(compound, others->Get(j), BondType_Potential); }
-        }
-        delete others;
-
-        // Two hydrogens
-        others = element->GetBondsWith(HYDROGEN);
-        if (others->Count() >= 2)
-        {
-            Compound* compound = StartNewCompound();
-
-            //If the alkali earth metals are either Beryllium or Magnesium, the bond will be covalent
-            //If they are the other alkali earth metals, they will make an ionic bond
-            if (strcmp(element->GetSymbol(), "Be") == 0 || strcmp(element->GetSymbol(), "Mg") == 0)
-            {
-                //TODO: 6 and 9 are hard-coded as hacks to get to 4, 2, 2, need to make this more generic probably.
-                element->SetBondTypeFor(compound, others->Get(0), BondType_Covalent, 3, 2);
-                element->SetBondTypeFor(compound, others->Get(1), BondType_Covalent, 3, 2);
-            }
-            else
-            {
-                element->SetBondTypeFor(compound, others->Get(0), BondType_Ionic);
-                element->SetBondTypeFor(compound, others->Get(1), BondType_Ionic);
-            }
-        }
-        else if (others->Count() > 0)
-        {
-            // Potential reaction
-            Compound* compound = StartNewCompound();
-            for (int j = 0; j < others->Count(); j++)
-            { element->SetBondTypeFor(compound, others->Get(j), BondType_Potential); }
-        }
-        delete others;
-    }
-    delete elements;
-
-    //Cleanup
-    delete dedupe;
-    #endif
 
     //--------------------------------------------------------------------------
     // Choose the ideal compound and apply it:
@@ -461,40 +416,148 @@ bool Reaction::Process()
 //TOOD: Either make this nicer or generate it with a tool. (I'm leaning towards the latter.)
 namespace PerchloricAcid
 {
-    RootElementSymbolNode node1("Cl");
-    ElementSymbolNode node1_1("O");
-    ElementSymbolNode node1_1_1("H");
-    ElementSymbolNode node1_2("O");
-    ElementSymbolNode node1_3("O");
-    ElementSymbolNode node1_4("O");
+    ElementSymbolFilterNode root("Cl");
+    ElementSymbolNode node_1("O");
+    ElementSymbolNode node_1_1("H");
+    ElementSymbolNode node_2("O");
+    ElementSymbolNode node_3("O");
+    ElementSymbolNode node_4("O");
 
     void Initialize()
     {
-        node1.AddChild(&node1_1);
-        node1.AddChild(&node1_2);
-        node1.AddChild(&node1_3);
-        node1.AddChild(&node1_4);
+        root.AddChild(&node_1);
+        root.AddChild(&node_2);
+        root.AddChild(&node_3);
+        root.AddChild(&node_4);
 
-        node1_1.AddChild(&node1_1_1);
+        node_1.AddChild(&node_1_1);
 
-        node1_1.SetBondInfo(BondType_Covalent, 1);
-        node1_2.SetBondInfo(BondType_Covalent, 2);
-        node1_3.SetBondInfo(BondType_Covalent, 2);
-        node1_4.SetBondInfo(BondType_Covalent, 2);
+        node_1.SetBondInfo(BondType_Covalent, 1);
+        node_2.SetBondInfo(BondType_Covalent, 2);
+        node_3.SetBondInfo(BondType_Covalent, 2);
+        node_4.SetBondInfo(BondType_Covalent, 2);
 
-        node1_1_1.SetBondInfo(BondType_Covalent, 1);
+        node_1_1.SetBondInfo(BondType_Covalent, 1);
 
-        CompoundDatabaseRoot.AddChild(&node1);
+        CompoundDatabaseRoot.AddChild(&root);
+    }
+}
+
+//------------------------------------------------------------------------------
+// Two Element Reactions
+//------------------------------------------------------------------------------
+namespace Hydrogen_HydrogenOrHalogenOrAlkali
+{
+    //Hydrogen - Hydrogen
+    ElementGroupFilterNode h_h1(HYDROGEN);
+    ElementGroupNode h_h2(HYDROGEN);
+
+    // Hydrogen - Halogen
+    ElementGroupFilterNode h_hal1(HYDROGEN);
+    ElementGroupNode h_hal2(HALOGEN);
+
+    // Hydrogen - Alkali
+    ElementGroupFilterNode h_a1(HYDROGEN);
+    ElementGroupNode h_a2(ALKALI);
+
+    void Initialize()
+    {
+        h_h1.AddChild(&h_h2);
+        h_h2.SetBondInfo(BondType_Covalent, 2, 2);
+        CompoundDatabaseRoot.AddChild(&h_h1);
+
+        h_hal1.AddChild(&h_hal2);
+        h_hal2.SetBondInfo(BondType_Covalent, 2, 8);
+        CompoundDatabaseRoot.AddChild(&h_hal1);
+
+        h_a1.AddChild(&h_a2);
+        h_a2.SetBondInfo(BondType_Ionic);
+        CompoundDatabaseRoot.AddChild(&h_a1);
+    }
+}
+
+namespace Halogen_HalogenOrAlkali
+{
+    // Halogen - Halogen
+    ElementGroupFilterNode ha_ha1(HALOGEN);
+    ElementGroupNode ha_ha2(HALOGEN);
+
+    // Halogen - Alkali
+    ElementGroupFilterNode ha_a1(HALOGEN);
+    ElementGroupNode ha_a2(ALKALI);
+
+    void Initialize()
+    {
+        ha_ha1.AddChild(&ha_ha2);
+        ha_ha2.SetBondInfo(BondType_Covalent, 8, 8);
+        CompoundDatabaseRoot.AddChild(&ha_ha1);
+
+        ha_a1.AddChild(&ha_a2);
+        ha_a2.SetBondInfo(BondType_Ionic);
+        CompoundDatabaseRoot.AddChild(&ha_a1);
+    }
+}
+
+namespace LithiumIodine
+{
+    ElementSymbolFilterNode root("Li");
+    ElementSymbolNode node_1("I");
+
+    void Initialize()
+    {
+        root.AddChild(&node_1);
+        node_1.SetBondInfo(BondType_Ionic);
+        CompoundDatabaseRoot.AddChild(&root);
+    }
+}
+
+//------------------------------------------------------------------------------
+// Three Element Reactions
+//------------------------------------------------------------------------------
+namespace AlkaliEarth_2HalogenOr2Hydrogen
+{
+    ElementGroupFilterNode halogenRoot(ALKALIEARTH);
+    EitherOrNode or1; // Used as if-else for Be
+        ElementSymbolFilterNode beFilter("Be");
+        ElementGroupNode be_1(HALOGEN);
+        ElementGroupNode be_2(HALOGEN);
+        /* else */
+        NoOpNode elseNode;
+            ElementGroupNode else_1(HALOGEN);
+            ElementGroupNode else_2(HALOGEN);
+
+    void Initialize()
+    {
+        halogenRoot.AddChild(&or1);
+        or1.AddChild(&beFilter);
+        {
+            //If the alkali earth metal is Beryllium, the bond will be covalent
+            beFilter.AddChild(&be_1);
+            beFilter.AddChild(&be_2);
+            //TODO: 2 and 9 are hard-coded as hacks to get to 4, 2, 2, need to make this more generic probably.
+            be_1.SetBondInfo(BondType_Covalent, 2, 9);
+            be_2.SetBondInfo(BondType_Covalent, 2, 9);
+        }
+        or1.AddChild(&elseNode);
+        {
+            //If they are the other alkali earth metals, they will make an ionic bond
+            elseNode.AddChild(&else_1);
+            elseNode.AddChild(&else_2);
+            else_1.SetBondInfo(BondType_Ionic);
+            else_2.SetBondInfo(BondType_Ionic);
+        }
+
+        CompoundDatabaseRoot.AddChild(&halogenRoot);
     }
 }
 
 void InitializeCompoundDatabase()
 {
-    //ElementSymbolNode node1("H");
-    //ElementSymbolNode node2("H");
-    //node1.AddChild(&node2);
-    //node2.SetBondInfo(BondType_Covalent);
     LOG("Initializing compound database...\n");
     PerchloricAcid::Initialize();
+    Hydrogen_HydrogenOrHalogenOrAlkali::Initialize();
+    Halogen_HalogenOrAlkali::Initialize();
+    LithiumIodine::Initialize();
+    AlkaliEarth_2HalogenOr2Hydrogen::Initialize();
     LOG("Done initializing compound database with %d compounds.\n", CompoundDatabaseRoot.GetChildIterator().Count());
 }
