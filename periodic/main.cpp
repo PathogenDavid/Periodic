@@ -37,7 +37,7 @@ const char* defaultCubeSymbols[] =
 {
     // /* Acetylene */ "H", "C", "C", "H",
     // /* Disulfur dioxide */ "O", "S", "S", "O",
-    /* Phosphorous acid */ "O", "H", "P", "O", "H", "O", "H",
+    // /* Phosphorous acid */ "O", "H", "P", "O", "H", "O", "H",
     // /* Perchloric Acid */ "H", "Cl", "O", "O", "O", "O",
     "H",
     "H",
@@ -52,6 +52,11 @@ const char* defaultCubeSymbols[] =
     "H",
     "H"
 };
+
+const char* acetylene[] = { "H", "C", "C", "H" };
+const char* disulferDioxide[] = { "O", "S", "S", "O" };
+const char* phosphorousAcid[] = { "O", "H", "P", "O", "H", "O", "H" };
+const char* perchloricAcid[] = { "H", "Cl", "O", "O", "O", "O" };
 
 //! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
@@ -68,6 +73,16 @@ void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned 
 //! Raw Sifteo event handler used to process cubes untouching
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
 
+void __ApplyCubeSet(const char* symbolSet[], int length)
+{
+    for (int i = 0; i < NUM_CUBES && i < length; i++)
+    {
+        cubes[i].Initialize(i, symbolSet[i]);
+    }
+}
+
+#define ApplyCubeSet(symbolSet) __ApplyCubeSet(symbolSet, CountOfArray(symbolSet));
+
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
 void main()
 {
@@ -76,10 +91,7 @@ void main()
     // Initialize ElementCubes:
     // Due to a bug in the Sifteo linker, we can't statically initialize these at all.
     // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
-    for (int i = 0; i < NUM_CUBES; i++)
-    {
-        cubes[i].Initialize(i, defaultCubeSymbols[i]);
-    }
+    ApplyCubeSet(defaultCubeSymbols);
 
     Events::cubeTouch.set(OnTouch);
     Events::neighborAdd.set(OnNeighborAdd);
@@ -205,12 +217,35 @@ void ProcessNeighborhood()
 ////////////////////////////////////////////////////////////////////////////////
 // Sifteo Events
 ////////////////////////////////////////////////////////////////////////////////
+//Hackish quick-set-select book-keeping:
+unsigned quickSelectCube = 0;
+bool quickSelectModeIsOn = false;
+int quickSelectIndex = 0;
+
 void OnPress(unsigned cubeId)
 {
 }
 
 void OnRelease(unsigned cubeId)
 {
+    if (quickSelectModeIsOn && cubeId == quickSelectCube)
+    {
+        quickSelectIndex++;
+
+        LOG("Quick selecting set #%d\n", quickSelectIndex);
+
+        switch (quickSelectIndex)
+        {
+        case 1: ApplyCubeSet(acetylene); break;
+        case 2: ApplyCubeSet(disulferDioxide); break;
+        case 3: ApplyCubeSet(phosphorousAcid); break;
+        case 4: ApplyCubeSet(perchloricAcid); break;
+        default: ApplyCubeSet(defaultCubeSymbols); quickSelectIndex = 0; break;
+        }
+
+        return;
+    }
+
     LOG("Going to next elemenet on cube %d.\n", cubeId);
 
     // Move the tapped cube to the next element
@@ -236,12 +271,28 @@ void OnTouch(void* sender, unsigned cubeId)
     isRelease[cubeId] = !isRelease[cubeId];//Next touch event on this cube will be a release event
 }
 
+#define BASE_STATION_ID 32
+
 void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+    if (firstId == BASE_STATION_ID)
+    {
+        quickSelectCube = secondId;
+        quickSelectModeIsOn = true;
+    }
+    else if (secondId == BASE_STATION_ID)
+    {
+        quickSelectCube = firstId;
+        quickSelectModeIsOn = true;
+    }
+    
     ProcessNeighborhood();
 }
 
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
+    if (firstId == BASE_STATION_ID || secondId == BASE_STATION_ID)
+    { quickSelectModeIsOn = false; }
+
     ProcessNeighborhood();
 }
