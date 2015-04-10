@@ -62,7 +62,14 @@ void Reaction::CancelCompound(Compound* compound)
 {
     //TODO: Right now this function is actually really dangerous because a lot of the bond stuff relies on the indices associated with each compound being consistent.
     //      We need a way for the compound to purge its self from all Elements' memories. However, there is still the issue of deleting a compound not at the end of the list.
+    // This function is less dangerous now since it purges bond info, but there's still the issue of deleting compounds from anything other than the end of the list.
     Assert(compound->GetIndex() == (possibleCompounds.Count() - 1)); // Ensure that this cancelation is at least a little safe-ish.
+
+    // Remove all information associated witht his bond from elements:
+    for (int i = 0; i < elements.Count(); i++)
+    { elements[i]->PurgeBondInfo(compound); }
+
+    // Remove the compound from the list of compounds:
     possibleCompounds.Remove(compound);
     delete compound;
 }

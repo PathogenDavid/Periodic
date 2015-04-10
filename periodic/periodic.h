@@ -24,7 +24,7 @@
 #define LETTER_SPACING 1
 #define LETTER_DESCENDER_HEIGHT 2
 
-#define NUM_CUBES 3 // 12 max
+#define NUM_CUBES 8 // 12 max
 // Note: Each cube takes about 1 KB of memory because of the frame buffer. Setting this too high leaves us with no room to allocate stack.
 // Current safe max seems to be 8 cubes
 

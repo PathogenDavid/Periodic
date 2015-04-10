@@ -344,21 +344,17 @@ bool Reaction::Process()
 
     //TODO: Right now a failed compound can leave element bonds in a weird partially bonded state, which will probably FUBAR the next compound to be processed.
     currentReaction = this;
-    Compound* newCompound = StartNewCompound();
     for (int i = 0; i < elements.Count(); i++)
     {
         LOG("Processing element %d:%s as root to compound...\n", i, elements[i]->GetSymbol());
         
         for (ReactionNode::Iterator it = CompoundDatabaseRoot.GetChildIterator(); *it; it++)
         {
-            if ((*it)->Process(newCompound, elements[i], 0))
-            {
-                // Make a new compound for the next potential compound
-                newCompound = StartNewCompound();
-            }
+            Compound* newCompound = StartNewCompound();
+            if (!(*it)->Process(newCompound, elements[i], 0))
+            { CancelCompound(newCompound); } // Cancel the compound if the process was not successful.
         }
     }
-    CancelCompound(newCompound);
 
     LOG("Reaction processing completed with %d candidate compounds.\n", possibleCompounds.Count());
 
@@ -440,6 +436,110 @@ namespace PerchloricAcid
         node_1_1.SetBondInfo(BondType_Covalent, 1);
 
         CompoundDatabaseRoot.AddChild(&root);
+    }
+}
+
+namespace Acetylene
+{
+    ElementSymbolFilterNode h1("H");
+    ElementSymbolNode c1("C");
+    ElementSymbolNode c2("C");
+    ElementSymbolNode h2("H");
+
+    void Initialize()
+    {
+        h1.AddChild(&c1);
+        c1.AddChild(&c2);
+        c2.AddChild(&h2);
+
+        c1.SetBondInfo(BondType_Covalent, 1);
+        c2.SetBondInfo(BondType_Covalent, 3);
+        h2.SetBondInfo(BondType_Covalent, 1);
+
+        CompoundDatabaseRoot.AddChild(&h1);
+    }
+}
+
+namespace DisulfurDioxide
+{
+    ElementSymbolFilterNode o1("O");
+    ElementSymbolNode s1("S");
+    ElementSymbolNode s2("S");
+    ElementSymbolNode o2("O");
+
+    void Initialize()
+    {
+        o1.AddChild(&s1);
+        s1.AddChild(&s2);
+        s2.AddChild(&o2);
+
+        s1.SetBondInfo(BondType_Covalent, 2);
+        s2.SetBondInfo(BondType_Covalent, 1);
+        o2.SetBondInfo(BondType_Covalent, 2);
+
+        CompoundDatabaseRoot.AddChild(&o1);
+    }
+}
+
+namespace PhosphorousAcid1 /* H3PO3 Tautomer */
+{
+    ElementSymbolFilterNode p("P");
+    ElementSymbolNode o1("O");
+    ElementSymbolNode o2("O");
+    ElementSymbolNode o3("O");
+    ElementSymbolNode h1("H");
+    ElementSymbolNode h2("H");
+    ElementSymbolNode h3("H");
+
+    void Initialize()
+    {
+        p.AddChild(&o1);
+        p.AddChild(&o2);
+        p.AddChild(&o3);
+
+        o1.AddChild(&h1);
+        o2.AddChild(&h2);
+        o3.AddChild(&h3);
+
+        o1.SetBondInfo(BondType_Covalent, 1);
+        o2.SetBondInfo(BondType_Covalent, 1);
+        o3.SetBondInfo(BondType_Covalent, 1);
+        h1.SetBondInfo(BondType_Ionic);
+        h2.SetBondInfo(BondType_Ionic);
+        h3.SetBondInfo(BondType_Ionic);
+
+        CompoundDatabaseRoot.AddChild(&p);
+    }
+}
+
+namespace PhosphorousAcid2 /* H2PHO3 Tautomer */
+{
+    ElementSymbolFilterNode p("P");
+    ElementSymbolNode o1("O");
+    ElementSymbolNode o2("O");
+    ElementSymbolNode o3("O");
+    ElementSymbolNode h1("H");
+    ElementSymbolNode h2("H");
+    ElementSymbolNode h3("H");
+
+    void Initialize()
+    {
+        p.AddChild(&o1);
+        p.AddChild(&o2);
+        p.AddChild(&o3);
+        p.AddChild(&h1);
+
+        o2.AddChild(&h2);
+        o3.AddChild(&h3);
+
+        o1.SetBondInfo(BondType_Covalent, 2);
+        o2.SetBondInfo(BondType_Covalent, 1);
+        o3.SetBondInfo(BondType_Covalent, 1);
+        h1.SetBondInfo(BondType_Covalent, 1);
+        h2.SetBondInfo(BondType_Ionic);
+        h3.SetBondInfo(BondType_Ionic);
+
+        CompoundDatabaseRoot.AddChild(&p);
     }
 }
 
@@ -558,5 +658,9 @@ void InitializeCompoundDatabase()
     Halogen_HalogenOrAlkali::Initialize();
     LithiumIodine::Initialize();
     AlkaliEarth_2HalogenOr2Hydrogen::Initialize();
+    Acetylene::Initialize();
+    DisulfurDioxide::Initialize();
+    PhosphorousAcid1::Initialize();
+    PhosphorousAcid2::Initialize();
     LOG("Done initializing compound database with %d compounds.\n", CompoundDatabaseRoot.GetChildIterator().Count());
 }

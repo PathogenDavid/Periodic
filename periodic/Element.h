@@ -108,6 +108,8 @@ class Element
         void SetBondTypeFor(Compound* compound, Element* otherElement, BondType type, int data);
         void SetBondTypeFor(Compound* compound, Element* otherElement, BondType type);
 
+        void PurgeBondInfo(Compound* compound);
+
         BondType GetBondTypeFor(BondSide side);
         int GetBondDataFor(BondSide side);
 

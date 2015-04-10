@@ -119,7 +119,6 @@ static Element rawElements[] =
 
 	//Metaloids
 	Element("Silicon", "Si", METALOID, 14, 28.085, 4, 1.90)
-
 };
 
 void Element::GetRawElement(int num, Element* elementOut)
@@ -234,6 +233,12 @@ void Element::SetBondTypeFor(Compound* compound, Element* otherElement, BondType
 { SetBondTypeFor(compound, otherElement, type, data, data); }
 void Element::SetBondTypeFor(Compound* compound, Element* otherElement, BondType type)
 { SetBondTypeFor(compound, otherElement, type, 0, 0); }
+
+void Element::PurgeBondInfo(Compound* compound)
+{
+    for (int i = 0; i < BondSide_Count; i++)
+    { bonds[i].PurgeInfoFor(compound); }
+}
 
 BondType Element::GetBondTypeFor(BondSide side)
 {

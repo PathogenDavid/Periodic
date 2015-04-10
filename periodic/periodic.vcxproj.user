@@ -8,6 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>$(SDK_DIR)bin\Siftulator.exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>$(NMakeOutput)</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>$(NMakeOutput)  -n 8</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

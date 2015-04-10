@@ -67,6 +67,13 @@ void Bond::SetTypeFor(Compound* compound, BondType type, int data)
     solutions[compound->GetIndex()] = BondSolution(compound, type, data);
 }
 
+void Bond::PurgeInfoFor(Compound* compound)
+{
+    BondSolution* solution = &solutions[compound->GetIndex()];
+    Assert(solution->GetCompound() == NULL || solution->GetCompound() == compound);
+    PeriodicMemset(solution, 0, sizeof(BondSolution));
+}
+
 int Bond::GetDataFor(Compound* compound)
 {
     if (compound == NULL)
