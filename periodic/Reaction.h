@@ -7,8 +7,6 @@
 
 #include <sifteo.h>
 
-class Trie;
-
 class Reaction : public ObjectPool<Reaction, MAX_REACTIONS>
 {
 private:
@@ -26,7 +24,8 @@ public:
 private:
     Compound* StartNewCompound();
     void CancelCompound(Compound* compound);
-    
+
+public: // We meed these public for ReactionNode, but it might be nice to do it a different way.
     void ClearElementMasks();
     void ClearElementMasks(int bit);
 };

@@ -1,6 +1,12 @@
 #include "Reaction.h"
 #include "Element.h"
 
+#define MAX_REACTION_DEPTH (sizeof(uint32) * 8 - 1)
+#define ELEMENT_IN_USE_BIT (MAX_REACTION_DEPTH + 1)
+
+//HACK: This is to get around ReactionNode not having a reference to the current reaction, make this not awful later.
+Reaction* currentReaction;
+
 class ReactionNode
 {
 protected:
@@ -101,49 +107,65 @@ public:
         LOG("ApplyBond(Compound:0x%X, Element:0x%X, Element:0x%X)\n", compound, left, right);
         Assert(left != right); // This means a bond was applied to a passthrough node.
 
+        left->SetMaskBit(MAX_REACTION_DEPTH);
+        right->SetMaskBit(MAX_REACTION_DEPTH);
         left->SetBondTypeFor(compound, right, type, leftData, rightData);
     }
 
-    bool ProcessChildren(Compound* compound, Element* inputForChildren)
+    bool ProcessChildren(Compound* compound, Element* inputForChildren, int depth)
     {
-        LOG("Processing children for 0x%X\n", this);
         for (Iterator it(&firstChild); *it; it++)
         {
-            LOG("Child for 0x%X = 0x%X\n", this, *it);
-            if (!(*it)->Process(compound, inputForChildren))
+            if (!(*it)->Process(compound, inputForChildren, depth))
             {
-                LOG("Child for 0x%X failed to process.\n", this);
                 return false; // All children must return true to succeed.
             }
         }
-        LOG("Done processing children for 0x%X\n", this);
 
         return true; // If we got this far, all children met their criteria.
     }
 
     // Don't override this for most implementations of this class
-    virtual bool Process(Compound* compound, Element* input)
+    virtual bool Process(Compound* compound, Element* input, int depth)
     {
-        Element* output = GetOutput(compound, input);
+        Assert(depth >= 0 && depth < MAX_REACTION_DEPTH);
+        bool success = false;
+        Element* output = NULL;
+        int num = 0;
 
-        if (output == NULL)
-        { return false; }
-
-        output->SetMaskBit(1); // Mark this element as being used
-
-        if (!ProcessChildren(compound, output))
+        while (true)
         {
-            output->ClearMaskBit(1); // Free this element since we no longer need it
-            return false;
+            LOG("ATTEMPT %d\n", num++);
+            // This will return a different element each time it is called, and NULL when no element is available
+            // Therefore, we can loop until we find an element with child elements that satisfy this branch of the reaction.
+            output = GetOutput(compound, input, depth);
+
+            // If output == NULL, we ran out of possibilities and failed.
+            if (output == NULL)
+            { break; }
+
+            // Mark this element as being used for this depth of the compound processing
+            output->SetMaskBit(depth);
+
+            // Process children (on the next depth)
+            if (ProcessChildren(compound, output, depth + 1))
+            {
+                // All children succeeded, so we succeed!
+                success = true;
+                break;
+            }
         }
 
-        ApplyBond(compound, input, output);
-        return true;
+        currentReaction->ClearElementMasks(depth); // Clear all of the elements we considered for this branch
+        if (success)
+        { ApplyBond(compound, input, output); }
+        return success;
     }
 
     // Override this for most implementations of this class
-    virtual Element* GetOutput(Compound* compound, Element* input)
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
+        LOG("WARN: Called unimplemented ReactionNode:GetOutput with Element:0x%X[%s] as input @ depth %d!\n", input, input->GetSymbol(), depth);
         return NULL;
     }
 };
@@ -159,9 +181,14 @@ public:
         LOG("RootElementSymbolNode:0x%X %s\n", this, symbol);
     }
 
-    virtual Element* GetOutput(Compound* compound, Element* input)
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
-        return strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
+        if (input->MatchesMask(ALL_ELEMENTS_MASK))
+        { return NULL; }
+
+        Element* ret = strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
+        LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
+        return ret;
     }
 };
 
@@ -176,10 +203,10 @@ public:
         LOG("ElementSymbolNode:0x%X %s\n", this, symbol);
     }
 
-    virtual Element* GetOutput(Compound* compound, Element* input)
+    virtual Element* GetOutput(Compound* compound, Element* input, int depth)
     {
         Element* ret = input->GetBondWith(symbol);
-        LOG("GetOutput for %s = 0x%X\n", symbol, ret);
+        LOG("Node:0x%X[%s].GetOutput(__, __, %d) = 0x%X\n", this, symbol, depth, ret);
         return ret;
     }
 };
@@ -193,6 +220,7 @@ Michael Ayala, Chemistry Major at UC Davis
 */
 bool Reaction::Process()
 {
+    currentReaction = this;
     LOG("--------------------------------------------------------------\n");
     //ElementSymbolNode node1("H");
     //ElementSymbolNode node2("H");
@@ -237,7 +265,7 @@ bool Reaction::Process()
     for (int i = 0; i < elements.Count(); i++)
     {
         LOG("Processing element %d:%s\n", i, elements[i]->GetSymbol());
-        if (node1.Process(newCompound, elements[i]))
+        if (node1.Process(newCompound, elements[i], 0))
         {
             LOG("%d: TRUE\n", i);
             newCompound = StartNewCompound();
