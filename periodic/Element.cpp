@@ -170,7 +170,7 @@ void Element::AddBond(BondSide side, Element* with)
     if (bonds[side].GetElement() == with)
     { return; }
 
-    LOG("Element:0x%X[%s].AddBond(side=%d, with=Element:0x%X)\n", this, symbol, side, with);
+    //LOG("Element:0x%X[%s].AddBond(side=%d, with=Element:0x%X)\n", this, symbol, side, with);
     Assert(bonds[side].GetElement() == NULL);
     bonds[side] = Bond(side, with);
 
@@ -208,7 +208,7 @@ int Element::GetBondDataFor(Compound* compound, BondSide side)
 
 void Element::SetBondTypeFor(Compound* compound, BondSide side, BondType type, int data, int otherData)
 {
-    LOG("Element:0x%X[%s].SetTypeFor(Compound:0x%X, side=%d, type=%d, data=%d, otherData=%d)\n", this, symbol, compound, side, type, data, otherData);
+    //LOG("Element:0x%X[%s].SetTypeFor(Compound:0x%X, side=%d, type=%d, data=%d, otherData=%d)\n", this, symbol, compound, side, type, data, otherData);
 
     // Validate arguments
     Assert(side >= 0 && side < BondSide_Count);
@@ -397,9 +397,9 @@ void Element::ApplyCompound(Compound* compound)
             //this->numOuterElectrons += sharedFromOther; //TODO: Should we just remove the ones we are sharing instead? - I'm just going to remove this entirely for now.
             this->sharedElectrons += sharedFromMe + sharedFromOther;
 
-            LOG("Element:0x%X[%s].ApplyCompound(Compound:0x%X) : CovalentBond sharedFromMe=%d, sharedFromOther=%d, sharedElectrons=%d, this->numOuterElectrons=%d, other->numOuterElectrons=%d\n",
-                this, symbol, compound, sharedFromMe, sharedFromOther, sharedElectrons, this->numOuterElectrons, other->numOuterElectrons
-            );
+            //LOG("Element:0x%X[%s].ApplyCompound(Compound:0x%X) : CovalentBond sharedFromMe=%d, sharedFromOther=%d, sharedElectrons=%d, this->numOuterElectrons=%d, other->numOuterElectrons=%d\n",
+            //    this, symbol, compound, sharedFromMe, sharedFromOther, sharedElectrons, this->numOuterElectrons, other->numOuterElectrons
+            //);
         }
         else if (type == BondType_Ionic)
         {

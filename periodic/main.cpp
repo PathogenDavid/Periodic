@@ -156,7 +156,6 @@ void ProcessNeighborhood()
 
     for (int i = 0; i < NUM_CUBES; i++)
     {
-        LOG("ProcessNeighborhood, iter = %d\n", i);
         if (hasBeenUsed[i])
         { continue; }
 

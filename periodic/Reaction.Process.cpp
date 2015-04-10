@@ -22,7 +22,7 @@ public:
 
         void Next()
         {
-            if (marker != NULL)
+            if (*marker != NULL)
             { marker = &(*marker)->sibling; }
         }
 
@@ -68,6 +68,7 @@ public:
     {
         Iterator it(&sibling);
         it.GoToEnd();
+        it.Next(); // Get marker on location to place node.
         *(it.GetMarker()) = node;
     }
 
@@ -75,18 +76,23 @@ public:
     {
         Iterator it(&firstChild);
         it.GoToEnd();
+        it.Next(); // Get marker on location to place node.
         *(it.GetMarker()) = node;
     }
 
     bool ProcessChildren(Compound* compound, Element* inputForChildren)
     {
+        LOG("Processing children for 0x%X\n", this);
         for (Iterator it(&firstChild); *it; it++)
         {
+            LOG("Child for 0x%X = 0x%X\n", this, *it);
             if (!(*it)->Process(compound, inputForChildren))
             {
+                LOG("Child for 0x%X failed to process.\n", this);
                 return false; // All children must return true to succeed.
             }
         }
+        LOG("Done processing children for 0x%X\n", this);
 
         return true; // If we got this far, all children met their criteria.
     }
@@ -109,22 +115,54 @@ public:
         if (this->type == BondType_None)
         { return; }
 
-        left->SetBondTypeFor(compound, right,type, leftData, rightData);
+        LOG("ApplyBond(Compound:0x%X, Element:0x%X, Element:0x%X)\n", compound, left, right);
+        Assert(left != right); // This means a bond was applied to a passthrough node.
+
+        left->SetBondTypeFor(compound, right, type, leftData, rightData);
     }
 
-    bool GenericProcess(Compound* compound, Element* input, Element* output)
+    // Don't override this for most implementations of this class
+    virtual bool Process(Compound* compound, Element* input)
     {
+        Element* output = GetOutput(compound, input);
+
         if (output == NULL)
         { return false; }
 
+        output->SetMaskBit(1); // Mark this element as being used
+
         if (!ProcessChildren(compound, output))
-        { return false; }
+        {
+            output->ClearMaskBit(1); // Free this element since we no longer need it
+            return false;
+        }
 
         ApplyBond(compound, input, output);
         return true;
     }
 
-    virtual bool Process(Compound* compound, Element* input) = 0;
+    // Override this for most implementations of this class
+    virtual Element* GetOutput(Compound* compound, Element* input)
+    {
+        return NULL;
+    }
+};
+
+class RootElementSymbolNode : public ReactionNode
+{
+private:
+    const char* symbol;
+public:
+    RootElementSymbolNode(const char* symbol)
+    {
+        this->symbol = symbol;
+        LOG("RootElementSymbolNode:0x%X %s\n", this, symbol);
+    }
+
+    virtual Element* GetOutput(Compound* compound, Element* input)
+    {
+        return strcmp(input->GetSymbol(), symbol) == 0 ? input : NULL;
+    }
 };
 
 class ElementSymbolNode : public ReactionNode
@@ -135,11 +173,14 @@ public:
     ElementSymbolNode(const char* symbol)
     {
         this->symbol = symbol;
+        LOG("ElementSymbolNode:0x%X %s\n", this, symbol);
     }
 
-    virtual bool Process(Compound* compound, Element* input)
+    virtual Element* GetOutput(Compound* compound, Element* input)
     {
-        return GenericProcess(compound, input, input->GetBondWith(symbol));
+        Element* ret = input->GetBondWith(symbol);
+        LOG("GetOutput for %s = 0x%X\n", symbol, ret);
+        return ret;
     }
 };
 
@@ -152,10 +193,31 @@ Michael Ayala, Chemistry Major at UC Davis
 */
 bool Reaction::Process()
 {
-    ElementSymbolNode node1("H");
-    ElementSymbolNode node2("H");
-    node1.AddChild(&node2);
-    node2.SetBondInfo(BondType_Covalent);
+    LOG("--------------------------------------------------------------\n");
+    //ElementSymbolNode node1("H");
+    //ElementSymbolNode node2("H");
+    //node1.AddChild(&node2);
+    //node2.SetBondInfo(BondType_Covalent);
+    RootElementSymbolNode node1("Cl");
+    ElementSymbolNode node1_1("O");
+    ElementSymbolNode node1_1_1("H");
+    ElementSymbolNode node1_2("O");
+    ElementSymbolNode node1_3("O");
+    ElementSymbolNode node1_4("O");
+
+    node1.AddChild(&node1_1);
+    node1.AddChild(&node1_2);
+    node1.AddChild(&node1_3);
+    node1.AddChild(&node1_4);
+
+    node1_1.AddChild(&node1_1_1);
+
+    node1_1.SetBondInfo(BondType_Covalent, 1);
+    node1_2.SetBondInfo(BondType_Covalent, 2);
+    node1_3.SetBondInfo(BondType_Covalent, 2);
+    node1_4.SetBondInfo(BondType_Covalent, 2);
+
+    node1_1_1.SetBondInfo(BondType_Covalent, 1);
 
     //TODO: Currently, it is theoretically possible for sufficiently complex compounds to find invalid reactions in some case.
     /*
@@ -174,6 +236,7 @@ bool Reaction::Process()
     Compound* newCompound = StartNewCompound();
     for (int i = 0; i < elements.Count(); i++)
     {
+        LOG("Processing element %d:%s\n", i, elements[i]->GetSymbol());
         if (node1.Process(newCompound, elements[i]))
         {
             LOG("%d: TRUE\n", i);
