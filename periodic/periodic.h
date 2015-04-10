@@ -24,6 +24,8 @@
 #define LETTER_DESCENDER_HEIGHT 2
 
 #define NUM_CUBES 3 // 12 max
+// Note: Each cube takes about 1 KB of memory because of the frame buffer. Setting this too high leaves us with no room to allocate stack.
+// Current safe max seems to be 8 cubes
 
 #define MAX_REACTIONS ((NUM_CUBES + 1) / 2 + 1)  // Half of the number of cubes, rounded up, plus an extra for processing cubes with no neighbors
 #define MAX_COMPOUNDS (MAX_REACTIONS * 2)

@@ -17,8 +17,37 @@ static Metadata M = Metadata()
     .cubeRange(NUM_CUBES)
 ;
 
-//! Pointer to the array of the ElementCube instances used in this program. There should be one for every cube in the simulation.
-ElementCube* cubes;
+//! ElementCube instances used in this program. There should be one for every cube in the simulation.
+ElementCube cubes[NUM_CUBES];
+
+/*
+Some reactions you can make with this set:
+H-H    :: Covalent
+H-F    :: Covalent
+H-Li   :: Covalent
+H-Be   :: Potential
+F-Li   :: Ionic
+F-Be   :: Potential
+Li-I   :: Ionic
+F-Be-F :: Covalent
+F-Ca-F :: Ionic
+H-Be-H :: Covalent
+*/
+const char* defaultCubeSymbols[] =
+{
+    "H",
+    "H",
+    "F",
+    "F",
+    "Li",
+    "I",
+    "Li",
+    "Be",
+    "Ca",
+    "H",
+    "H",
+    "H"
+};
 
 //! Processes the entire Sifteo Cube neighborhood and handles any reactions present in it
 void ProcessNeighborhood();
@@ -41,60 +70,13 @@ void main()
     LOG("Enterting main...\n");
 
     // Initialize ElementCubes:
-    // Due to a bug in the Sifteo linker, we can't statically initialize these outside of main.
+    // Due to a bug in the Sifteo linker, we can't statically initialize these at all.
     // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
-    ElementCube _cubes[NUM_CUBES] =
+    for (int i = 0; i < NUM_CUBES; i++)
     {
-        ElementCube(0, "H"),
-        ElementCube(1, "H"),
-        ElementCube(2, "F"),
-        //TODO: Make this less terrible and just instantiate all the cubes, but only actually use the ones available.
-        /*
-        Yes this looks kinda terrible, but it is useful for manual testing.
+        cubes[i].Initialize(i, defaultCubeSymbols[i]);
+    }
 
-        Some reactions you can make with this set:
-        H-H    :: Covalent
-        H-F    :: Covalent
-        H-Li   :: Covalent
-        H-Be   :: Potential
-        F-Li   :: Ionic
-        F-Be   :: Potential
-        Li-I   :: Ionic
-        F-Be-F :: Covalent
-        F-Ca-F :: Ionic
-        H-Be-H :: Covalent
-        */
-#if NUM_CUBES > 3
-        ElementCube(3, "F"),
-#if NUM_CUBES > 4
-        ElementCube(4, "Li"),
-#if NUM_CUBES > 5
-        ElementCube(5, "I"),
-#if NUM_CUBES > 6
-        ElementCube(6, "Li"),
-#if NUM_CUBES > 7
-        ElementCube(7, "Be"),
-#if NUM_CUBES > 8
-        ElementCube(8, "Ca"),
-#if NUM_CUBES > 9
-        ElementCube(9, "H"),
-#if NUM_CUBES > 10
-        ElementCube(10, "H"),
-#if NUM_CUBES > 11
-        ElementCube(11, "H")
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-    };
-    cubes = _cubes;
-
-    //InitCubes();
     Events::cubeTouch.set(OnTouch);
     Events::neighborAdd.set(OnNeighborAdd);
     Events::neighborRemove.set(OnNeighborRemove);

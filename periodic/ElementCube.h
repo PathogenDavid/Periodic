@@ -42,10 +42,12 @@ class ElementCube
         Element currentElement;
         //! The amount this cube's screens hould be rotated.
         unsigned char rotation;
-
-        //! Initializes this ElementCube with the specified cube ID and initial element index
-        void Init(int cubeId, int initialElementNum);
     public:
+        //! Initializes this ElementCube with the specified cube ID and initial element index
+        void Initialize(int cubeId, int initialElementNum);
+        //! Initializes this ElementCube with the specified cube ID and initial element symbol
+        void Initialize(int cubeId, const char* initialElementSymbol);
+
         ElementCube();
         //! Creates a new ElementCube with the specified cube ID and initial element index
         ElementCube(int cubeId, int initialElementNum = 0);

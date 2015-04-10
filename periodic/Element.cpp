@@ -27,7 +27,7 @@ Element::Element(const char* name, const char* symbol, groupState group, short a
     ClearMask();
 }
 
-Element::Element(Element* baseElement)
+void Element::ChangeInto(Element* baseElement)
 {
     Assert(baseElement != NULL);
     this->baseElement = baseElement;
@@ -77,7 +77,6 @@ int Element::GetCharge()
     return baseElement->numOuterElectrons - this->numOuterElectrons;
 }
 
-
 static Element rawElements[] =
 {
 	//Hydrogen
@@ -126,23 +125,18 @@ static Element rawElements[] =
 void Element::GetRawElement(int num, Element* elementOut)
 {
     Assert(num >= 0 && num < GetRawElementCount());
-    *elementOut = Element(&rawElements[num]);
+    elementOut->ChangeInto(&rawElements[num]);
 }
 
 bool Element::GetRawElement(const char* name, Element* elementOut)
 {
     int num = GetRawElementNum(name);
-
+    
     if (num < 0)
-    {
-        *elementOut = Element("INVALID", "INV", NONMETAL, 0, 0.0, 0, 0.0);
-        return false;
-    }
-    else
-    {
-        *elementOut = Element(&rawElements[num]);
-        return true;
-    }
+    { return false; }
+
+    GetRawElement(num, elementOut);
+    return true;
 }
 
 int Element::GetRawElementNum(const char* name)

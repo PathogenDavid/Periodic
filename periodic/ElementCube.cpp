@@ -26,7 +26,7 @@ enum LewisSides
     LLast = LBottom
 };
 
-void ElementCube::Init(int cubeId, int initialElementNum)
+void ElementCube::Initialize(int cubeId, int initialElementNum)
 {
     this->cubeId = cubeId;
     this->cube = CubeID(cubeId);
@@ -48,18 +48,23 @@ void ElementCube::Init(int cubeId, int initialElementNum)
     }
 }
 
+void ElementCube::Initialize(int cubeId,const char* initialElementSymbol)
+{
+    Initialize(cubeId, Element::GetRawElementNum(initialElementSymbol));
+}
+
 ElementCube::ElementCube()
 {
 }
 
 ElementCube::ElementCube(int cubeId, int initialElementNum)
 {
-    Init(cubeId, initialElementNum);
+    Initialize(cubeId, initialElementNum);
 }
 
 ElementCube::ElementCube(int cubeId, const char* initialElementSymbol)
 {
-    Init(cubeId, Element::GetRawElementNum(initialElementSymbol));
+    Initialize(cubeId, Element::GetRawElementNum(initialElementSymbol));
 }
 
 void ElementCube::GoToNextElement()

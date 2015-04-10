@@ -47,13 +47,14 @@ class Element
         Bond bonds[BondSide_Count];
         Reaction* currentReaction;
         Compound* currentCompound;
+
+        //! Changes this element into the basic state of another element
+        void ChangeInto(Element* newBaseElement);
     public:
         //! Creates a dead element, elements made with this constructor must be initialized with one of the static pseudoconstructors before use.
         Element();
         //! Creates an element with the specified initial attributes, the element is assumed to be in its default state.
         Element(const char* name, const char* symbol, groupState group, short atomicNumber, double elementWeight, int numOuterElectrons, double electroNegativity);
-        //! Creates an element from the specified element
-        Element(Element* baseElement);
 
         //! Returns the human-readable name of this element
         const char* GetName();
