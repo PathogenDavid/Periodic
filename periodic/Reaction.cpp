@@ -7,8 +7,8 @@ Reaction::Reaction()
 
 Reaction::~Reaction()
 {
-    for (int i = 0; i < possibleCompounds.Count(); i++)
-    { delete possibleCompounds[i]; }
+    Assert(possibleCompounds.Count() == 0); // The possible compounds list should never have contents outside of Reaction::Process.
+    delete idealCompound; // Delete the ideal compound that is in use in this reaction if we have one.
 }
 
 ElementSet* Reaction::Find(groupState group)

@@ -80,23 +80,6 @@ public:
         *(it.GetMarker()) = node;
     }
 
-    bool ProcessChildren(Compound* compound, Element* inputForChildren)
-    {
-        LOG("Processing children for 0x%X\n", this);
-        for (Iterator it(&firstChild); *it; it++)
-        {
-            LOG("Child for 0x%X = 0x%X\n", this, *it);
-            if (!(*it)->Process(compound, inputForChildren))
-            {
-                LOG("Child for 0x%X failed to process.\n", this);
-                return false; // All children must return true to succeed.
-            }
-        }
-        LOG("Done processing children for 0x%X\n", this);
-
-        return true; // If we got this far, all children met their criteria.
-    }
-
     void SetBondInfo(BondType type, int leftData, int rightData)
     {
         this->type = type;
@@ -119,6 +102,23 @@ public:
         Assert(left != right); // This means a bond was applied to a passthrough node.
 
         left->SetBondTypeFor(compound, right, type, leftData, rightData);
+    }
+
+    bool ProcessChildren(Compound* compound, Element* inputForChildren)
+    {
+        LOG("Processing children for 0x%X\n", this);
+        for (Iterator it(&firstChild); *it; it++)
+        {
+            LOG("Child for 0x%X = 0x%X\n", this, *it);
+            if (!(*it)->Process(compound, inputForChildren))
+            {
+                LOG("Child for 0x%X failed to process.\n", this);
+                return false; // All children must return true to succeed.
+            }
+        }
+        LOG("Done processing children for 0x%X\n", this);
+
+        return true; // If we got this far, all children met their criteria.
     }
 
     // Don't override this for most implementations of this class
@@ -388,7 +388,7 @@ bool Reaction::Process()
     // Choose the ideal compound and apply it:
     //--------------------------------------------------------------------------
     //TODO: Allow multiple compounds to form in one reaction when they don't overlap.
-    Compound* idealCompound = NULL;
+    idealCompound = NULL;
     for (int i = 0; i < possibleCompounds.Count(); i++)
     {
         Compound* compound = possibleCompounds[i];
@@ -418,9 +418,10 @@ bool Reaction::Process()
         if (possibleCompounds[i] != idealCompound)
         {
             delete possibleCompounds[i];
-            possibleCompounds.RemoveAt(i);
         }
     }
+    // Clear the possible compounds list to release the linked list memory (The ideal compound will survive.)
+    possibleCompounds.Clear();
 
     // Apply the ideal compound and return
     if (idealCompound != NULL)

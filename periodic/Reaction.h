@@ -14,6 +14,7 @@ class Reaction : public ObjectPool<Reaction, MAX_REACTIONS>
 private:
     ElementSet elements;
     LinkedList<Compound*, MAX_COMPOUNDS> possibleCompounds;
+    Compound* idealCompound = NULL;
 public:
     Reaction();
     ~Reaction();
