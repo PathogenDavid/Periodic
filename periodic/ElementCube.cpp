@@ -128,6 +128,12 @@ CubeRotation ElementCube::GetRotation()
 
 void ElementCube::DrawDot(int x, int y, unsigned int color)
 {
+    if (x < 0 || y < 0 || x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT)
+    {
+        LOG("WARN: ElementCube:%d tried to draw %d at %d, %d!\n", cubeId, color, x, y);
+        return;
+    }
+
     switch (rotation)
     {
     case CubeRotatation0:
@@ -215,7 +221,7 @@ void ElementCube::Render()
     {
         BondSide side = (BondSide)i;
         if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
-        { DrawCovalentLines(side, 1, stringWidth, stringHeight); }
+        { DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); }
     }
 
     // Draw potential reaction:
@@ -307,6 +313,10 @@ void ElementCube::DrawNumAt(int x, int y, int num, int color)
 
 void ElementCube::DrawCovalentLines(BondSide side, int count, int stringWidth, int stringHeight)
 {
+    // The default data value for bonds is 0, so we want to change it to 1 if nobody set it:
+    if (count < 1)
+    { count = 1; }
+
     const int seperation = 2;
     int offset = -count / 2 * seperation;
     for (int i = 0; i < count; i++)
