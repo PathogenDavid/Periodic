@@ -35,6 +35,7 @@ H-Be-H :: Covalent
 */
 const char* defaultCubeSymbols[] =
 {
+    /* Perchloric Acid */ "H", "Cl", "O", "O", "O", "O",
     "H",
     "H",
     "F",

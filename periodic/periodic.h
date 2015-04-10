@@ -10,6 +10,7 @@
 
 #define CountOfArray(a) ( sizeof(a) / sizeof(*a) )
 
+//! Sifteo's memset uses a non-standard signature, use this one if you want the default memset signature's behavior.
 #define PeriodicMemset(destination, value, count) Sifteo::memset8((uint8_t*)destination, (uint8_t)value, count)
 
 //------------------------------------------------------------------------

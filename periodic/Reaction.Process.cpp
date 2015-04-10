@@ -463,11 +463,11 @@ namespace Hydrogen_HydrogenOrHalogenOrAlkali
     void Initialize()
     {
         h_h1.AddChild(&h_h2);
-        h_h2.SetBondInfo(BondType_Covalent, 2, 2);
+        h_h2.SetBondInfo(BondType_Covalent, 1);
         CompoundDatabaseRoot.AddChild(&h_h1);
 
         h_hal1.AddChild(&h_hal2);
-        h_hal2.SetBondInfo(BondType_Covalent, 2, 8);
+        h_hal2.SetBondInfo(BondType_Covalent, 1);
         CompoundDatabaseRoot.AddChild(&h_hal1);
 
         h_a1.AddChild(&h_a2);
@@ -489,7 +489,7 @@ namespace Halogen_HalogenOrAlkali
     void Initialize()
     {
         ha_ha1.AddChild(&ha_ha2);
-        ha_ha2.SetBondInfo(BondType_Covalent, 8, 8);
+        ha_ha2.SetBondInfo(BondType_Covalent, 1);
         CompoundDatabaseRoot.AddChild(&ha_ha1);
 
         ha_a1.AddChild(&ha_a2);
@@ -534,9 +534,8 @@ namespace AlkaliEarth_2HalogenOr2Hydrogen
             //If the alkali earth metal is Beryllium, the bond will be covalent
             beFilter.AddChild(&be_1);
             beFilter.AddChild(&be_2);
-            //TODO: 2 and 9 are hard-coded as hacks to get to 4, 2, 2, need to make this more generic probably.
-            be_1.SetBondInfo(BondType_Covalent, 2, 9);
-            be_2.SetBondInfo(BondType_Covalent, 2, 9);
+            be_1.SetBondInfo(BondType_Covalent, 1);
+            be_2.SetBondInfo(BondType_Covalent, 1);
         }
         or1.AddChild(&elseNode);
         {

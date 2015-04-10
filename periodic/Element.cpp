@@ -384,16 +384,7 @@ void Element::ApplyCompound(Compound* compound)
 
         if (type == BondType_Covalent)
         {
-            //TODO: Make this less terrible from a processing standpoint.
-            int sharedFromMe = data - this->numOuterElectrons;
-            int sharedFromOther = otherData - other->numOuterElectrons;
-            
-            //this->numOuterElectrons += sharedFromOther; //TODO: Should we just remove the ones we are sharing instead? - I'm just going to remove this entirely for now.
-            this->sharedElectrons += sharedFromMe + sharedFromOther;
-
-            //LOG("Element:0x%X[%s].ApplyCompound(Compound:0x%X) : CovalentBond sharedFromMe=%d, sharedFromOther=%d, sharedElectrons=%d, this->numOuterElectrons=%d, other->numOuterElectrons=%d\n",
-            //    this, symbol, compound, sharedFromMe, sharedFromOther, sharedElectrons, this->numOuterElectrons, other->numOuterElectrons
-            //);
+            this->sharedElectrons += data;
         }
         else if (type == BondType_Ionic)
         {
