@@ -614,13 +614,13 @@ namespace LithiumIodine
 //------------------------------------------------------------------------------
 // Three Element Reactions
 //------------------------------------------------------------------------------
-namespace AlkaliEarth_2HalogenOr2Hydrogen
+namespace AlkaliEarth_2Halogen
 {
     ElementGroupFilterNode halogenRoot(ALKALIEARTH);
     EitherOrNode or1; // Used as if-else for Be
         ElementSymbolFilterNode beFilter("Be");
-        ElementGroupNode be_1(HALOGEN);
-        ElementGroupNode be_2(HALOGEN);
+            ElementGroupNode be_1(HALOGEN);
+            ElementGroupNode be_2(HALOGEN);
         /* else */
         NoOpNode elseNode;
             ElementGroupNode else_1(HALOGEN);
@@ -650,6 +650,54 @@ namespace AlkaliEarth_2HalogenOr2Hydrogen
     }
 }
 
+namespace AlkaliEarth_2Hydrogen
+{
+    ElementGroupFilterNode halogenRoot(ALKALIEARTH);
+    EitherOrNode or1; // Used as if-else for Be
+        ElementSymbolFilterNode beFilter("Be");
+            ElementGroupNode be_1(HYDROGEN);
+            ElementGroupNode be_2(HYDROGEN);
+        /* else if */
+        ElementSymbolFilterNode mgFilter("Mg");
+            ElementGroupNode mg_1(HYDROGEN);
+            ElementGroupNode mg_2(HYDROGEN);
+        /* else */
+        NoOpNode elseNode;
+            ElementGroupNode else_1(HYDROGEN);
+            ElementGroupNode else_2(HYDROGEN);
+
+    void Initialize()
+    {
+        halogenRoot.AddChild(&or1);
+        or1.AddChild(&beFilter);
+        {
+            //If the alkali earth metal is Beryllium, the bond will be covalent
+            beFilter.AddChild(&be_1);
+            beFilter.AddChild(&be_2);
+            be_1.SetBondInfo(BondType_Covalent, 1);
+            be_2.SetBondInfo(BondType_Covalent, 1);
+        }
+        or1.AddChild(&mgFilter);
+        {
+            //If the alkali earth metal is Magnesium, the bond will be covalent
+            mgFilter.AddChild(&mg_1);
+            mgFilter.AddChild(&mg_2);
+            mg_1.SetBondInfo(BondType_Covalent, 1);
+            mg_2.SetBondInfo(BondType_Covalent, 1);
+        }
+        or1.AddChild(&elseNode);
+        {
+            //If they are the other alkali earth metals, they will make an ionic bond
+            elseNode.AddChild(&else_1);
+            elseNode.AddChild(&else_2);
+            else_1.SetBondInfo(BondType_Ionic);
+            else_2.SetBondInfo(BondType_Ionic);
+        }
+
+        CompoundDatabaseRoot.AddChild(&halogenRoot);
+    }
+}
+
 void InitializeCompoundDatabase()
 {
     LOG("Initializing compound database...\n");
@@ -657,7 +705,8 @@ void InitializeCompoundDatabase()
     Hydrogen_HydrogenOrHalogenOrAlkali::Initialize();
     Halogen_HalogenOrAlkali::Initialize();
     LithiumIodine::Initialize();
-    AlkaliEarth_2HalogenOr2Hydrogen::Initialize();
+    AlkaliEarth_2Halogen::Initialize();
+    AlkaliEarth_2Hydrogen::Initialize();
     Acetylene::Initialize();
     DisulfurDioxide::Initialize();
     PhosphorousAcid1::Initialize();
