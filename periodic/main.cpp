@@ -105,6 +105,7 @@ void main()
             cubes[i].Render();
         }
 
+        System::keepAwake();
         System::paint();
         timeStep.next();
     }

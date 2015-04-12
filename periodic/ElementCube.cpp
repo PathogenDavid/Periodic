@@ -139,6 +139,13 @@ void ElementCube::DrawDot(int x, int y, unsigned int color)
         return;
     }
 
+    #ifdef SIFTEO_SET_2
+    if (color == BG_COLOR)
+    {
+        color = 4;
+    }
+    #endif
+
     switch (rotation)
     {
     case CubeRotatation0:
@@ -167,8 +174,20 @@ void ElementCube::Render()
 
     //LOG("Cube %d is dirty! Redrawing.\n", (int)cube);
 
+    v.attach(cubeId);
+    v.initMode(FB32);
+
+    for (int j = 0, h = 0; j < PALETTE_COUNT; j++, h += 3)
+    {
+        v.colormap[j].set(palette[h], palette[h + 1], palette[h + 2]);
+    }
+
     // Clear the screen:
+#ifdef SIFTEO_SET_2
+    v.fb32.fill(4);
+#else
     v.fb32.fill(BG_COLOR);
+#endif
 
     // Draw the element symbol:
     const char* symbol = currentElement.GetSymbol();
@@ -215,7 +234,7 @@ void ElementCube::Render()
         }
 
         // Draw the number
-        if (abs(currentElement.GetCharge()) > 1)
+        if (abs(currentElement.GetCharge()) > 1 && false)
         {
             DrawNumAt(x + 3 + LETTER_SPACING, y - 1, currentElement.GetCharge(), CHARGE_COLOR);
         }
