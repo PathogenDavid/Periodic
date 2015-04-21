@@ -201,23 +201,33 @@ void ElementCube::Render()
 
     // Draw the +/- symbol:
     if (currentElement.GetCharge() != 0 && currentElement.HasBondType(BondType_Ionic))
-    {
-        // Draw the line for the dash
-        DrawDot(x + 0, y + 1, CHARGE_COLOR);
-        DrawDot(x + 1, y + 1, CHARGE_COLOR);
-        DrawDot(x + 2, y + 1, CHARGE_COLOR);
-
-        // Draw the nubs for the plus for positive charge
-        if (currentElement.GetCharge() > 0)
-        {
-            DrawDot(x + 1, y + 0, CHARGE_COLOR);
-            DrawDot(x + 1, y + 2, CHARGE_COLOR);
-        }
-
-        // Draw the number
+    {   
         if (abs(currentElement.GetCharge()) > 1)
         {
-            DrawNumAt(x + 3 + LETTER_SPACING, y - 1, currentElement.GetCharge(), CHARGE_COLOR);
+            // Draw the number
+            DrawNumAt(x, y - 1, currentElement.GetCharge(), CHARGE_COLOR);
+            // Draw the line for the dash
+            DrawDot(x + 3 + LETTER_SPACING + 0, y + 1, CHARGE_COLOR);
+            DrawDot(x + 3 + LETTER_SPACING + 1, y + 1, CHARGE_COLOR);
+            DrawDot(x + 3 + LETTER_SPACING + 2, y + 1, CHARGE_COLOR);
+            // Draw the nubs for the plus for positive charge
+            if (currentElement.GetCharge() > 0)
+            {
+                DrawDot(x + 3 + LETTER_SPACING + 1, y + 0, CHARGE_COLOR);
+                DrawDot(x + 3 + LETTER_SPACING + 1, y + 2, CHARGE_COLOR);
+            }
+        }
+        else{ //charge == +1 or -1
+            // Draw the line for the dash
+            DrawDot(x + 0, y + 1, CHARGE_COLOR);
+            DrawDot(x + 1, y + 1, CHARGE_COLOR);
+            DrawDot(x + 2, y + 1, CHARGE_COLOR);
+            // Draw the nubs for the plus for positive charge
+            if (currentElement.GetCharge() > 0)
+            {
+                DrawDot(x + 1, y + 0, CHARGE_COLOR);
+                DrawDot(x + 1, y + 2, CHARGE_COLOR);
+            }
         }
     }
 
