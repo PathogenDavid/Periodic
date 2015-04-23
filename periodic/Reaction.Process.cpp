@@ -1,7 +1,9 @@
 #include "Reaction.h"
 #include "Element.h"
 
-#define MAX_REACTION_DEPTH (sizeof(uint32) * 8 - 1)
+//TODO: All of the ReactionNode stuff needs to be moved to separate files.
+
+#define MAX_REACTION_DEPTH (sizeof(uint32) * 8 - 2)
 #define ELEMENT_IN_USE_BIT (MAX_REACTION_DEPTH + 1)
 
 //HACK: This is to get around ReactionNode not having a reference to the current reaction, make this not awful later.
@@ -112,14 +114,16 @@ public:
 
     void ApplyBond(Compound* compound, Element* left, Element* right)
     {
+        // We need to set the IN_USE bit even if no bond needs to be added.
+        left->SetMaskBit(ELEMENT_IN_USE_BIT);
+        right->SetMaskBit(ELEMENT_IN_USE_BIT);
+
         if (this->type == BondType_None)
         { return; }
 
         //LOG("ApplyBond(Compound:0x%X, Element:0x%X, Element:0x%X)\n", compound, left, right);
         Assert(left != right); // This means a bond was applied to a passthrough node.
 
-        left->SetMaskBit(MAX_REACTION_DEPTH);
-        right->SetMaskBit(MAX_REACTION_DEPTH);
         left->SetBondTypeFor(compound, right, type, leftData, rightData);
     }
 
@@ -342,7 +346,6 @@ bool Reaction::Process()
     }
     LOG(" ]\n");
 
-    //TODO: Right now a failed compound can leave element bonds in a weird partially bonded state, which will probably FUBAR the next compound to be processed.
     currentReaction = this;
     for (int i = 0; i < elements.Count(); i++)
     {
@@ -529,8 +532,8 @@ namespace PhosphorousAcid2 /* H2PHO3 Tautomer */
         p.AddChild(&o3);
         p.AddChild(&h1);
 
-        o2.AddChild(&h2);
-        o3.AddChild(&h3);
+        o1.AddChild(&h2);
+        o2.AddChild(&h3);
 
         o1.SetBondInfo(BondType_Covalent, 2);
         o2.SetBondInfo(BondType_Covalent, 1);
