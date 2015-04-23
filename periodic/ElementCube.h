@@ -42,6 +42,10 @@ class ElementCube
         Element currentElement;
         //! The amount this cube's screens hould be rotated.
         unsigned char rotation;
+		//! Checks if the element bonds covalently.  Used when drawing the lewis dots.
+		bool isCovalent = false;
+		//! Used to determine which side the covalent bond occurs on
+		int covalentSide = 0;
     public:
         //! Initializes this ElementCube with the specified cube ID and initial element index
         void Initialize(int cubeId, int initialElementNum);

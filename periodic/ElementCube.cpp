@@ -226,7 +226,11 @@ void ElementCube::Render()
     {
         BondSide side = (BondSide)i;
         if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
-        { DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); }
+        { 
+			DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); 
+			isCovalent = true;
+			covalentSide = i;
+		}
     }
 
     // Draw potential reaction:
@@ -269,6 +273,7 @@ void ElementCube::Render()
     #endif
 
     isDirty = false;
+	isCovalent = false;
 }
 
 void ElementCube::DrawCharAt(int x, int y, char c)
