@@ -236,7 +236,11 @@ void ElementCube::Render()
     {
         BondSide side = (BondSide)i;
         if (currentElement.GetBondTypeFor(side) == BondType_Covalent)
-        { DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); }
+        { 
+			DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); 
+			isCovalent = true;
+			covalentSide = i;
+		}
     }
 
     // Draw potential reaction:
@@ -279,6 +283,7 @@ void ElementCube::Render()
     #endif
 
     isDirty = false;
+	isCovalent = false;
 }
 
 void ElementCube::DrawCharAt(int x, int y, char c)
@@ -376,6 +381,234 @@ void ElementCube::DrawCovalentLine(BondSide side, int stringWidth, int stringHei
 
 void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 {
+	if (currentElement.GetCharge() != 0 && currentElement.GetNumOuterElectrons() == 8)
+	{
+		return;
+	}
+	int numOuterElectrons = currentElement.GetNumOuterElectrons() - currentElement.GetSharedElectrons();
+	LOG("\n\tnumOuterElectrons = %d", numOuterElectrons);
+
+	//right, left, top, bottom
+	//int position[4];
+	//If we need to draw covalent lines, then we enter
+	if (isCovalent)
+	{
+		//right, left, top, bottom
+		int position[4] = { 0, 0, 0, 0 };
+		LOG("\n\tCovalentSide = %d", covalentSide);
+		if (covalentSide == 1)
+		{
+			switch (numOuterElectrons)
+			{
+			case 1:
+				position[2] = 1;
+				break;
+			case 2:
+				position[2] = 1;
+				position[3] = 1;
+				break;
+			case 3:
+				position[0] = 1;
+				position[2] = 1;
+				position[3] = 1;
+				break;
+			case 4:
+				position[0] = 1;
+				position[2] = 2;
+				position[3] = 1;
+				break;
+			case 5:
+				position[0] = 1;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			case 6:
+				position[0] = 2;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			case 7:
+				position[0] = 2;
+				position[1] = 1;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			default:
+				break;
+			}
+		}
+		else if (covalentSide == 3)
+		{
+			switch (numOuterElectrons)
+			{
+			case 1:
+				position[2] = 1;
+				break;
+			case 2:
+				position[2] = 1;
+				position[3] = 1;
+				break;
+			case 3:
+				position[1] = 1;
+				position[2] = 1;
+				position[3] = 1;
+				break;
+			case 4:
+				position[1] = 1;
+				position[2] = 2;
+				position[3] = 1;
+				break;
+			case 5:
+				position[1] = 1;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			case 6:
+				position[1] = 2;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			case 7:
+				position[0] = 1;
+				position[1] = 2;
+				position[2] = 2;
+				position[3] = 2;
+				break;
+			default:
+				break;
+			}
+		}
+
+		for (int s = LFirst; s <= LLast; s++)
+		{
+			int e = position[s];
+			LOG("\n\ts = %d", s);
+			LOG("\n\te = %d", e);
+			if (e == 0)
+			{
+				continue;
+			}
+			int x = SCREEN_WIDTH / 2;
+			int y = SCREEN_HEIGHT / 2;
+
+			switch (s)
+			{
+			case LRight:
+				x += stringWidth / 2 + 2;
+				y += LETTER_DESCENDER_HEIGHT / 2;
+				break;
+			case LLeft:
+				x -= stringWidth / 2 + 2;
+				y += LETTER_DESCENDER_HEIGHT / 2;
+				break;
+			case LTop:
+				x++; // Looks more natural one pixel to the right
+				y -= stringHeight / 2 + 2;
+				break;
+			case LBottom:
+				x++; // Looks more natural one pixel to the right
+				y += stringHeight / 2 + 2;
+				break;
+			}
+
+			// Calculate offset for electron separation:
+			switch (s)
+			{
+			case LRight:
+			case LLeft:
+				y -= (e - 1) * 2;
+				break;
+			case LTop:
+			case LBottom:
+				x -= (e - 1) * 2;
+				break;
+			}
+			// Draw the electrons:
+			for (; e > 0; e--)
+			{
+				DrawDot(x, y, ELECTRON_COLOR);
+				switch (s)
+				{
+				case LRight:
+				case LLeft:
+					y += 2;
+					break;
+				case LTop:
+				case LBottom:
+					x += 2;
+					break;
+				}
+			}
+		}
+	}
+	//Otherwise we'll draw them normally
+	else
+	{
+		for (int s = LFirst; s <= LLast; s++)
+		{
+
+			int e = (numOuterElectrons + 3 - s) / 4;
+
+			int x = SCREEN_WIDTH / 2;
+			int y = SCREEN_HEIGHT / 2;
+			switch (s)
+			{
+			case LRight:
+				x += stringWidth / 2 + 2;
+				y += LETTER_DESCENDER_HEIGHT / 2;
+				break;
+			case LLeft:
+				x -= stringWidth / 2 + 2;
+				y += LETTER_DESCENDER_HEIGHT / 2;
+				break;
+			case LTop:
+				x++; // Looks more natural one pixel to the right
+				y -= stringHeight / 2 + 2;
+				break;
+			case LBottom:
+				x++; // Looks more natural one pixel to the right
+				y += stringHeight / 2 + 2;
+				break;
+			}
+
+			// Calculate offset for electron separation:
+			switch (s)
+			{
+			case LRight:
+			case LLeft:
+				y -= (e - 1) * 2;
+				break;
+			case LTop:
+			case LBottom:
+				x -= (e - 1) * 2;
+				break;
+			}
+
+			// Draw the electrons:
+			for (; e > 0; e--)
+			{
+				DrawDot(x, y, ELECTRON_COLOR);
+
+				switch (s)
+				{
+				case LRight:
+				case LLeft:
+					y += 2;
+					break;
+				case LTop:
+				case LBottom:
+					x += 2;
+					break;
+				}
+			}
+		}
+	}
+
+}
+
+/*
+void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
+{
     //TODO: This is a bit of a hack. We need to properly set the outer electron count to 0 when the orbital is filled.
     if (currentElement.GetCharge() != 0 && currentElement.GetNumOuterElectrons() == 8)
     {
@@ -443,3 +676,4 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
         }
     }
 }
+*/
