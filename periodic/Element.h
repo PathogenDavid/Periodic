@@ -40,6 +40,8 @@ class Element
 		double electroNegativity;
         //! The number of electrons this element is sharing with neighboring elements.
         int sharedElectrons;
+        //! The number of charge for this element 
+        int numCharge;
 
         //! Bitmask of categories associated with this Element
         uint32 mask;

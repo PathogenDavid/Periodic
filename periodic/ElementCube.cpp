@@ -385,6 +385,11 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 	{
 		return;
 	}
+    //special case for "H"
+    if (currentElement.GetCharge() != 0 && strcmp(currentElement.GetSymbol(), "H") == 0 && currentElement.GetNumOuterElectrons() == 2)
+    {
+        return;
+    }
 	int numOuterElectrons = currentElement.GetNumOuterElectrons() - currentElement.GetSharedElectrons();
 	LOG("\n\tnumOuterElectrons = %d", numOuterElectrons);
 

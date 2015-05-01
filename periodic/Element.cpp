@@ -20,6 +20,7 @@ Element::Element(const char* name, const char* symbol, groupState group, short a
     this->numOuterElectrons = numOuterElectrons;  
 	this->electroNegativity = electroNegativity;
     this->sharedElectrons = 0;
+    this->numCharge = 0;
 
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
@@ -45,6 +46,7 @@ void Element::ResetToBasicState()
     this->numOuterElectrons = baseElement->numOuterElectrons;
     this->electroNegativity = baseElement->electroNegativity;
     this->sharedElectrons = 0;
+    this->numCharge = 0;
 
     PeriodicMemset(bonds, 0, sizeof(bonds));
     this->currentReaction = NULL;
@@ -68,14 +70,19 @@ bool Element::IsRawElement()
     return baseElement == NULL;
 }
 
+
 //Gets the charge of the current element
 int Element::GetCharge()
 {
+    /*
     if (IsRawElement())
     { return 0; }
 
     return baseElement->numOuterElectrons - this->numOuterElectrons;
+    */
+    return numCharge;
 }
+
 
 static Element rawElements[] =
 {
@@ -393,6 +400,26 @@ void Element::ApplyCompound(Compound* compound)
         }
         else if (type == BondType_Ionic)
         {
+            //In Ionic Reaction "H" only gets electrons
+            if (strcmp(this->GetSymbol(), "H") == 0)
+            {
+                this->numOuterElectrons = 2;
+                this->numCharge = this->baseElement->numOuterElectrons - 2;
+            }
+            else
+            {
+                if (this->numOuterElectrons > 4)    //These elements tend to get electrons
+                {
+                    this->numOuterElectrons = 8;
+                    this->numCharge = this->baseElement->numOuterElectrons - 8;
+                }
+                else                                //while these tend to donate electrons
+                {
+                    this->numOuterElectrons = 0;
+                    this->numCharge = this->baseElement->numOuterElectrons;
+                }
+            }
+            /*
             // Figure out who shares the electrons: (Using baseElement so the  doesn't get confused when this is applied to the other element.)
 			int electronsDonated;
 
@@ -407,6 +434,7 @@ void Element::ApplyCompound(Compound* compound)
 				other->numOuterElectrons += electronsDonated;
 				this->numOuterElectrons -= electronsDonated;
             }
+            */
         }
     }
 }
