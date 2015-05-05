@@ -28,8 +28,6 @@ void __TestCovalentBond(const char* a, const char* b, int numElectronsShared, co
     // Verify the result
 	TestEqInt("Check the first element's shared electron number after the reaction", ea.GetSharedElectrons(), numElectronsShared);
 	TestEqInt("Check the second element's shared electron number after the reaction", eb.GetSharedElectrons(), numElectronsShared);
-	TestEqInt("Check the first element's outer electron number after the reaction", ea.GetNumOuterElectrons(), (numOuterElectronA+1));
-	TestEqInt("Check the second element's outer electron number after the reaction", eb.GetNumOuterElectrons(), (numOuterElectronB+1));
 }
 
 //! Supporting function for TestIonicBond
@@ -111,9 +109,9 @@ void __TestTripleBond(const char* a, const char* b, const char* c, BondType expe
         for (int i = 0; i < 3; i++)
         {
             if (i == alkaliEarthPosition)
-                TestEqInt("Check the element's shared electron number after the reaction", elementArray[i].GetSharedElectrons(), 4);
-            else
                 TestEqInt("Check the element's shared electron number after the reaction", elementArray[i].GetSharedElectrons(), 2);
+            else
+                TestEqInt("Check the element's shared electron number after the reaction", elementArray[i].GetSharedElectrons(), 1);
         }
     }
     else
@@ -145,23 +143,23 @@ void TestStep_Bonds()
 {
     TestStart();
 	TestMessage("Test 2 elements covalent bonds");
-    TestCovalentBond("H", "H", 2);
-    TestCovalentBond("F", "F", 2);
-    TestCovalentBond("Cl", "Cl", 2);
-    TestCovalentBond("Br", "Br", 2);
-    TestCovalentBond("I", "I", 2);
-    TestCovalentBond("F", "Cl", 2);
-    TestCovalentBond("F", "Br", 2);
-    TestCovalentBond("F", "I", 2);
-    TestCovalentBond("Cl", "Br", 2);
-    TestCovalentBond("Cl", "I", 2);
-    TestCovalentBond("H", "F", 2);
-    TestCovalentBond("H", "Cl", 2);
-    TestCovalentBond("H", "Br", 2); 
-    TestCovalentBond("H", "I", 2);
-    TestCovalentBond("H", "At", 2);
+    TestCovalentBond("H", "H", 1);
+    TestCovalentBond("F", "F", 1);
+    TestCovalentBond("Cl", "Cl", 1);
+    TestCovalentBond("Br", "Br", 1);
+    TestCovalentBond("I", "I", 1);
+    TestCovalentBond("F", "Cl", 1);
+    TestCovalentBond("F", "Br", 1);
+    TestCovalentBond("F", "I", 1);
+    TestCovalentBond("Cl", "Br", 1);
+    TestCovalentBond("Cl", "I", 1);
+    TestCovalentBond("H", "F", 1);
+    TestCovalentBond("H", "Cl", 1);
+    TestCovalentBond("H", "Br", 1); 
+    TestCovalentBond("H", "I", 1);
+    TestCovalentBond("H", "At", 1);
     TestEnd();
-  
+
     TestStart();
     TestMessage("Test 2 elements ionic compounds");
     TestIonicBond("Li", "F", 1);
@@ -202,8 +200,7 @@ void TestStep_Bonds()
     TestTripleBond("Br", "Be", "Br", BondType_Covalent);
     TestTripleBond("I" , "Be", "I" , BondType_Covalent);
     TestTripleBond("At", "Be", "At", BondType_Covalent);
-    TestEnd();
-#if 0
+
     TestTripleBond("F" , "Mg", "F" , BondType_Ionic);
     TestTripleBond("Cl", "Mg", "Cl", BondType_Ionic);
     TestTripleBond("Br", "Mg", "Br", BondType_Ionic);
@@ -224,5 +221,7 @@ void TestStep_Bonds()
     TestTripleBond("Br", "Ba", "Br", BondType_Ionic);
     TestTripleBond("I" , "Ba", "I" , BondType_Ionic);
     TestTripleBond("At", "Ba", "At", BondType_Ionic);
+    TestEnd();
+#if 0  
 #endif  
 }
