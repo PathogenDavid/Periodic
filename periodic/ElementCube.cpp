@@ -239,8 +239,6 @@ void ElementCube::Render()
         { 
 			DrawCovalentLines(side, currentElement.GetBondDataFor(side), stringWidth, stringHeight); 
 			isCovalent = true;
-			//LOG("\nCurrent Element = %s", currentElement.GetName());
-			//LOG("\tBondSide = %d", i);
 			covalentSide[i] = 2;
 		}
     }
@@ -409,11 +407,6 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 		position[2] = covalentSide[0];
 		position[3] = covalentSide[2];
 
-		LOG("\n\tRight = %d", position[0]);
-		LOG("\n\tLeft = %d", position[1]);
-		LOG("\n\tTop = %d", position[2]);
-		LOG("\n\tBottom = %d", position[3]);
-
 		//iterate through element sides.  Count covalent sides as 2 initially
 		//If we have extras afterward, then add to those sides.
 		int side = 0;
@@ -428,107 +421,15 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 			position[side]++;
 		}
 
+		//Subtract the original sides with covalent bonds
 		position[0] -= covalentSide[3];
 		position[1] -= covalentSide[1];
 		position[2] -= covalentSide[0];
 		position[3] -= covalentSide[2];
 
-
-		LOG("\n\n\tRight = %d", position[0]);
-		LOG("\n\tLeft = %d", position[1]);
-		LOG("\n\tTop = %d", position[2]);
-		LOG("\n\tBottom = %d\n", position[3]);
-
-		/*
-		LOG("\n\tCovalentSide = %d", covalentSide);
-		if (covalentSide == 1)
-		{
-		switch (numOuterElectrons)
-		{
-		case 1:
-		position[2] = 1;
-		break;
-		case 2:
-		position[2] = 1;
-		position[3] = 1;
-		break;
-		case 3:
-		position[0] = 1;
-		position[2] = 1;
-		position[3] = 1;
-		break;
-		case 4:
-		position[0] = 1;
-		position[2] = 2;
-		position[3] = 1;
-		break;
-		case 5:
-		position[0] = 1;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		case 6:
-		position[0] = 2;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		case 7:
-		position[0] = 2;
-		position[1] = 1;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		default:
-		break;
-		}
-		}
-		else if (covalentSide == 3)
-		{
-		switch (numOuterElectrons)
-		{
-		case 1:
-		position[2] = 1;
-		break;
-		case 2:
-		position[2] = 1;
-		position[3] = 1;
-		break;
-		case 3:
-		position[1] = 1;
-		position[2] = 1;
-		position[3] = 1;
-		break;
-		case 4:
-		position[1] = 1;
-		position[2] = 2;
-		position[3] = 1;
-		break;
-		case 5:
-		position[1] = 1;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		case 6:
-		position[1] = 2;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		case 7:
-		position[0] = 1;
-		position[1] = 2;
-		position[2] = 2;
-		position[3] = 2;
-		break;
-		default:
-		break;
-		}
-		}
-		*/
 		for (int s = LFirst; s <= LLast; s++)
 		{
 			int e = position[s];
-			//LOG("\n\ts = %d", s);
-			//LOG("\n\te = %d", e);
 			if (e == 0)
 			{
 				continue;
