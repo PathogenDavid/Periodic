@@ -1,5 +1,4 @@
-﻿using System;
-using PeriodicAppCore;
+﻿using PeriodicAppCore;
 
 namespace PeriodicAppWinForms
 {
