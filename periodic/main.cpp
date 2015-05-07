@@ -232,8 +232,10 @@ void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned 
     ProcessNeighborhood();
 	LOG("\n\tLeave OnNeightborAdd#%d\n", my_call);
 	*/
+	LOG("\n\tInside Main OnNeighborAdd\n");
 	cubes[firstId].AddNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
 	neighborhoodHasChanged = true;
+	LOG("\n\tNeighborhood has changed(Add)\n");
 }
 
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
@@ -245,6 +247,9 @@ void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsign
     ProcessNeighborhood();
 	LOG("\n\tLeave OnNeighborRemove #%d\n", my_call);
 	*/
+
+	LOG("\n\tInside Main OnNeighborRemove\n");
 	cubes[firstId].RemoveNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
 	neighborhoodHasChanged = true;
+	LOG("\n\tNeighborhood has changed(Remove)\n");
 }

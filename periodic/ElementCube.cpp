@@ -202,12 +202,23 @@ void ElementCube::AddNeighbor(ElementCube* other, BondSide side, BondSide otherS
     Assert(neighbors[side] == NULL);
 
     neighbors[side] = other;
+	LOG("\n\n\t\tRight before AddNeighbor call\n\n\n");
     other->AddNeighbor(this, otherSide, side);
 }
 
 void ElementCube::RemoveNeighbor(ElementCube* other, BondSide side, BondSide otherSide)
 {
+	LOG("\n\t\tInside RemoveNeighbor");
+	Assert(side >= 0 && side < BondSide_Count);
+	Assert(otherSide >= 0 && otherSide < BondSide_Count);
 
+	LOG("\nNeighbors[side] = 0x%X\t side = %d", neighbors[side], side);
+	if (neighbors[side] == NULL)
+	{  return;	}
+
+	Assert(neighbors[side] != NULL);
+	LOG("\n\n\t\tRight before RemoveNeighbor call\n\n\n");
+	other->RemoveNeighbor(this, otherSide, side);
 }
 
 ElementCube* ElementCube::GetNeighbor(BondSide side)
