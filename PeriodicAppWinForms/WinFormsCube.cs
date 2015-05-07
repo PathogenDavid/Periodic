@@ -60,8 +60,8 @@ namespace PeriodicAppWinForms
             Form.Show();
             Form.MouseDown += Form_MouseUpDown;
             Form.MouseUp += Form_MouseUpDown;
-            Form.ResizeBegin += Form_ResizeBegin;
-            Form.ResizeEnd += Form_ResizeEnd;
+            Form.Move += Form_Move;
+            //Form.ResizeEnd += Form_Move;
             Form.Icon = PeriodicAppWinForms.Properties.Resources.None;
             Swap();
 
@@ -75,6 +75,7 @@ namespace PeriodicAppWinForms
 
         public override void Paint()
         {
+            base.Paint();
             Swap();
         }
 
@@ -106,31 +107,21 @@ namespace PeriodicAppWinForms
         }
 
         /// <summary>
-        /// Removes all nieghbor associations while the cube is being manipulated
-        /// </summary>
-        /// <remarks>Contrary to the name's implications, this event occus before moving too.</remarks>
-        void Form_ResizeBegin(object sender, EventArgs e)
-        {
-            SetNeighbor(Side.Left, null);
-            SetNeighbor(Side.Right, null);
-            SetNeighbor(Side.Top, null);
-            SetNeighbor(Side.Bottom, null);
-        }
-
-        /// <summary>
         /// Figures out if this cube is close enough to any other cubes to "latch on" to them and consider them to be neighbors.
         /// </summary>
         /// <remarks>Contrary to the name's implications, this event occus after moving too.</remarks>
-        void Form_ResizeEnd(object sender, EventArgs e)
+        void Form_Move(object sender, EventArgs e)
         {
+            if (Form.WindowState != FormWindowState.Normal)
+            { return; }
+
             const int maxSep = 15; // The maximum seperation between cubes, in pixels
             const int maxOff = 15; // The maximum offset for the perpendicular axis, in pixels
 
-            // We should have no neighbors when this event occurs:
-            Debug.Assert(GetNeighbor(Side.Top) == null);
-            Debug.Assert(GetNeighbor(Side.Right) == null);
-            Debug.Assert(GetNeighbor(Side.Bottom) == null);
-            Debug.Assert(GetNeighbor(Side.Left) == null);
+            Cube newLeft = null;
+            Cube newRight = null;
+            Cube newTop = null;
+            Cube newBottom = null;
 
             // Loop through every other cube and determine if it is close enough to us:
             foreach (WinFormsCube other in cubes)
@@ -142,39 +133,50 @@ namespace PeriodicAppWinForms
 
                 if (Math.Abs(this.Form.Left - other.Form.Left) <= maxOff)
                 {
-                    Debug.Print("{0} {1} {2}", this.Form.Top, other.Form.Bottom, Math.Abs(this.Form.Top - other.Form.Bottom));
-                    if (GetNeighbor(Side.Top) == null && Math.Abs(this.Form.Top - other.Form.Bottom) <= maxSep)
+                    if (newTop == null && Math.Abs(this.Form.Top - other.Form.Bottom) <= maxSep)
                     {
-                        SetNeighbor(Side.Top, other);
+                        newTop = other;
                         continue;
                     }
 
-                    if (GetNeighbor(Side.Bottom) == null && Math.Abs(this.Form.Bottom - other.Form.Top) <= maxSep)
+                    if (newBottom == null && Math.Abs(this.Form.Bottom - other.Form.Top) <= maxSep)
                     {
-                        SetNeighbor(Side.Bottom, other);
+                        newBottom = other;
                         continue;
                     }
                 }
 
                 if (Math.Abs(this.Form.Top - other.Form.Top) <= maxOff)
                 {
-                    if (GetNeighbor(Side.Left) == null && Math.Abs(this.Form.Left - other.Form.Right) <= maxSep)
+                    if (newLeft == null && Math.Abs(this.Form.Left - other.Form.Right) <= maxSep)
                     {
-                        SetNeighbor(Side.Left, other);
+                        newLeft = other;
                         continue;
                     }
 
-                    if (GetNeighbor(Side.Right) == null && Math.Abs(this.Form.Right - other.Form.Left) <= maxSep)
+                    if (newRight == null && Math.Abs(this.Form.Right - other.Form.Left) <= maxSep)
                     {
-                        SetNeighbor(Side.Right, other);
+                        newRight = other;
                         continue;
                     }
                 }
             }
+
+            // These will only raise events for ones that have changed.
+            SetNeighbor(Side.Left, newLeft);
+            SetNeighbor(Side.Right, newRight);
+            SetNeighbor(Side.Top, newTop);
+            SetNeighbor(Side.Bottom, newBottom);
         }
 
         protected override void OnNeighborsChanged()
         {
+            if (Form.InvokeRequired)
+            {
+                Form.Invoke(OnNeighborsChanged);
+                return;
+            }
+
             // Set the icon to the appropriate symbol:
             string name = "";
 

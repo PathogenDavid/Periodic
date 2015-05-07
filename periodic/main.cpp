@@ -73,9 +73,11 @@ void OnRelease(unsigned cubeId);
 PeriodicExport void OnTouch(void* sender, unsigned cubeId);
 
 //! Raw Sifteo event handler used to process cubes touching
-PeriodicExport void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
 //! Raw Sifteo event handler used to process cubes untouching
-PeriodicExport void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+//! Standalone app event handler used to process cube neighborhoods changing
+PeriodicExport void OnNeighborhoodChanged();
 
 void __ApplyCubeSet(const char* symbolSet[], int length)
 {
@@ -103,6 +105,7 @@ PeriodicExport void main()
     // Due to a bug in the Sifteo linker, we can't statically initialize these at all.
     // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
     ApplyCubeSet(defaultCubeSymbols);
+    ApplyCubeSet(phosphorousAcid);
 
     #ifndef STANDALONE_APP
     Events::cubeTouch.set(OnTouch);
@@ -307,6 +310,11 @@ void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsign
     if (firstId == BASE_STATION_ID || secondId == BASE_STATION_ID)
     { quickSelectModeIsOn = false; }
 
+    ProcessNeighborhood();
+}
+
+void OnNeighborhoodChanged()
+{
     ProcessNeighborhood();
 }
 

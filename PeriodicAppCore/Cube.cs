@@ -11,9 +11,18 @@ namespace PeriodicAppCore
         protected const int paletteSize = 16;
         protected Color[] palette = new Color[paletteSize];
         protected Cube[] neighbors = new Cube[(int)Side.NumSides];
+        protected Cube[] lastNeighbors = new Cube[(int)Side.NumSides];
 
         protected virtual void OnNeighborsChanged()
         {
+        }
+
+        public Cube GetNeighborSinceLastPaint(Side side)
+        {
+            if (!side.IsValid())
+            { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
+
+            return lastNeighbors[(int)side];
         }
 
         public Cube GetNeighbor(Side side)
@@ -24,48 +33,43 @@ namespace PeriodicAppCore
             return neighbors[(int)side];
         }
 
-        private void SetNeighbor(Side side, Cube other, bool skipAddEvent)
-        {
-            if (!side.IsValid())
-            { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
-
-            int sideNum = (int)side;
-            Side oppositeSide = side.GetOpposite();
-            int oppositeSideNum = (int)oppositeSide;
-
-            Cube currentNeighbor = GetNeighbor(side);
-
-            // Don't do anything if we already have this neighbor
-            if (currentNeighbor == other)
-            { return; }
-
-            // If we had an old neighbor, trigger the appropriate event and remove ourselves as their neighbor
-            if (currentNeighbor != null)
-            {
-                Debug.Assert(currentNeighbor.neighbors[oppositeSideNum] == this);
-                Periodic.OnNeighborRemoved(side, this, currentNeighbor);
-                currentNeighbor.neighbors[oppositeSideNum] = null;
-                currentNeighbor.OnNeighborsChanged();
-            }
-
-            // Set the new neighbor, and trigger the appropriate event if relevant.
-            neighbors[sideNum] = other;
-            OnNeighborsChanged();
-
-            // Nothing left to do if the new neighbor is no neighbor.
-            if (other == null)
-            { return; }
-
-            if (!skipAddEvent)
-            { Periodic.OnNeighborAdded(side, this, other); }
-
-            // Set the neighbor backwards for the new neighbor
-            other.SetNeighbor(oppositeSide, this, true);
-        }
-
         public void SetNeighbor(Side side, Cube other)
         {
-            SetNeighbor(side, other, false);
+            lock (Periodic.NeighborhoodMutex)
+            {
+                if (!side.IsValid())
+                { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
+
+                int sideNum = (int)side;
+                Side oppositeSide = side.GetOpposite();
+                int oppositeSideNum = (int)oppositeSide;
+
+                Cube oldNeighbor = GetNeighbor(side);
+
+                if (oldNeighbor == other)
+                { return; }
+
+                // Remove ourselves from our old neighbor
+                if (oldNeighbor != null)
+                {
+                    Debug.Assert(oldNeighbor.neighbors[oppositeSideNum] == this);
+                    oldNeighbor.neighbors[oppositeSideNum] = null;
+                }
+
+                // Set our new neighbor:
+                neighbors[sideNum] = other;
+
+                // Set us on our new neighbor, and remove the old neighbor if the new neighbor had one:
+                if (other != null)
+                {
+                    // Remove the new neighbor from the old neighbor
+                    if (other.neighbors[oppositeSideNum] != null)
+                    { other.neighbors[oppositeSideNum].neighbors[sideNum] = null; }
+
+                    // Set us as a neighbor of the new neighbor
+                    other.neighbors[oppositeSideNum] = this;
+                }
+            }
         }
 
         public void OnTouch()
@@ -86,7 +90,38 @@ namespace PeriodicAppCore
             SetPaletteColor(colorIndex, Color.FromArgb(r, g, b));
         }
 
-        public abstract void Paint();
+        bool neighborhoodIsStale = false;
+
+        public virtual void Paint()
+        {
+            // Back up the neighbors array so that the cubes get the state that is accurate to the events they've received rather than
+            // the live version. We also use this to call OnNeighborsChanged and inform Periodic that the neighborhoods have changed.
+            neighborhoodIsStale = false;
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                if (lastNeighbors[i] != neighbors[i])
+                {
+                    lastNeighbors[i] = neighbors[i];
+                    neighborhoodIsStale = true;
+                }
+            }
+
+            if (neighborhoodIsStale)
+            {
+                Periodic.MarkNeighborhoodsAsStale();
+            }
+        }
+
+        //HACK: This is kinda weird to get around issues with deadlocking with Invoke in OnNeighborsChanged.
+        public void HandleNeighborhoodChanging()
+        {
+            if (neighborhoodIsStale)
+            {
+                neighborhoodIsStale = false;
+                OnNeighborsChanged();
+            }
+        }
+
         public abstract void ClearScreen(int colorIndex);
         public abstract void DrawPoint(int x, int y, int colorIndex);
     }

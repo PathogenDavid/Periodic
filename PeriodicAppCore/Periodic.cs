@@ -10,6 +10,7 @@ namespace PeriodicAppCore
         private static List<Cube> cubes = new List<Cube>();
         private static Queue<Action> pendingEvents = new Queue<Action>();
         private const byte InvalidCubeId = unchecked((byte)-1);
+        private static bool neighborhoodsAreStale = false;
 
         private static int GetCubeId(Cube cube)
         {
@@ -21,34 +22,6 @@ namespace PeriodicAppCore
             get { return GetCubeCount(); }
         }
 
-        internal static void OnNeighborAdded(Side side, Cube cube, Cube other)
-        {
-            if (!side.IsValid())
-            { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
-
-            if (cube == null)
-            { throw new ArgumentNullException("cube"); }
-
-            if (other == null)
-            { throw new ArgumentNullException("other"); }
-
-            pendingEvents.Enqueue(() => OnNeighborAdd(IntPtr.Zero, (uint)GetCubeId(cube), (uint)side, (uint)GetCubeId(other), (uint)side.GetOpposite()));
-        }
-
-        internal static void OnNeighborRemoved(Side side, Cube cube, Cube other)
-        {
-            if (!side.IsValid())
-            { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
-
-            if (cube == null)
-            { throw new ArgumentNullException("cube"); }
-
-            if (other == null)
-            { throw new ArgumentNullException("other"); }
-
-            pendingEvents.Enqueue(() => OnNeighborRemove(IntPtr.Zero, (uint)GetCubeId(cube), (uint)side, (uint)GetCubeId(other), (uint)side.GetOpposite()));
-        }
-
         internal static void OnTouch(Cube cube)
         {
             if (cube == null)
@@ -57,21 +30,45 @@ namespace PeriodicAppCore
             pendingEvents.Enqueue(() => OnTouch(IntPtr.Zero, (uint)GetCubeId(cube)));
         }
 
+        public static void MarkNeighborhoodsAsStale()
+        {
+            neighborhoodsAreStale = true;
+        }
+
         private static void Log(string message)
         {
             Debug.Write(message, "Periodic");
         }
 
+        internal static readonly object NeighborhoodMutex = new Object();
+
         private static void Paint()
         {
-            // Tell the cubes to paint
-            foreach (Cube cube in cubes)
-            { cube.Paint(); }
-
-            // Dispatch any events that were queued since the last call to Paint. (This is how the Sifteo framework dispatches events.)
-            while (pendingEvents.Count > 0)
+            lock (NeighborhoodMutex)
             {
-                pendingEvents.Dequeue()();
+                // Tell the cubes to paint
+                foreach (Cube cube in cubes)
+                { cube.Paint(); }
+
+                // Dispatch any events that were queued since the last call to Paint. (This is how the Sifteo framework dispatches events.)
+                while (pendingEvents.Count > 0)
+                {
+                    pendingEvents.Dequeue()();
+                }
+
+                // Dispatch the neighborhoods stale event
+                //HACK: This isn't the same as Sifteo, which isn't the worst, but it is worth noting.
+                if (neighborhoodsAreStale)
+                {
+                    OnNeighborhoodChanged();
+                    neighborhoodsAreStale = false;
+                }
+            }
+
+            // Let cubes handle stuff that should happen when their own neighborhoods change:
+            foreach (Cube cube in cubes)
+            {
+                cube.HandleNeighborhoodChanging();
             }
 
             //TODO: Rate-limit painting to avoid eating CPU.
@@ -89,7 +86,7 @@ namespace PeriodicAppCore
             { return InvalidCubeId; }
 
             Cube relativeToCube = cubes[relativeTo];
-            Cube ret = relativeToCube.GetNeighbor(side);
+            Cube ret = relativeToCube.GetNeighborSinceLastPaint(side);
             return ret == null ? InvalidCubeId : (byte)GetCubeId(ret);
         }
 

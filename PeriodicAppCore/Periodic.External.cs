@@ -13,11 +13,14 @@ namespace PeriodicAppCore
         [DllImport(periodicDll, EntryPoint = "main", CallingConvention = CallingConvention.Cdecl)]
         private static extern void MainThread();
 
-        [DllImport(periodicDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void OnNeighborAdd(IntPtr sender, uint firstId, uint firstSide, uint secondId, uint secondSide);
+        //[DllImport(periodicDll, CallingConvention = CallingConvention.Cdecl)]
+        //private static extern void OnNeighborAdd(IntPtr sender, uint firstId, uint firstSide, uint secondId, uint secondSide);
+
+        //[DllImport(periodicDll, CallingConvention = CallingConvention.Cdecl)]
+        //private static extern void OnNeighborRemove(IntPtr sender, uint firstId, uint firstSide, uint secondId, uint secondSide);
 
         [DllImport(periodicDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void OnNeighborRemove(IntPtr sender, uint firstId, uint firstSide, uint secondId, uint secondSide);
+        private static extern void OnNeighborhoodChanged();
 
         [DllImport(periodicDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void OnTouch(IntPtr sender, uint cubeId);
