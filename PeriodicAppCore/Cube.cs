@@ -6,6 +6,8 @@ namespace PeriodicAppCore
 {
     public abstract class Cube
     {
+        public const int Width = 32;
+        public const int Height = 32;
         protected const int paletteSize = 16;
         protected Color[] palette = new Color[paletteSize];
         protected Cube[] neighbors = new Cube[(int)Side.NumSides];
