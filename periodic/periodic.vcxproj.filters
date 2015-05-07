@@ -22,6 +22,9 @@
     <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Reaction.Process.cpp" />
     <ClCompile Include="LinkedList.cpp" />
+    <ClCompile Include="PeriodicApp\PeriodicAppGlue.cpp">
+      <Filter>PeriodicApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.png" />
@@ -45,10 +48,16 @@
     <ClInclude Include="Compound.h" />
     <ClInclude Include="ElementSet.h" />
     <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="PeriodicApp\sifteo.h">
+      <Filter>PeriodicApp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated">
       <UniqueIdentifier>{44ee09c8-e397-40eb-968e-27a0f036ebc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PeriodicApp">
+      <UniqueIdentifier>{318f6394-85bb-4df4-9478-01e040c159b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

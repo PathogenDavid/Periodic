@@ -1,4 +1,6 @@
+#ifndef STANDALONE_APP
 #include "assets.gen.h"
+#endif
 #include "coders_crux.gen.h"
 #include "Element.h"
 #include "ElementCube.h"
@@ -10,12 +12,14 @@
 
 using namespace Sifteo;
 
+#ifndef STANDALONE_APP
 static Metadata M = Metadata()
     .title("Periodic Project")
     .package("edu.ksu.periodic", "0.2")
     .icon(Icon)
     .cubeRange(NUM_CUBES)
 ;
+#endif
 
 //! ElementCube instances used in this program. There should be one for every cube in the simulation.
 ElementCube cubes[NUM_CUBES];
@@ -66,12 +70,12 @@ void OnPress(unsigned cubeId);
 //! Called when a specific cube is released (as in, not touched after being touched.)
 void OnRelease(unsigned cubeId);
 //! Raw Sifteo event handler for OnTocuh, you probably want to use OnPress and OnRelease instead.
-void OnTouch(void* sender, unsigned cubeId);
+PeriodicExport void OnTouch(void* sender, unsigned cubeId);
 
 //! Raw Sifteo event handler used to process cubes touching
-void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+PeriodicExport void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
 //! Raw Sifteo event handler used to process cubes untouching
-void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
+PeriodicExport void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide);
 
 void __ApplyCubeSet(const char* symbolSet[], int length)
 {
@@ -84,7 +88,7 @@ void __ApplyCubeSet(const char* symbolSet[], int length)
 #define ApplyCubeSet(symbolSet) __ApplyCubeSet(symbolSet, CountOfArray(symbolSet));
 
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
-void main()
+PeriodicExport void main()
 {
     LOG("Enterting main...\n");
 
@@ -93,11 +97,12 @@ void main()
     // If we do, sometimes they will initialize before the periodic table and will cause crashes trying to access it.
     ApplyCubeSet(defaultCubeSymbols);
 
+    #ifndef STANDALONE_APP
     Events::cubeTouch.set(OnTouch);
     Events::neighborAdd.set(OnNeighborAdd);
     Events::neighborRemove.set(OnNeighborRemove);
+    #endif
     
-    TimeStep timeStep;
     while (1)
     {
         for (unsigned i = 0; i < NUM_CUBES; i++)
@@ -106,7 +111,6 @@ void main()
         }
 
         System::paint();
-        timeStep.next();
     }
 }
 
@@ -255,10 +259,12 @@ void OnRelease(unsigned cubeId)
 }
 
 //! Internal accounting for OnTouch, used to separate presses from releases.
-static bool isRelease[CUBE_ALLOCATION];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
+static bool isRelease[NUM_CUBES];//TODO: Investigate if this should be initialized with CubeID.isTouch on startup.
 
 void OnTouch(void* sender, unsigned cubeId)
 {
+    if (cubeId >= NUM_CUBES) { return; }
+
     if (isRelease[cubeId])
     {
         OnRelease(cubeId);
