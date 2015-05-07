@@ -15,7 +15,7 @@ using namespace Sifteo;
 #ifndef STANDALONE_APP
 static Metadata M = Metadata()
     .title("Periodic Project")
-    .package("edu.ksu.periodic", "0.2")
+    .package("edu.ksu.periodic", "0.3")
     .icon(Icon)
     .cubeRange(NUM_CUBES)
 ;
