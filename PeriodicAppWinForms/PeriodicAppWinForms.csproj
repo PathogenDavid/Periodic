@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,6 +65,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -81,6 +85,24 @@
       <Project>{119d6d23-96d5-4106-bb2f-4255f920bd1a}</Project>
       <Name>PeriodicAppCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\E.ico" />
+    <Content Include="Resources\ES.ico" />
+    <None Include="Resources\ESW.ico" />
+    <Content Include="Resources\EW.ico" />
+    <Content Include="Resources\N.ico" />
+    <Content Include="Resources\NE.ico" />
+    <Content Include="Resources\NES.ico" />
+    <Content Include="Resources\NESW.ico" />
+    <Content Include="Resources\NEW.ico" />
+    <Content Include="Resources\None.ico" />
+    <Content Include="Resources\NS.ico" />
+    <Content Include="Resources\NSW.ico" />
+    <Content Include="Resources\NW.ico" />
+    <Content Include="Resources\S.ico" />
+    <Content Include="Resources\SW.ico" />
+    <Content Include="Resources\W.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

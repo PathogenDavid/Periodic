@@ -84,6 +84,9 @@ namespace PeriodicAppWinForms
                 { continue; }
 
                 cube.Form.WindowState = senderForm.WindowState;
+
+                if (senderForm.WindowState == FormWindowState.Normal)
+                { cube.Form.BringToFront(); }
             }
 
             ignoreSizeChangedEvents = false;

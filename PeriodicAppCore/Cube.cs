@@ -12,6 +12,10 @@ namespace PeriodicAppCore
         protected Color[] palette = new Color[paletteSize];
         protected Cube[] neighbors = new Cube[(int)Side.NumSides];
 
+        protected virtual void OnNeighborsChanged()
+        {
+        }
+
         public Cube GetNeighbor(Side side)
         {
             if (!side.IsValid())
@@ -20,7 +24,7 @@ namespace PeriodicAppCore
             return neighbors[(int)side];
         }
 
-        public void SetNeighbor(Side side, Cube other)
+        private void SetNeighbor(Side side, Cube other, bool skipAddEvent)
         {
             if (!side.IsValid())
             { throw new ArgumentOutOfRangeException("side", "Side must be a valid side!"); }
@@ -41,23 +45,27 @@ namespace PeriodicAppCore
                 Debug.Assert(currentNeighbor.neighbors[oppositeSideNum] == this);
                 Periodic.OnNeighborRemoved(side, this, currentNeighbor);
                 currentNeighbor.neighbors[oppositeSideNum] = null;
+                currentNeighbor.OnNeighborsChanged();
             }
 
             // Set the new neighbor, and trigger the appropriate event if relevant.
             neighbors[sideNum] = other;
+            OnNeighborsChanged();
 
+            // Nothing left to do if the new neighbor is no neighbor.
             if (other == null)
-            { return; } // Nothing left to do if the new neighbor is no neighbor.
+            { return; }
 
-            Periodic.OnNeighborAdded(side, this, other);
+            if (!skipAddEvent)
+            { Periodic.OnNeighborAdded(side, this, other); }
 
-            // If the new neighbor has an existing neighbor in our new spot, we dispatch a removed event
-            Cube otherOldNeighbor = other.GetNeighbor(oppositeSide);
-            if (otherOldNeighbor != null)
-            { Periodic.OnNeighborRemoved(oppositeSide, other, otherOldNeighbor); }
+            // Set the neighbor backwards for the new neighbor
+            other.SetNeighbor(oppositeSide, this, true);
+        }
 
-            // Set ourselves as our nieghbor's neighbor
-            other.neighbors[oppositeSideNum] = this;
+        public void SetNeighbor(Side side, Cube other)
+        {
+            SetNeighbor(side, other, false);
         }
 
         public void OnTouch()
