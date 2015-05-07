@@ -225,31 +225,12 @@ void OnTouch(void* sender, unsigned cubeId)
 
 void OnNeighborAdd(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
-	/*
-	static unsigned int call = 0;
-	unsigned int my_call = call++;
-	LOG("\n\tEnter OnNeighborAdd #%d\n", my_call);
-    ProcessNeighborhood();
-	LOG("\n\tLeave OnNeightborAdd#%d\n", my_call);
-	*/
-	LOG("\n\tInside Main OnNeighborAdd\n");
 	cubes[firstId].AddNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
 	neighborhoodHasChanged = true;
-	LOG("\n\tNeighborhood has changed(Add)\n");
 }
 
 void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsigned secondId, unsigned secondSide)
 {
-	/*
-	static unsigned int remove_call = 0;
-	unsigned int my_call = remove_call++;
-	LOG("\n\tEnter OnNeighborRemove #%d\n", my_call);
-    ProcessNeighborhood();
-	LOG("\n\tLeave OnNeighborRemove #%d\n", my_call);
-	*/
-
-	LOG("\n\tInside Main OnNeighborRemove\n");
 	cubes[firstId].RemoveNeighbor(&cubes[secondId], (BondSide)firstSide, (BondSide)secondSide);
 	neighborhoodHasChanged = true;
-	LOG("\n\tNeighborhood has changed(Remove)\n");
 }
