@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{119D6D23-96D5-4106-BB2F-4255F920BD1A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{58C397C2-D249-4806-A6C7-3B415BDC6698}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PeriodicAppCore</RootNamespace>
-    <AssemblyName>PeriodicAppCore</AssemblyName>
+    <RootNamespace>PeriodicAppWinForms</RootNamespace>
+    <AssemblyName>PeriodicAppWinForms</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,22 +31,35 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cube.cs" />
-    <Compile Include="Periodic.cs" />
-    <Compile Include="Periodic.External.cs" />
+    <Compile Include="CubeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CubeForm.Designer.cs">
+      <DependentUpon>CubeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Side.cs" />
-    <Compile Include="SideEx.cs" />
+    <Compile Include="WinFormsCube.cs" />
+    <EmbeddedResource Include="CubeForm.resx">
+      <DependentUpon>CubeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -55,7 +68,6 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -69,6 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PeriodicAppCore\PeriodicAppCore.csproj">
+      <Project>{119d6d23-96d5-4106-bb2f-4255f920bd1a}</Project>
+      <Name>PeriodicAppCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

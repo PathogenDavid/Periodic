@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Periodic Standalone App Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Periodic Standalone App")]
+[assembly: AssemblyDescription("Winforms Implementation")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("The Periodic Project")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("153a9988-e046-4c55-9c15-612a8f69ce59")]
+[assembly: Guid("31a4f911-e34f-428b-941d-57e743e17b12")]
 
 // Version information for an assembly consists of the following four values:
 //

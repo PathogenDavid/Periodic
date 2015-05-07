@@ -59,7 +59,7 @@ namespace PeriodicAppCore
 
         private static void Log(string message)
         {
-            Debug.Write("Periodic: {0}", message);
+            Debug.Write(message, "Periodic");
         }
 
         private static void Paint()
