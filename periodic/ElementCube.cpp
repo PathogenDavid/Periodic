@@ -408,12 +408,11 @@ void ElementCube::DrawLewisDots(int stringWidth, int stringHeight)
 		position[3] = covalentSide[2];
 
 		//iterate through element sides.  Count covalent sides as 2 initially
-		//If we have extras afterward, then add to those sides.
 		int side = 0;
 		for (int i = 0; i < numOuterElectrons; i++)
 		{
 			side = i % 4;
-			while (position[side] == 2)
+			while (position[side] >= 2)
 			{
 				side = (side + 1) % 4;
 			}
