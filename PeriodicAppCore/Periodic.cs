@@ -159,15 +159,23 @@ namespace PeriodicAppCore
 
         public static event EventHandler Stopped;
 
+        private static Thread thread;
+
+        public static bool IsRunning
+        {
+            get { return thread != null; }
+        }
+
         public static void Start()
         {
-            Thread thread = new Thread(PeriodicThread);
+            thread = new Thread(PeriodicThread);
             thread.Start();
         }
 
         private static void PeriodicThread()
         {
             MainThread();
+            thread = null;
 
             var stopped = Stopped;
             if (stopped != null)
