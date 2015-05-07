@@ -87,6 +87,13 @@ void __ApplyCubeSet(const char* symbolSet[], int length)
 
 #define ApplyCubeSet(symbolSet) __ApplyCubeSet(symbolSet, CountOfArray(symbolSet));
 
+bool IsRunning = true;
+
+PeriodicExport void RequestStop()
+{
+    IsRunning = false;
+}
+
 //! Program entry-point, initializes all state and event handlers, and handles the main program loop
 PeriodicExport void main()
 {
@@ -103,7 +110,7 @@ PeriodicExport void main()
     Events::neighborRemove.set(OnNeighborRemove);
     #endif
     
-    while (1)
+    while (IsRunning)
     {
         for (unsigned i = 0; i < NUM_CUBES; i++)
         {
@@ -301,4 +308,9 @@ void OnNeighborRemove(void* sender, unsigned firstId, unsigned firstSide, unsign
     { quickSelectModeIsOn = false; }
 
     ProcessNeighborhood();
+}
+
+PeriodicExport int GetCubeCount()
+{
+    return NUM_CUBES;
 }

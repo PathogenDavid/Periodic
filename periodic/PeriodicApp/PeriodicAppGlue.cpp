@@ -1,9 +1,12 @@
 #include "sifteo.h"
 
 #include <Windows.h>
+#include <stdio.h>
+#include <malloc.h>
 
 namespace Sifteo
 {
+    typedef void(*LogCallbackT)(const char* message);
     typedef void(*PaintCallbackT)();
     typedef CubeID(*NeighborHoodCubeAtCallbackT)(CubeID relativeTo, Side side);
     typedef void(*ClearScreenCallbackT)(CubeID cube, unsigned int colorIndex);
@@ -33,6 +36,33 @@ namespace Sifteo
         ClearScreenCallback = clearScreenCallback;
         DrawPointCallback = drawPointCallback;
         SetPaletteColorCallback = setPaletteColorCallback;
+    }
+
+    void __do_log(const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        
+        // Figure out how long the message will be
+        int messageLength = _vscprintf(format, args) + 1; // +1 for the null terminating character
+        char* message = (char*)_alloca(messageLength * sizeof(char));
+        message[messageLength - 1] = '\0'; // Add terminating null character.
+
+        // Format the message
+        ASSERT(vsprintf_s(message, messageLength, format, args) != -1);
+
+        // Print out the message
+        if (LogCallback != NULL)
+        { LogCallback(message); }
+        else
+        {
+            printf(message);
+            OutputDebugStringA(message);
+        }
+
+        // Cleanup
+        _freea(message);
+        va_end(args);
     }
 
     void System::paint()

@@ -17,8 +17,7 @@
 
 namespace Sifteo
 {
-    typedef void(*LogCallbackT)(const char* format, ...);
-    extern LogCallbackT LogCallback;
+    void __do_log(const char* format, ...);
 
     typedef unsigned char uint8_t;
 
@@ -104,7 +103,7 @@ namespace Sifteo
 
 #define ASSERT(x) assert(x)
 
-#define LOG(...) Sifteo::LogCallback(__VA_ARGS__);
+#define LOG(...) Sifteo::__do_log(__VA_ARGS__);
 
 #define PeriodicExport extern "C" __declspec(dllexport)
 
