@@ -39,6 +39,7 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CubeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Cube";
