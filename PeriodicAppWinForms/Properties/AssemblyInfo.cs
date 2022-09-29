@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sifteo Cube Font Generator")]
-[assembly: AssemblyDescription("Aids in generating fonts for Sifteo FB32 graphics modes.")]
+[assembly: AssemblyTitle("Periodic Standalone App")]
+[assembly: AssemblyDescription("Winforms Implementation")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Sifteo Cube Font Generator")]
-[assembly: AssemblyCopyright("© 2014 David Maas and Alex Lesperance")]
-[assembly: AssemblyTrademark("Licensed under the MIT License")]
+[assembly: AssemblyProduct("The Periodic Project")]
+[assembly: AssemblyCopyright("Copyright © 2015")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("01909a2a-27d6-450b-8c8a-47055d22e229")]
+[assembly: Guid("31a4f911-e34f-428b-941d-57e743e17b12")]
 
 // Version information for an assembly consists of the following four values:
 //

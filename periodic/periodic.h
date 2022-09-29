@@ -10,8 +10,14 @@
 
 #define CountOfArray(a) ( sizeof(a) / sizeof(*a) )
 
+#ifndef STANDALONE_APP
 //! Sifteo's memset uses a non-standard signature, use this one if you want the default memset signature's behavior.
 #define PeriodicMemset(destination, value, count) Sifteo::memset8((uint8_t*)destination, (uint8_t)value, count)
+
+#define PeriodicExport
+#else
+#define PeriodicMemset(destination, value, count) memset(destination, value, count)
+#endif
 
 //------------------------------------------------------------------------
 // Constants
@@ -24,7 +30,11 @@
 #define LETTER_SPACING 1
 #define LETTER_DESCENDER_HEIGHT 2
 
-#define NUM_CUBES 7 // 12 max
+#ifdef STANDALONE_APP
+#define NUM_CUBES 12 // 12 max
+#else
+#define NUM_CUBES 8 // 12 max
+#endif
 // Note: Each cube takes about 1 KB of memory because of the frame buffer. Setting this too high leaves us with no room to allocate stack.
 // Current safe max seems to be 8 cubes
 
@@ -34,7 +44,9 @@
 //------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------
+#ifndef STANDALONE_APP
 typedef unsigned long size_t; // Sifteo doesn't declare size_t for some reason.
+#endif
 
 typedef unsigned int uint32;
 CompilerAssert(sizeof(uint32) == 4);

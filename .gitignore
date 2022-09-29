@@ -3,6 +3,7 @@
 *.sdf
 *.suo
 *.csproj.user
+.vs/
 
 # Sifteo Generated Files
 assets.gen.*

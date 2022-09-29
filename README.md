@@ -13,7 +13,7 @@ Running in the Siftulator can be accomplished be running `make run` or by starti
 Deploying to hardware currently is only possible by running `make install`, and cannot be accomplished through Visual Studio.
 
 ## Standalone app
-In addition to running the code in the Siftulator or on the actual Sifteo cubes. There is a proof of concept standalone app located in the [`standaloneApp`](https://github.com/PathogenDavid/Periodic/tree/standaloneApp) branch. It's a little rough around the edges, but it demonstrates that the codebase is portable enough to run in other places.
+In addition to running the code in the Siftulator or on the actual Sifteo cubes. There is a proof of concept standalone app named `PeriodicAppWinForms`. It's a little rough around the edges, but it demonstrates that the codebase is portable enough to run in other places.
 
 ## Third Party Licenses
 Included in the repository is a modified copy of the font [Coder's Crux](http://fontstruct.com/fontstructions/show/619715) by NAL, which is licensed under [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/).
